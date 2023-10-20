@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E97910A-16A7-4AB6-908F-D645D31C14D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anexia.E5E", "src\Anexia.E5E\Anexia.E5E.csproj", "{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anexia.E5E.Tests", "src\Anexia.E5E.Tests\Anexia.E5E.Tests.csproj", "{7499D7E0-887E-4577-BABC-EA948C06DE74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7499D7E0-887E-4577-BABC-EA948C06DE74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7499D7E0-887E-4577-BABC-EA948C06DE74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7499D7E0-887E-4577-BABC-EA948C06DE74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7499D7E0-887E-4577-BABC-EA948C06DE74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B1FD3CBB-527D-4E30-B738-808E2CF7E9CB} = {7E97910A-16A7-4AB6-908F-D645D31C14D9}
+		{7499D7E0-887E-4577-BABC-EA948C06DE74} = {7E97910A-16A7-4AB6-908F-D645D31C14D9}
+	EndGlobalSection
+EndGlobal

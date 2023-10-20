@@ -1,0 +1,24 @@
+name: "Run tests"
+
+on: [ push, pull_request ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: [ '6.0.x', '7.0.x' ]
+    name: ".NET tests ({{ $matrix.dotnet }})"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        id: stepid
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+      - name: Create temporary global.json
+        run: echo '{"sdk":{"version": "${{ steps.stepid.outputs.dotnet-version }}"}}' > ./global.json
+      - name: Restore packages
+        run: dotnet restore --locked-mode
+      - name: Run tests
+        run: dotnet test
