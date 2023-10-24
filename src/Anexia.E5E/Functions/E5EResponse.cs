@@ -1,41 +1,45 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace Anexia.E5E.Functions;
 
-// TODO: Implement .NET 6 compatible polymorphic deserialization. It's supported natively in .NET 7, but let's target
-// the LTS release here. https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/converters-how-to?pivots=dotnet-6-0#support-polymorphic-deserialization
 public class E5EResponse
 {
-	[JsonInclude] public JsonNode? Data { get; }
-
-	public E5EResponseType Type { get; private set; }
-
+	public JsonElement Data { get; protected set; }
+	public E5EResponseType Type { get; protected set; }
 	public HttpStatusCode? Status { get; protected set; }
-	public HttpResponseHeaders? ResponseHeaders { get; protected set; }
+	public E5EHttpHeaders? ResponseHeaders { get; protected set; }
+
+	protected E5EResponse() { }
 
 	[JsonConstructor]
-	public E5EResponse()
+	public E5EResponse(E5EResponseType type, JsonElement data, HttpStatusCode? status = null,
+		E5EHttpHeaders? responseHeaders = null)
 	{
+		Type = type;
+		Data = data;
+		Status = status;
+		ResponseHeaders = responseHeaders;
 	}
+}
 
-	internal E5EResponse(JsonNode? node) => Data = node;
+public class E5EResponse<T> : E5EResponse
+{
+	public T Value { get; }
 
-	public static E5EResponse FromString(string? s)
+	public E5EResponse(T value, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
 	{
-		return new E5EResponse(JsonSerializer.SerializeToNode(s)) { Type = E5EResponseType.Text, };
-	}
+		Type = value switch
+		{
+			string => E5EResponseType.Text,
+			IEnumerable<byte> => E5EResponseType.Binary,
+			_ => E5EResponseType.Object
+		};
 
-	public static E5EResponse From<T>(T? obj, JsonSerializerOptions? options = null)
-	{
-		return new E5EResponse(JsonSerializer.SerializeToNode(obj, options)) { Type = E5EResponseType.Object, };
-	}
-
-	public static E5EResponse FromBinary(byte[] data)
-	{
-		return new E5EResponse(JsonSerializer.SerializeToNode(data)) { Type = E5EResponseType.Binary, };
+		this.Value = value;
+		Data = JsonSerializer.SerializeToElement(value);
+		Status = status;
+		ResponseHeaders = responseHeaders;
 	}
 }

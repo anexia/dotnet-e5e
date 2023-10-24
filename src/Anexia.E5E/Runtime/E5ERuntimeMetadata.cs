@@ -13,7 +13,7 @@ public class E5ERuntimeMetadata
 			var version = typeof(E5ERuntimeMetadata).Assembly
 				.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
 				?.InformationalVersion ?? "0.0.1";
-			return version[..version.IndexOf("+", StringComparison.Ordinal)];
+			return version;
 		}
 	}
 

@@ -5,6 +5,7 @@ using Anexia.E5E.DependencyInjection;
 using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;
+using Anexia.E5E.Serialization;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -130,14 +131,13 @@ public class E5ECommunicationService : BackgroundService
 
 		try
 		{
-			_logger.LogDebug("received response {response}", response);
-			var json = JsonSerializer.Serialize(response);
+			_logger.LogDebug("Received {Response}", response);
+			var json = JsonSerializer.Serialize(response, E5EJsonSerializerOptions.Default);
 
-			_logger.LogDebug("writing serialized response to stdout");
 			await _console.WriteToStdoutAsync(_options.StdoutTerminationSequence, stoppingToken);
 			await _console.WriteToStdoutAsync(json, stoppingToken);
 		}
-		catch (NotSupportedException e)
+		catch (Exception e)
 		{
 			throw new E5EFailedSerializationException("JSON serialization of the response failed", e);
 		}
@@ -148,8 +148,8 @@ public class E5ECommunicationService : BackgroundService
 		E5EIncomingRequest? request;
 		try
 		{
-			_logger.LogDebug("deserializing line");
-			request = JsonSerializer.Deserialize<E5EIncomingRequest>(line);
+			_logger.LogDebug("Deserializing line");
+			request = JsonSerializer.Deserialize<E5EIncomingRequest>(line, E5EJsonSerializerOptions.Default);
 		}
 		catch (JsonException e)
 		{
