@@ -38,7 +38,7 @@ public static class ServiceCollectionHostedServiceExtensions
 		return services;
 	}
 
-	private static void TryAddEntrypointServiceResolver(this IServiceCollection services)
+	internal static void TryAddEntrypointServiceResolver(this IServiceCollection services)
 	{
 		services.TryAddScoped<E5EFunctionResolver>(svc => () =>
 		{

@@ -2,11 +2,15 @@ using System.Text.Json;
 
 using Anexia.E5E.Abstractions;
 using Anexia.E5E.Exceptions;
+using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
+using Anexia.E5E.Serialization;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Extensions;
 
@@ -23,16 +27,18 @@ public static class HostApplicationBuilderExtensions
 			throw new E5EMissingArgumentsException(
 				$"There were no arguments given to the {nameof(ConfigureE5E)} method.");
 
-		if (args[0] == "metadata")
+		hb.ConfigureServices((_, services) =>
 		{
-			var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata());
-			Console.Out.WriteLine(metadata);
-			Environment.Exit(0);
-			return hb;
-		}
+			services.TryAddEntrypointServiceResolver();
+			services.TryAddSingleton<IConsoleAbstraction, ConsoleAbstraction>();
+		});
+
+		if (args[0] == "metadata")
+			return ConfigureE5E(hb, E5ERuntimeOptions.WriteMetadata);
 
 		if (args.Length != 4)
 			throw new E5EMissingArgumentsException($"Expected exactly four arguments given, got {args.Length}");
+
 
 		var entrypoint = args[0];
 		var stdoutTerminationSequence = args[1].Replace("\\0", "\0");
@@ -47,8 +53,9 @@ public static class HostApplicationBuilderExtensions
 	{
 		hb.ConfigureServices((_, services) =>
 		{
-			services.AddSingleton<IConsoleAbstraction, ConsoleAbstraction>();
-			services.AddSingleton(options);
+			services.TryAddEntrypointServiceResolver();
+			services.TryAddSingleton<IConsoleAbstraction, ConsoleAbstraction>();
+			services.TryAddSingleton(options);
 			services.AddHostedService<E5ECommunicationService>();
 		});
 
