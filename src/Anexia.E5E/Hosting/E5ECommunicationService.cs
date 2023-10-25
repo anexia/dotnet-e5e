@@ -35,7 +35,7 @@ public class E5ECommunicationService : BackgroundService
 	}
 
 
-	protected override Task ExecuteAsync(CancellationToken stoppingToken)
+	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
 		// If the cancellation is requested, dispose our console streams and therefore end the processing loop below.
 		stoppingToken.Register(_console.CloseStdin);
@@ -48,10 +48,20 @@ public class E5ECommunicationService : BackgroundService
 		//
 		// Therefore we run the actual listening task like the example here:
 		// https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0#queued-background-tasks
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-		Task.Run(async () => await ListenForIncomingMessagesAsync(stoppingToken), stoppingToken);
-		return Task.CompletedTask;
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+		try
+		{
+			await Task.Yield();
+			await ListenForIncomingMessagesAsync(stoppingToken);
+		}
+		catch (E5EException e)
+		{
+			_logger.LogError(e, "An error occured during message processing");
+		}
+		catch (Exception e)
+		{
+			_logger.LogCritical(e, "The background process crashed unexpectedly");
+			throw;
+		}
 	}
 
 	private async Task ListenForIncomingMessagesAsync(CancellationToken stoppingToken)
