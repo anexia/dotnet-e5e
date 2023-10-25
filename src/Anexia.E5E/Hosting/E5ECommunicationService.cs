@@ -111,8 +111,8 @@ public class E5ECommunicationService : BackgroundService
 	private async Task ExecuteFunctionAsync(string line, CancellationToken stoppingToken)
 	{
 		E5EIncomingRequest request = ParseRequest(line);
-		if (request.Event is null)
-			throw new E5EException(
+		if (request.Event is null || request.Context is null)
+			throw new E5ERuntimeException(
 				"Apparently the deserialization failed, the given event is null. Please create a bug report at https://github.com/anexia/dotnet-e5e/issues/new");
 
 		using var _ = _logger.BeginScope(request);
@@ -126,7 +126,7 @@ public class E5ECommunicationService : BackgroundService
 		catch (Exception e)
 		{
 			_logger.LogError(e, "The function execution failed for the given {Event}", request.Event);
-			throw new E5EException("The function execution failed for the given event", e);
+			throw new E5EFunctionExecutionFailedException(request.Context, request.Event, e);
 		}
 
 		try
@@ -153,13 +153,12 @@ public class E5ECommunicationService : BackgroundService
 		}
 		catch (JsonException e)
 		{
-			throw new E5EFailedDeserializationException(
-				"The deserialization of the standard input into valid JSON failed.", e);
+			throw new E5EFailedDeserializationException(line, e);
 		}
 
 		if (request?.Event is null)
 		{
-			throw new E5EException("The request event from the deserialization is null.");
+			throw new E5ERuntimeException("The request event from the deserialization is null.");
 		}
 
 		return request;
