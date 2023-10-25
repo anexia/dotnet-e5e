@@ -61,4 +61,7 @@ public class E5EResponse<T> : E5EResponse
 		Status = status;
 		ResponseHeaders = responseHeaders;
 	}
+
+	public static implicit operator T(E5EResponse<T> resp) => resp.Value;
+	public static implicit operator E5EResponse<T>(T input) => new(input);
 }

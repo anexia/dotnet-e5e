@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 using Anexia.E5E.Functions;
+
+using NLog.LayoutRenderers;
 
 namespace Anexia.E5E.Tests.Builders;
 
 public interface IE5ERequestBuilder
 {
 	E5ERequest Build();
+	void SendTo(IE5EHost host) { host.WriteToStdinOnce(Build()); }
 	IE5ERequestBuilder AddHeader(string key, string value);
 	IE5ERequestBuilder AddParam(string key, string value);
 }

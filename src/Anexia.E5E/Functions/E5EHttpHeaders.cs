@@ -5,6 +5,18 @@ namespace Anexia.E5E.Functions;
 
 public class E5EHttpHeaders : HttpHeaders
 {
+	public bool TryGetValue(string key, out string? header)
+	{
+		if (!this.TryGetValues(key, out var headers))
+		{
+			header = null;
+			return false;
+		}
+
+		header = string.Join(", ", headers);
+		return true;
+	}
+
 	private sealed class E5EHttpHeadersEqualityComparer : IEqualityComparer<E5EHttpHeaders>
 	{
 		public bool Equals(E5EHttpHeaders? x, E5EHttpHeaders? y)
