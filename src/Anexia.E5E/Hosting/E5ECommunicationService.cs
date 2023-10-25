@@ -39,8 +39,6 @@ public class E5ECommunicationService : BackgroundService
 	{
 		// If the cancellation is requested, dispose our console streams and therefore end the processing loop below.
 		stoppingToken.Register(_console.CloseStdin);
-
-		_logger.LogInformation("Execution started, waiting for E5E requests on standard input");
 		_console.Open();
 
 		// > No further services are started until ExecuteAsync becomes asynchronous, such as by calling await.
@@ -66,6 +64,8 @@ public class E5ECommunicationService : BackgroundService
 
 	private async Task ListenForIncomingMessagesAsync(CancellationToken stoppingToken)
 	{
+		_logger.LogInformation("Execution started, waiting for E5E requests on standard input");
+
 		while (!stoppingToken.IsCancellationRequested)
 		{
 			var line = await _console.ReadLineFromStdinAsync(stoppingToken);
@@ -116,6 +116,8 @@ public class E5ECommunicationService : BackgroundService
 			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence, stoppingToken);
 			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence, stoppingToken);
 		}
+
+		_logger.LogInformation("Execution stopped successfully");
 	}
 
 	private async Task ExecuteFunctionAsync(string line, CancellationToken stoppingToken)
