@@ -28,6 +28,25 @@ public class E5EResponse<T> : E5EResponse
 {
 	public T Value { get; }
 
+	[JsonConstructor]
+	public E5EResponse(E5EResponseType type, JsonElement data, HttpStatusCode? status = null,
+		E5EHttpHeaders? responseHeaders = null) : base(type, data, status, responseHeaders)
+	{
+		Value = data.Deserialize<T>() ?? throw new InvalidOperationException(
+			$"The provided data cannot be deserialized to {typeof(T)}");
+
+		Type = Value switch
+		{
+			string => E5EResponseType.Text,
+			IEnumerable<byte> => E5EResponseType.Binary,
+			_ => E5EResponseType.Object
+		};
+
+		Data = data;
+		Status = status;
+		ResponseHeaders = responseHeaders;
+	}
+
 	public E5EResponse(T value, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
 	{
 		Type = value switch

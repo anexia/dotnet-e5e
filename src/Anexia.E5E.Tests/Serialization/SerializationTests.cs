@@ -93,6 +93,16 @@ public class SerializationTests
 		);
 	}
 
+	[Fact]
+	public void ResponseSerializationRecognisesCorrectType()
+	{
+		Assert.Equal(E5EResponseType.Text, new E5EResponse<string>("test").Type);
+		Assert.Equal(E5EResponseType.Binary, new E5EResponse<byte[]>(Encoding.UTF8.GetBytes("test")).Type);
+		Assert.Equal(E5EResponseType.Binary,
+			new E5EResponse<IEnumerable<byte>>(Encoding.UTF8.GetBytes("test").AsEnumerable()).Type);
+		Assert.Equal(E5EResponseType.Object, new E5EResponse<E5ERuntimeMetadata>(new E5ERuntimeMetadata()).Type);
+	}
+
 	class SerializationTestsData : IEnumerable<object[]>
 	{
 		private readonly List<object> _objects = new()
