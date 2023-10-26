@@ -11,6 +11,7 @@
 		<RepositoryUrl>https://github.com/anexia/dotnet-e5e</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>anexia,faas</PackageTags>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>
