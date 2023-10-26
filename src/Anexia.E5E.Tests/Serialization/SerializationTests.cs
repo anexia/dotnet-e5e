@@ -11,6 +11,7 @@ using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
 using Anexia.E5E.Tests.Builders;
+using Anexia.E5E.Tests.Helpers;
 
 using VerifyTests;
 
@@ -67,9 +68,7 @@ public class SerializationTests
 		Assert.Multiple(
 			() => Assert.Equal(input.Type, got.Type),
 			() => Assert.Equal(input.RequestHeaders, got.RequestHeaders,
-				E5EHttpHeaders
-					.E5EHttpHeadersComparer
-				!), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
+				E5EHttpHeadersEqualityComparer.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
 			() => Assert.Equal(input.Data.GetRawText(), got.Data.GetRawText())
 		);
 	}
@@ -86,9 +85,7 @@ public class SerializationTests
 		Assert.Multiple(
 			() => Assert.Equal(input.Status, got.Status),
 			() => Assert.Equal(input.ResponseHeaders, got.ResponseHeaders,
-				E5EHttpHeaders
-					.E5EHttpHeadersComparer
-				!), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
+				E5EHttpHeadersEqualityComparer.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
 			() => Assert.Equal(input.Data.GetRawText(), got.Data.GetRawText())
 		);
 	}
