@@ -14,21 +14,21 @@ namespace Anexia.E5E.Extensions;
 public static class ServiceCollectionHostedServiceExtensions
 {
 	/// <summary>
-	/// Add an <see cref="IE5EFunction"/> registration for the given type. The name is automatically derived from the name of <typeparamref name="TFunction"/>.
+	/// Add an <see cref="IE5EFunctionHandler"/> registration for the given type. The name is automatically derived from the name of <typeparamref name="TFunction"/>.
 	/// </summary>
-	/// <typeparam name="TFunction">An <see cref="IE5EFunction"/> to register.</typeparam>
+	/// <typeparam name="TFunction">An <see cref="IE5EFunctionHandler"/> to register.</typeparam>
 	/// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
 	/// <returns>The original <see cref="IServiceCollection"/>.</returns>
 	public static IServiceCollection AddE5EFunction<TFunction>(this IServiceCollection services)
-		where TFunction : class, IE5EFunction
+		where TFunction : class, IE5EFunctionHandler
 	{
 		services.TryAddEntrypointServiceResolver();
-		services.AddScoped<IE5EFunction, TFunction>();
+		services.AddScoped<IE5EFunctionHandler, TFunction>();
 		return services;
 	}
 
 	/// <summary>
-	/// Add an inline <see cref="IE5EFunction"/> registration for the given type and name.
+	/// Add an inline <see cref="IE5EFunctionHandler"/> registration for the given type and name.
 	/// </summary>
 	/// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
 	/// <param name="name">The name of the function.</param>
@@ -38,16 +38,16 @@ public static class ServiceCollectionHostedServiceExtensions
 		Func<E5ERequest, CancellationToken, Task<E5EResponse>> func)
 	{
 		services.TryAddEntrypointServiceResolver();
-		services.Add(ServiceDescriptor.Scoped<IE5EFunction>(_ => new E5EFuncFunction(name, func)));
+		services.Add(ServiceDescriptor.Scoped<IE5EFunctionHandler>(_ => new E5EInlineFunctionHandler(name, func)));
 		return services;
 	}
 
 	internal static void TryAddEntrypointServiceResolver(this IServiceCollection services)
 	{
-		services.TryAddScoped<E5EFunctionResolver>(svc => () =>
+		services.TryAddScoped<E5EFunctionHandlerResolver>(svc => () =>
 		{
 			var options = svc.GetRequiredService<E5ERuntimeOptions>();
-			var func = svc.GetServices<IE5EFunction>()
+			var func = svc.GetServices<IE5EFunctionHandler>()
 				.SingleOrDefault(x => x.Name.Equals(options.Entrypoint, StringComparison.InvariantCulture));
 
 			return func ?? throw new E5EMissingEntrypointException(options.Entrypoint);

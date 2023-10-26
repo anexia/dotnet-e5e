@@ -52,7 +52,7 @@ public interface IE5EHost : IDisposable, IAsyncDisposable
 
 
 	void WriteToStdinOnce(string input);
-	void WriteToStdinOnce(E5ERequest request);
+	void WriteToStdinOnce(E5EEvent evt);
 
 	/// <summary>
 	/// Reads a response from the stdout.
@@ -152,15 +152,11 @@ public static class E5EHostBuilder
 			console.Close();
 		}
 
-		public void WriteToStdinOnce(E5ERequest request)
+		public void WriteToStdinOnce(E5EEvent evt)
 		{
 			var console = _host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 						  throw new InvalidOperationException("There's no console registered");
-			var req = new E5EIncomingRequest
-			{
-				Context = new E5EContext("test", DateTimeOffset.Now, true),
-				Event = request,
-			};
+			var req = new E5ERequest(evt, new E5ERequestContext("test", DateTimeOffset.Now, true));
 			var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
 
 			console.WriteToStdin(json);

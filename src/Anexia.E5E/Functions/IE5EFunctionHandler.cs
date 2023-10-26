@@ -3,7 +3,7 @@ namespace Anexia.E5E.Functions;
 /// <summary>
 /// Defines methods for objects that provide function handlers.
 /// </summary>
-public interface IE5EFunction
+public interface IE5EFunctionHandler
 {
 	/// <summary>
 	/// The name of the entrypoint that's handled by this implementation.
@@ -16,5 +16,5 @@ public interface IE5EFunction
 	/// <param name="request">The current request with all the provided metadata.</param>
 	/// <param name="cancellationToken">Used for cancelling the operation on shutdown.</param>
 	/// <returns>The response that's serialized and returned to E5E.</returns>
-	Task<E5EResponse> RunAsync(E5ERequest request, CancellationToken cancellationToken = default);
+	Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default);
 }

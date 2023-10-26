@@ -14,20 +14,20 @@ namespace Anexia.E5E.Hosting;
 
 internal class E5ECommunicationService : BackgroundService
 {
-	private readonly IE5EFunction _function;
+	private readonly IE5EFunctionHandler _functionHandler;
 	private readonly IConsoleAbstraction _console;
 	private readonly E5ERuntimeOptions _options;
 	private readonly ILogger<E5ECommunicationService> _logger;
 	private readonly IHostApplicationLifetime _lifetime;
 
 	public E5ECommunicationService(
-		E5EFunctionResolver resolve,
+		E5EFunctionHandlerResolver resolve,
 		IConsoleAbstraction console,
 		E5ERuntimeOptions options,
 		ILogger<E5ECommunicationService> logger,
 		IHostApplicationLifetime lifetime)
 	{
-		_function = resolve();
+		_functionHandler = resolve();
 		_console = console;
 		_options = options;
 		_logger = logger;
@@ -122,7 +122,7 @@ internal class E5ECommunicationService : BackgroundService
 
 	private async Task ExecuteFunctionAsync(string line, CancellationToken stoppingToken)
 	{
-		E5EIncomingRequest request = ParseRequest(line);
+		E5ERequest request = ParseRequest(line);
 		if (request.Event is null || request.Context is null)
 			throw new E5ERuntimeException(
 				"Apparently the deserialization failed, the given event is null. Please create a bug report at https://github.com/anexia/dotnet-e5e/issues/new");
@@ -133,12 +133,12 @@ internal class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.LogDebug("Executing function with {Event}", request.Event);
-			response = await _function.RunAsync(request.Event, stoppingToken);
+			response = await _functionHandler.HandleAsync(request, stoppingToken);
 		}
 		catch (Exception e)
 		{
 			_logger.LogError(e, "The function execution failed for the given {Event}", request.Event);
-			throw new E5EFunctionExecutionFailedException(request.Context, request.Event, e);
+			throw new E5EFunctionExecutionFailedException(request, e);
 		}
 
 		try
@@ -155,13 +155,13 @@ internal class E5ECommunicationService : BackgroundService
 		}
 	}
 
-	private E5EIncomingRequest ParseRequest(string line)
+	private E5ERequest ParseRequest(string line)
 	{
-		E5EIncomingRequest? request;
+		E5ERequest? request;
 		try
 		{
 			_logger.LogDebug("Deserializing line");
-			request = JsonSerializer.Deserialize<E5EIncomingRequest>(line, E5EJsonSerializerOptions.Default);
+			request = JsonSerializer.Deserialize<E5ERequest>(line, E5EJsonSerializerOptions.Default);
 		}
 		catch (JsonException e)
 		{

@@ -5,4 +5,4 @@ namespace Anexia.E5E.DependencyInjection;
 /// <summary>
 /// Resolves the implementation for the entrypoint that's passed during startup.
 /// </summary>
-public delegate IE5EFunction E5EFunctionResolver();
+public delegate IE5EFunctionHandler E5EFunctionHandlerResolver();

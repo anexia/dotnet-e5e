@@ -8,7 +8,7 @@ namespace Anexia.E5E.Tests.Builders;
 
 public interface IE5ERequestBuilder
 {
-	E5ERequest Build();
+	E5EEvent Build();
 	void SendTo(IE5EHost host) { host.WriteToStdinOnce(Build()); }
 	IE5ERequestBuilder AddHeader(string key, string value);
 	IE5ERequestBuilder AddParam(string key, string value);
@@ -24,25 +24,25 @@ public static class E5ERequestBuilder
 		private E5ERequestParameters? _parameters;
 		private E5EHttpHeaders? _headers;
 		private readonly JsonElement _data;
-		private readonly E5ERequestType? _requestType;
+		private readonly E5ERequestDataType? _requestType;
 
 		public E5ERequestBuilderInner(object data)
 		{
 			_requestType = data switch
 			{
-				string => E5ERequestType.Text,
-				IEnumerable<byte> => E5ERequestType.Binary,
-				_ => E5ERequestType.Object
+				string => E5ERequestDataType.Text,
+				IEnumerable<byte> => E5ERequestDataType.Binary,
+				_ => E5ERequestDataType.Object
 			};
 
 			_data = JsonSerializer.SerializeToElement(data);
 		}
 
-		public E5ERequest Build()
+		public E5EEvent Build()
 		{
 			if (_requestType is null) throw new ArgumentNullException(nameof(_requestType));
 
-			return new E5ERequest(_requestType.GetValueOrDefault(), _data, _headers, _parameters);
+			return new E5EEvent(_requestType.GetValueOrDefault(), _data, _headers, _parameters);
 		}
 
 		public IE5ERequestBuilder AddHeader(string key, string value)

@@ -7,15 +7,15 @@ namespace Anexia.E5E.Functions;
 /// Provides information about the current execution.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public record E5EContext
+public record E5ERequestContext
 {
 	/// <summary>
-	/// Initializes a new instance of the <see cref="E5EContext"/> record.
+	/// Initializes a new instance of the <see cref="E5ERequestContext"/> record.
 	/// </summary>
 	/// <param name="type">Used for differentiation of the execution context.</param>
 	/// <param name="date">The invocation date of the function.</param>
 	/// <param name="isAsynchronous">Whether the call is made asynchronous or not.</param>
-	public E5EContext(string type, DateTimeOffset date, bool isAsynchronous)
+	public E5ERequestContext(string type, DateTimeOffset date, bool isAsynchronous)
 	{
 		Type = type;
 		Date = date;
@@ -25,13 +25,11 @@ public record E5EContext
 	/// <summary>
 	/// Tells information about the trigger that caused this execution.
 	/// </summary>
-	[JsonPropertyName("type")]
 	public string Type { get; init; } = "generic";
 
 	/// <summary>
 	/// The time when the function was triggered.
 	/// </summary>
-	[JsonPropertyName("date")]
 	public DateTimeOffset Date { get; init; }
 
 	/// <summary>

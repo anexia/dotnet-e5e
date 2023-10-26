@@ -43,9 +43,9 @@ public class SerializationTests
 
 	[Theory]
 	[ClassData(typeof(RequestSerializationTestsData))]
-	public Task RequestSerializationMatchesSnapshot(string testName, E5ERequest request)
+	public Task RequestSerializationMatchesSnapshot(string testName, E5EEvent evt)
 	{
-		var json = JsonSerializer.Serialize(request, _options);
+		var json = JsonSerializer.Serialize(evt, _options);
 		return Verify(json, _verifySettings).UseParameters(testName);
 	}
 
@@ -59,10 +59,10 @@ public class SerializationTests
 
 	[Theory]
 	[ClassData(typeof(RequestSerializationTestsData))]
-	public void RequestSerializationWorksBidirectional(string _, E5ERequest input)
+	public void RequestSerializationWorksBidirectional(string _, E5EEvent input)
 	{
 		var json = JsonSerializer.Serialize(input, _options);
-		var got = JsonSerializer.Deserialize<E5ERequest>(json, _options);
+		var got = JsonSerializer.Deserialize<E5EEvent>(json, _options);
 		Assert.NotNull(got);
 		Assert.Multiple(
 			() => Assert.Equal(input.Type, got.Type),
@@ -106,7 +106,7 @@ public class SerializationTests
 	{
 		private readonly List<object> _objects = new()
 		{
-			new E5EContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
+			new E5ERequestContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
 			new E5ERuntimeMetadata(),
 		};
@@ -118,7 +118,7 @@ public class SerializationTests
 
 	class RequestSerializationTestsData : IEnumerable<object[]>
 	{
-		private readonly Dictionary<string, E5ERequest> _tests = new()
+		private readonly Dictionary<string, E5EEvent> _tests = new()
 		{
 			{ "simple text request", E5ERequestBuilder.New("test").Build() },
 			{ "simple binary request", E5ERequestBuilder.New(Encoding.UTF8.GetBytes("test")).Build() },

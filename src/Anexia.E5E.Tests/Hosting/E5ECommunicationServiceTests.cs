@@ -59,9 +59,9 @@ public class E5ECommunicationServiceTests
 		await using var host = E5EHostBuilder.New(_outputHelper)
 			.WithDefaultHandler(req =>
 			{
-				Assert.NotNull(req.RequestHeaders);
+				Assert.NotNull(req.Event?.RequestHeaders);
 
-				req.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
+				req.Event.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
 				return E5EResponse.From(acceptHeader!);
 			})
 			.Build();
@@ -85,9 +85,9 @@ public class E5ECommunicationServiceTests
 		await using var host = E5EHostBuilder.New(_outputHelper)
 			.WithDefaultHandler(req =>
 			{
-				Assert.NotNull(req.Params);
+				Assert.NotNull(req.Event?.Params);
 
-				req.Params.TryGetValue(paramName, out var parameter);
+				req.Event.Params.TryGetValue(paramName, out var parameter);
 				return E5EResponse.From(parameter!);
 			})
 			.Build();
