@@ -41,8 +41,8 @@ public interface IE5EHostBuilder
 	/// <returns>The same instance of the <see cref="IE5EHostBuilder"/>.</returns>
 	IE5EHostBuilder WithFunction(string name, Func<E5ERequest, CancellationToken, Task<E5EResponse>> func);
 
-	IE5EHostBuilder WithDefaultHandler<T>(Func<E5ERequest, E5EResponse<T>> func);
-	IE5EHostBuilder WithDefaultHandler<T>(Func<E5ERequest, Task<E5EResponse<T>>> func);
+	IE5EHostBuilder WithDefaultHandler(Func<E5ERequest, E5EResponse> func);
+	IE5EHostBuilder WithDefaultHandler(Func<E5ERequest, Task<E5EResponse>> func);
 }
 
 public interface IE5EHost : IDisposable, IAsyncDisposable
@@ -60,7 +60,7 @@ public interface IE5EHost : IDisposable, IAsyncDisposable
 	/// <param name="timeout">The timeout for the action. If not given, a default timeout of three seconds is used.</param>
 	/// <returns>The given line.</returns>
 	/// <exception cref="TimeoutException">Thrown, if no line within the timespan was logged.</exception>
-	Task<E5EResponse<TValue>> ReadResponseFromStdoutAsync<TValue>(TimeSpan? timeout = null);
+	Task<E5EResponse> ReadResponseFromStdoutAsync(TimeSpan? timeout = null);
 
 	/// <summary>
 	/// Reads a line from the stdout.
@@ -106,18 +106,18 @@ public static class E5EHostBuilder
 			return this;
 		}
 
-		public IE5EHostBuilder WithDefaultHandler<T>(Func<E5ERequest, E5EResponse<T>> func)
+		public IE5EHostBuilder WithDefaultHandler(Func<E5ERequest, E5EResponse> func)
 		{
 			_hb.ConfigureServices(svc => svc.AddE5EFunction(TestE5ERuntimeOptions.DefaultEntrypointName,
 				(request, _) =>
 				{
 					var resp = func.Invoke(request);
-					return Task.FromResult<E5EResponse>(resp);
+					return Task.FromResult(resp);
 				}));
 			return this;
 		}
 
-		public IE5EHostBuilder WithDefaultHandler<T>(Func<E5ERequest, Task<E5EResponse<T>>> func)
+		public IE5EHostBuilder WithDefaultHandler(Func<E5ERequest, Task<E5EResponse>> func)
 		{
 			_hb.ConfigureServices(svc => svc.AddE5EFunction(TestE5ERuntimeOptions.DefaultEntrypointName,
 				async (request, _) =>
@@ -167,7 +167,7 @@ public static class E5EHostBuilder
 			console.Close();
 		}
 
-		public async Task<E5EResponse<TValue>> ReadResponseFromStdoutAsync<TValue>(TimeSpan? timeout)
+		public async Task<E5EResponse> ReadResponseFromStdoutAsync(TimeSpan? timeout)
 		{
 			timeout ??= TimeSpan.FromSeconds(3);
 			using var cts = new CancellationTokenSource(timeout.Value);
@@ -186,7 +186,7 @@ public static class E5EHostBuilder
 			line = await console.ReadLineFromStdoutAsync(cts.Token) ??
 				   throw new InvalidOperationException("No next line found after termination sequence");
 
-			var resp = JsonSerializer.Deserialize<E5EResponse<TValue>>(line, E5EJsonSerializerOptions.Default);
+			var resp = JsonSerializer.Deserialize<E5EResponse>(line, E5EJsonSerializerOptions.Default);
 
 			// ReSharper disable once NullableWarningSuppressionIsUsed
 			return resp!;

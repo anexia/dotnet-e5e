@@ -96,11 +96,10 @@ public class SerializationTests
 	[Fact]
 	public void ResponseSerializationRecognisesCorrectType()
 	{
-		Assert.Equal(E5EResponseType.Text, new E5EResponse<string>("test").Type);
-		Assert.Equal(E5EResponseType.Binary, new E5EResponse<byte[]>(Encoding.UTF8.GetBytes("test")).Type);
-		Assert.Equal(E5EResponseType.Binary,
-			new E5EResponse<IEnumerable<byte>>(Encoding.UTF8.GetBytes("test").AsEnumerable()).Type);
-		Assert.Equal(E5EResponseType.Object, new E5EResponse<E5ERuntimeMetadata>(new E5ERuntimeMetadata()).Type);
+		Assert.Equal(E5EResponseType.Text, E5EResponse.From("test").Type);
+		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test")).Type);
+		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test").AsEnumerable()).Type);
+		Assert.Equal(E5EResponseType.Object, E5EResponse.From(new E5ERuntimeMetadata()).Type);
 	}
 
 	class SerializationTestsData : IEnumerable<object[]>
@@ -144,14 +143,14 @@ public class SerializationTests
 	{
 		private readonly Dictionary<string, E5EResponse> _tests = new()
 		{
-			{ "simple text response", new E5EResponse<string>("test") },
-			{ "simple binary response", new E5EResponse<byte[]>(Encoding.UTF8.GetBytes("test")) },
+			{ "simple text response", E5EResponse.From("test") },
+			{ "simple binary response", E5EResponse.From(Encoding.UTF8.GetBytes("test")) },
 			{
 				"simple object response",
-				new E5EResponse<Dictionary<string, int>>(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } })
+				E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } })
 			},
 			{
-				"text response with headers and status code", new E5EResponse<string>("test", HttpStatusCode.Moved,
+				"text response with headers and status code",E5EResponse.From("test", HttpStatusCode.Moved,
 					new E5EHttpHeaders { { "Location", "https://example.com" } })
 			}
 		};

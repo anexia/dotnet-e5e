@@ -39,7 +39,7 @@ public class E5ECommunicationServiceTests
 	{
 		// Arrange
 		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(_ => new E5EResponse<string>("test"))
+			.WithDefaultHandler(_ => E5EResponse.From("test"))
 			.Build();
 		await host.StartAsync();
 
@@ -47,8 +47,8 @@ public class E5ECommunicationServiceTests
 		E5ERequestBuilder.New("hello").SendTo(host);
 
 		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync<string>();
-		Assert.Equal("test", resp.Value);
+		var resp = await host.ReadResponseFromStdoutAsync();
+		Assert.Equal("test", resp.Text());
 	}
 
 	[Fact]
@@ -57,12 +57,12 @@ public class E5ECommunicationServiceTests
 		// Arrange
 		const string headerName = "Accept";
 		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler<string>(req =>
+			.WithDefaultHandler(req =>
 			{
 				Assert.NotNull(req.RequestHeaders);
 
 				req.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
-				return acceptHeader!;
+				return E5EResponse.From(acceptHeader!);
 			})
 			.Build();
 		await host.StartAsync();
@@ -73,8 +73,8 @@ public class E5ECommunicationServiceTests
 			.SendTo(host);
 
 		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync<string>();
-		Assert.Equal("application/json", resp);
+		var resp = await host.ReadResponseFromStdoutAsync();
+		Assert.Equal("application/json", resp.Text());
 	}
 
 	[Fact]
@@ -83,12 +83,12 @@ public class E5ECommunicationServiceTests
 		// Arrange
 		const string paramName = "myParam";
 		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler<List<string>>(req =>
+			.WithDefaultHandler(req =>
 			{
 				Assert.NotNull(req.Params);
 
 				req.Params.TryGetValue(paramName, out var parameter);
-				return parameter!;
+				return E5EResponse.From(parameter!);
 			})
 			.Build();
 		await host.StartAsync();
@@ -99,8 +99,8 @@ public class E5ECommunicationServiceTests
 			.SendTo(host);
 
 		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync<List<string>>();
-		Assert.Equal("this is my parameter", resp.Value.FirstOrDefault());
+		var resp = await host.ReadResponseFromStdoutAsync();
+		Assert.Equal("this is my parameter", resp.As<List<string>>().FirstOrDefault());
 	}
 
 	[Fact]
@@ -108,7 +108,7 @@ public class E5ECommunicationServiceTests
 	{
 		// Arrange
 		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler<string>(_ => "response")
+			.WithDefaultHandler(_ => E5EResponse.From("response"))
 			.Build();
 		await host.StartAsync();
 
@@ -125,7 +125,7 @@ public class E5ECommunicationServiceTests
 	{
 		// Arrange
 		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler<string>(_ => "response")
+			.WithDefaultHandler(_ => E5EResponse.From("response"))
 			.Build();
 		await host.StartAsync();
 
