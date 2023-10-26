@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Hosting;
 
-public class E5ECommunicationService : BackgroundService
+internal class E5ECommunicationService : BackgroundService
 {
 	private readonly IE5EFunction _function;
 	private readonly IConsoleAbstraction _console;

@@ -5,14 +5,9 @@ using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Serialization;
 
-public class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
+internal class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
 {
-	/// <summary>Reads and converts the JSON to type <typeparamref name="T" />.</summary>
-	/// <param name="reader">The reader.</param>
-	/// <param name="typeToConvert">The type to convert.</param>
-	/// <param name="options">An object that specifies serialization options to use.</param>
-	/// <returns>The converted value.</returns>
-	public override E5EHttpHeaders? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	public override E5EHttpHeaders Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
 		var res = new E5EHttpHeaders();
 		var node = JsonSerializer.Deserialize<JsonDocument>(ref reader);
@@ -30,8 +25,8 @@ public class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
 					res.Add(prop.Name, prop.Value.EnumerateArray().Select(x => x.GetString()));
 					break;
 				default:
-					throw new InvalidOperationException("Value of JSON property " + prop.Name +
-														" is neither an array nor a string.");
+					throw new InvalidOperationException(
+						$"Value of JSON property {prop.Name} is neither an array nor a string.");
 			}
 		}
 

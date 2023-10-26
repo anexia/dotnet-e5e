@@ -1,9 +1,20 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Anexia.E5E.Functions;
 
+/// <summary>
+/// Provides information about the current execution.
+/// </summary>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public record E5EContext
 {
+	/// <summary>
+	/// Initializes a new instance of the <see cref="E5EContext"/> record.
+	/// </summary>
+	/// <param name="type">Used for differentiation of the execution context.</param>
+	/// <param name="date">The invocation date of the function.</param>
+	/// <param name="isAsynchronous">Whether the call is made asynchronous or not.</param>
 	public E5EContext(string type, DateTimeOffset date, bool isAsynchronous)
 	{
 		Type = type;
@@ -11,7 +22,22 @@ public record E5EContext
 		IsAsynchronous = isAsynchronous;
 	}
 
-	[JsonPropertyName("type")] public string Type { get; init; } = "generic";
-	[JsonPropertyName("date")] public DateTimeOffset Date { get; init; }
-	[JsonPropertyName("async")] public bool IsAsynchronous { get; init; }
+	/// <summary>
+	/// Tells information about the trigger that caused this execution.
+	/// </summary>
+	[JsonPropertyName("type")]
+	public string Type { get; init; } = "generic";
+
+	/// <summary>
+	/// The time when the function was triggered.
+	/// </summary>
+	[JsonPropertyName("date")]
+	public DateTimeOffset Date { get; init; }
+
+	/// <summary>
+	/// This attribute is set to true if the event was triggered in an asynchronous way, meaning that the event trigger
+	/// does not wait for the return of the function execution.
+	/// </summary>
+	[JsonPropertyName("async")]
+	public bool IsAsynchronous { get; init; }
 }
