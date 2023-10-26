@@ -16,9 +16,9 @@ public interface IConsoleAbstraction : IDisposable, IAsyncDisposable
 	void Open();
 
 	/// <summary>
-	/// Closes the console input.
+	/// Closes the console streams.
 	/// </summary>
-	void CloseStdin();
+	void Close();
 
 	/// <summary>
 	/// Reads a single line from the standard input.
@@ -31,13 +31,13 @@ public interface IConsoleAbstraction : IDisposable, IAsyncDisposable
 	/// Write text to standard output.
 	/// </summary>
 	/// <param name="s">The text to write.</param>
-	Task WriteToStdoutAsync(string? s, CancellationToken token = default);
+	Task WriteToStdoutAsync(string? s);
 
 	/// <summary>
 	/// Write text to standard error.
 	/// </summary>
 	/// <param name="s">The text to write.</param>
-	Task WriteToStderrAsync(string? s, CancellationToken token = default);
+	Task WriteToStderrAsync(string? s);
 }
 
 internal class ConsoleAbstraction : IConsoleAbstraction
@@ -57,7 +57,7 @@ internal class ConsoleAbstraction : IConsoleAbstraction
 		_stderr = new StreamWriter(stderrStream);
 	}
 
-	public void CloseStdin() => _stdin?.Close();
+	public void Close() => this.Dispose();
 
 	public Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
@@ -67,7 +67,7 @@ internal class ConsoleAbstraction : IConsoleAbstraction
 		return _stdin.ReadLineAsync();
 	}
 
-	public async Task WriteToStdoutAsync(string? s, CancellationToken token = default)
+	public async Task WriteToStdoutAsync(string? s)
 	{
 		if (_stdout is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
@@ -76,7 +76,7 @@ internal class ConsoleAbstraction : IConsoleAbstraction
 		await _stdout.FlushAsync();
 	}
 
-	public async Task WriteToStderrAsync(string? s, CancellationToken token = default)
+	public async Task WriteToStderrAsync(string? s)
 	{
 		if (_stderr is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");

@@ -150,7 +150,7 @@ public static class E5EHostBuilder
 			var console = _host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 						  throw new InvalidOperationException("There's no console registered");
 			console.WriteToStdin(input);
-			console.CloseStdin();
+			console.Close();
 		}
 
 		public void WriteToStdinOnce(E5ERequest request)
@@ -165,7 +165,7 @@ public static class E5EHostBuilder
 			var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
 
 			console.WriteToStdin(json);
-			console.CloseStdin();
+			console.Close();
 		}
 
 		public async Task<E5EResponse<TValue>> ReadResponseFromStdoutAsync<TValue>(TimeSpan? timeout)
@@ -188,7 +188,9 @@ public static class E5EHostBuilder
 				   throw new InvalidOperationException("No next line found after termination sequence");
 
 			var resp = JsonSerializer.Deserialize<E5EResponse<TValue>>(line, E5EJsonSerializerOptions.Default);
-			return resp ?? throw new E5EFailedDeserializationException(line);
+
+			// ReSharper disable once NullableWarningSuppressionIsUsed
+			return resp!;
 		}
 
 		/// <summary>

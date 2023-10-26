@@ -38,7 +38,7 @@ internal class E5ECommunicationService : BackgroundService
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
 		// If the cancellation is requested, dispose our console streams and therefore end the processing loop below.
-		stoppingToken.Register(_console.CloseStdin);
+		stoppingToken.Register(_console.Close);
 		_console.Open();
 
 		// > No further services are started until ExecuteAsync becomes asynchronous, such as by calling await.
@@ -88,7 +88,7 @@ internal class E5ECommunicationService : BackgroundService
 
 			if (line == "ping" && _options.KeepAlive)
 			{
-				await _console.WriteToStdoutAsync("pong", stoppingToken);
+				await _console.WriteToStdoutAsync("pong");
 				_logger.LogInformation("Responded to ping message from E5E");
 				continue;
 			}
@@ -113,8 +113,8 @@ internal class E5ECommunicationService : BackgroundService
 			}
 
 			// ...and notify the engine of the end on stdout and stderr.
-			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence, stoppingToken);
-			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence, stoppingToken);
+			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
+			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
 		}
 
 		_logger.LogInformation("Execution stopped successfully");
@@ -146,8 +146,8 @@ internal class E5ECommunicationService : BackgroundService
 			_logger.LogDebug("Received {Response}", response);
 			var json = JsonSerializer.Serialize(response, E5EJsonSerializerOptions.Default);
 
-			await _console.WriteToStdoutAsync(_options.StdoutTerminationSequence, stoppingToken);
-			await _console.WriteToStdoutAsync(json, stoppingToken);
+			await _console.WriteToStdoutAsync(_options.StdoutTerminationSequence);
+			await _console.WriteToStdoutAsync(json);
 		}
 		catch (Exception e)
 		{

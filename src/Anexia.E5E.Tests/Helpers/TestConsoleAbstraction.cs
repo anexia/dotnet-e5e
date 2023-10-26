@@ -25,7 +25,7 @@ public class TestConsoleAbstraction : IConsoleAbstraction
 	private readonly StringBuilder _stdoutStr = new();
 
 	public void Open() => _logger.LogDebug("Console opened for reading");
-	public void CloseStdin() => _logger.LogDebug("Stdin closed");
+	public void Close() => _logger.LogDebug("Stdin closed");
 
 	public string Stdout() => _stdoutStr.ToString();
 	public string Stderr() => _stderrStr.ToString();
@@ -41,7 +41,7 @@ public class TestConsoleAbstraction : IConsoleAbstraction
 		return Task.FromResult(res);
 	}
 
-	public Task WriteToStdoutAsync(string? s, CancellationToken token = default)
+	public Task WriteToStdoutAsync(string? s)
 	{
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
@@ -52,7 +52,7 @@ public class TestConsoleAbstraction : IConsoleAbstraction
 		return Task.CompletedTask;
 	}
 
-	public Task WriteToStderrAsync(string? s, CancellationToken token = default)
+	public Task WriteToStderrAsync(string? s)
 	{
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
