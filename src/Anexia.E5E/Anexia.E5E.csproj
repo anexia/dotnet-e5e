@@ -5,6 +5,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<Authors>Anexia</Authors>
+		<Description>A helper library to help you build functions on top of the Anexia Engine.</Description>
+		<PackageLicenseUrl>https://github.com/anexia/dotnet-e5e/blob/main/LICENSE</PackageLicenseUrl>
+		<RepositoryUrl>https://github.com/anexia/dotnet-e5e</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>anexia,faas</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
