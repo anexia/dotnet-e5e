@@ -47,7 +47,7 @@ public class HostApplicationBuilderExtensionsTests
 	{
 		var host = Host.CreateDefaultBuilder().ConfigureE5E(new[] { "entrypoint", "\\0", "1", "\\0" }).Build();
 		var got = host.Services.GetRequiredService<E5ERuntimeOptions>();
-		var expected = new E5ERuntimeOptions("entrypoint", "\0", "\0", true, false);
+		var expected = new E5ERuntimeOptions("entrypoint", "\0", "\0", true);
 
 		Assert.Equal(expected, got);
 	}

@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 
 using Anexia.E5E.Functions;
-
-using NLog.LayoutRenderers;
 
 namespace Anexia.E5E.Tests.Builders;
 
@@ -19,7 +16,8 @@ public interface IE5ERequestBuilder
 
 public static class E5ERequestBuilder
 {
-	public static IE5ERequestBuilder New<T>(T data) => new E5ERequestBuilderInner(data);
+	public static IE5ERequestBuilder New<T>(T data) =>
+		new E5ERequestBuilderInner(data ?? throw new ArgumentNullException(nameof(data)));
 
 	private class E5ERequestBuilderInner : IE5ERequestBuilder
 	{

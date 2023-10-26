@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
-using Anexia.E5E.Exceptions;
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;

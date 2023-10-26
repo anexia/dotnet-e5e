@@ -1,16 +1,11 @@
-using System.Text.Json;
-
 using Anexia.E5E.Abstractions;
 using Anexia.E5E.Exceptions;
-using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
-using Anexia.E5E.Serialization;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Extensions;
 
