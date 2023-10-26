@@ -159,7 +159,7 @@ public static class E5EHostBuilder
 						  throw new InvalidOperationException("There's no console registered");
 			var req = new E5EIncomingRequest
 			{
-				Context = new E5EContext(E5EContextType.Generic, DateTimeOffset.Now, true),
+				Context = new E5EContext("test", DateTimeOffset.Now, true),
 				Event = request,
 			};
 			var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
