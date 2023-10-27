@@ -1,0 +1,109 @@
+﻿#nullable enable
+Anexia.E5E.Abstractions.IConsoleAbstraction
+Anexia.E5E.Abstractions.IConsoleAbstraction.Close() -> void
+Anexia.E5E.Abstractions.IConsoleAbstraction.Open() -> void
+Anexia.E5E.Abstractions.IConsoleAbstraction.ReadLineFromStdinAsync(System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
+Anexia.E5E.Abstractions.IConsoleAbstraction.WriteToStderrAsync(string? s) -> System.Threading.Tasks.Task!
+Anexia.E5E.Abstractions.IConsoleAbstraction.WriteToStdoutAsync(string? s) -> System.Threading.Tasks.Task!
+Anexia.E5E.Exceptions.E5EEntrypointAlreadyRegisteredException
+Anexia.E5E.Exceptions.E5EEntrypointAlreadyRegisteredException.Entrypoint.get -> string!
+Anexia.E5E.Exceptions.E5EException
+Anexia.E5E.Exceptions.E5EFailedDeserializationException
+Anexia.E5E.Exceptions.E5EFailedDeserializationException.Line.get -> string!
+Anexia.E5E.Exceptions.E5EFailedSerializationException
+Anexia.E5E.Exceptions.E5EFunctionExecutionFailedException
+Anexia.E5E.Exceptions.E5EFunctionExecutionFailedException.Request.get -> Anexia.E5E.Functions.E5ERequest!
+Anexia.E5E.Exceptions.E5EHandlerNotFoundException
+Anexia.E5E.Exceptions.E5EHandlerNotFoundException.HandlerType.get -> System.Type!
+Anexia.E5E.Exceptions.E5EInvalidConversionException
+Anexia.E5E.Exceptions.E5EInvalidConversionException.Actual.get -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Exceptions.E5EInvalidConversionException.Expected.get -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Exceptions.E5EMissingArgumentsException
+Anexia.E5E.Exceptions.E5EMissingEntrypointException
+Anexia.E5E.Exceptions.E5EMissingEntrypointException.Entrypoint.get -> string!
+Anexia.E5E.Exceptions.E5ERuntimeException
+Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions
+Anexia.E5E.Functions.E5EEvent
+Anexia.E5E.Functions.E5EEvent.As<TValue>(System.Text.Json.JsonSerializerOptions? options = null) -> TValue?
+Anexia.E5E.Functions.E5EEvent.AsByteArray() -> byte[]?
+Anexia.E5E.Functions.E5EEvent.AsText() -> string?
+Anexia.E5E.Functions.E5EEvent.Data.get -> System.Text.Json.JsonElement
+Anexia.E5E.Functions.E5EEvent.Data.init -> void
+Anexia.E5E.Functions.E5EEvent.E5EEvent(Anexia.E5E.Functions.E5ERequestDataType Type, System.Text.Json.JsonElement Data, Anexia.E5E.Functions.E5EHttpHeaders? RequestHeaders = null, Anexia.E5E.Functions.E5ERequestParameters? Params = null) -> void
+Anexia.E5E.Functions.E5EEvent.Params.get -> Anexia.E5E.Functions.E5ERequestParameters?
+Anexia.E5E.Functions.E5EEvent.Params.init -> void
+Anexia.E5E.Functions.E5EEvent.RequestHeaders.get -> Anexia.E5E.Functions.E5EHttpHeaders?
+Anexia.E5E.Functions.E5EEvent.RequestHeaders.init -> void
+Anexia.E5E.Functions.E5EEvent.Type.get -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5EEvent.Type.init -> void
+Anexia.E5E.Functions.E5EHttpHeaders
+Anexia.E5E.Functions.E5EHttpHeaders.E5EHttpHeaders() -> void
+Anexia.E5E.Functions.E5EHttpHeaders.TryGetValue(string! name, out string? header) -> bool
+Anexia.E5E.Functions.E5ERequest
+Anexia.E5E.Functions.E5ERequest.Context.get -> Anexia.E5E.Functions.E5ERequestContext?
+Anexia.E5E.Functions.E5ERequest.Context.init -> void
+Anexia.E5E.Functions.E5ERequest.E5ERequest(Anexia.E5E.Functions.E5EEvent? Event, Anexia.E5E.Functions.E5ERequestContext? Context) -> void
+Anexia.E5E.Functions.E5ERequest.Event.get -> Anexia.E5E.Functions.E5EEvent?
+Anexia.E5E.Functions.E5ERequest.Event.init -> void
+Anexia.E5E.Functions.E5ERequestContext
+Anexia.E5E.Functions.E5ERequestContext.Date.get -> System.DateTimeOffset
+Anexia.E5E.Functions.E5ERequestContext.Date.init -> void
+Anexia.E5E.Functions.E5ERequestContext.E5ERequestContext(string! type, System.DateTimeOffset date, bool isAsynchronous) -> void
+Anexia.E5E.Functions.E5ERequestContext.IsAsynchronous.get -> bool
+Anexia.E5E.Functions.E5ERequestContext.IsAsynchronous.init -> void
+Anexia.E5E.Functions.E5ERequestContext.Type.get -> string!
+Anexia.E5E.Functions.E5ERequestContext.Type.init -> void
+Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5ERequestDataType.Binary = 1 -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5ERequestDataType.Mixed = 3 -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5ERequestDataType.StructuredObject = 2 -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5ERequestDataType.Text = 0 -> Anexia.E5E.Functions.E5ERequestDataType
+Anexia.E5E.Functions.E5ERequestParameters
+Anexia.E5E.Functions.E5ERequestParameters.E5ERequestParameters() -> void
+Anexia.E5E.Functions.E5EResponse
+Anexia.E5E.Functions.E5EResponse.Data.get -> System.Text.Json.JsonElement
+Anexia.E5E.Functions.E5EResponse.Data.init -> void
+Anexia.E5E.Functions.E5EResponse.E5EResponse() -> void
+Anexia.E5E.Functions.E5EResponse.ResponseHeaders.get -> Anexia.E5E.Functions.E5EHttpHeaders?
+Anexia.E5E.Functions.E5EResponse.ResponseHeaders.init -> void
+Anexia.E5E.Functions.E5EResponse.Status.get -> System.Net.HttpStatusCode?
+Anexia.E5E.Functions.E5EResponse.Status.init -> void
+Anexia.E5E.Functions.E5EResponse.Type.get -> Anexia.E5E.Functions.E5EResponseType
+Anexia.E5E.Functions.E5EResponse.Type.init -> void
+Anexia.E5E.Functions.E5EResponseType
+Anexia.E5E.Functions.E5EResponseType.Binary = 1 -> Anexia.E5E.Functions.E5EResponseType
+Anexia.E5E.Functions.E5EResponseType.StructuredObject = 2 -> Anexia.E5E.Functions.E5EResponseType
+Anexia.E5E.Functions.E5EResponseType.Text = 0 -> Anexia.E5E.Functions.E5EResponseType
+Anexia.E5E.Functions.IE5EFunctionHandler
+Anexia.E5E.Functions.IE5EFunctionHandler.HandleAsync(Anexia.E5E.Functions.E5ERequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!
+Anexia.E5E.Hosting.E5EApplication
+Anexia.E5E.Hosting.IE5EHost
+Anexia.E5E.Hosting.IE5EHost.RegisterEntrypoint(string! entrypoint, System.Func<Anexia.E5E.Functions.E5ERequest!, System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!>! func) -> void
+Anexia.E5E.Hosting.IE5EHost.RegisterEntrypoint<T>(string! entrypoint) -> void
+Anexia.E5E.Hosting.IE5EHostBuilder
+Anexia.E5E.Hosting.IE5EHostBuilder.Build() -> Anexia.E5E.Hosting.IE5EHost!
+Anexia.E5E.Hosting.IE5EHostBuilder.OverrideRuntimeOptions(System.Func<Anexia.E5E.Runtime.E5ERuntimeOptions!, Anexia.E5E.Runtime.E5ERuntimeOptions!>! configureDelegate) -> Anexia.E5E.Hosting.IE5EHostBuilder!
+Anexia.E5E.Runtime.E5ERuntimeMetadata
+Anexia.E5E.Runtime.E5ERuntimeOptions
+Anexia.E5E.Runtime.E5ERuntimeOptions.DaemonExecutionTerminationSequence.get -> string!
+Anexia.E5E.Runtime.E5ERuntimeOptions.DaemonExecutionTerminationSequence.init -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.E5ERuntimeOptions(string! Entrypoint, string! StdoutTerminationSequence, string! DaemonExecutionTerminationSequence, bool KeepAlive, bool WriteMetadataOnStartup = false) -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.Entrypoint.get -> string!
+Anexia.E5E.Runtime.E5ERuntimeOptions.Entrypoint.init -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.KeepAlive.get -> bool
+Anexia.E5E.Runtime.E5ERuntimeOptions.KeepAlive.init -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.StdoutTerminationSequence.get -> string!
+Anexia.E5E.Runtime.E5ERuntimeOptions.StdoutTerminationSequence.init -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.WriteMetadataOnStartup.get -> bool
+Anexia.E5E.Runtime.E5ERuntimeOptions.WriteMetadataOnStartup.init -> void
+Anexia.E5E.Serialization.E5EJsonSerializerOptions
+static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddE5EFunctionHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Anexia.E5E.Functions.E5EResponse.From<T>(T! cls, System.Net.HttpStatusCode? status = null, Anexia.E5E.Functions.E5EHttpHeaders? responseHeaders = null) -> Anexia.E5E.Functions.E5EResponse!
+static Anexia.E5E.Hosting.E5EApplication.CreateBuilder(Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Anexia.E5E.Hosting.IE5EHostBuilder!
+static Anexia.E5E.Hosting.E5EApplication.CreateBuilder(string![]! args) -> Anexia.E5E.Hosting.IE5EHostBuilder!
+static Anexia.E5E.Runtime.E5ERuntimeMetadata.Features.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static Anexia.E5E.Runtime.E5ERuntimeMetadata.LibraryVersion.get -> string!
+static Anexia.E5E.Runtime.E5ERuntimeMetadata.Runtime.get -> string!
+static Anexia.E5E.Runtime.E5ERuntimeMetadata.RuntimeVersion.get -> string!
+static Anexia.E5E.Serialization.E5EJsonSerializerOptions.Default.get -> System.Text.Json.JsonSerializerOptions!
+
