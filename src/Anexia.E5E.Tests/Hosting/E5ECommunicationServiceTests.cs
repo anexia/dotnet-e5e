@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
 using Anexia.E5E.Tests.Builders;
+using Anexia.E5E.Tests.Fixtures;
 using Anexia.E5E.Tests.Helpers;
 
 using Xunit;
@@ -12,128 +13,92 @@ using Xunit.Abstractions;
 
 namespace Anexia.E5E.Tests.Hosting;
 
-public class E5ECommunicationServiceTests
+public class E5ECommunicationServiceTests : IAsyncLifetime
 {
-	private readonly ITestOutputHelper _outputHelper;
+	private readonly HostFixture _host;
+	public E5ECommunicationServiceTests(ITestOutputHelper outputHelper) => _host = new HostFixture(outputHelper);
 
-	public E5ECommunicationServiceTests(ITestOutputHelper outputHelper) => _outputHelper = outputHelper;
+	public Task InitializeAsync() => _host.InitializeAsync();
+	public Task DisposeAsync() => _host.DisposeAsync();
 
 	[Fact]
 	public async Task PingResponds()
 	{
-		// Arrange
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithFunction(TestE5ERuntimeOptions.DefaultEntrypointName, (_, _) => throw new Exception("Test exception"))
-			.Build();
-		await host.StartAsync();
-
-		// Act
-		host.WriteToStdinOnce("ping");
-
-		// Assert
-		Assert.Equal("pong", await host.ReadLineFromStdoutAsync());
+		_host.SetTestEntrypoint(_ => throw new Exception("This method should not have been called"));
+		_host.WriteToStdinAndClose("ping");
+		Assert.Equal("pong", await _host.ReadLineFromStdoutAsync());
 	}
 
 	[Fact]
 	public async Task PlainInput()
 	{
-		// Arrange
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(_ => E5EResponse.From("test"))
-			.Build();
-		await host.StartAsync();
+		_host.SetTestEntrypoint(_ => E5EResponse.From("test"));
+		E5ERequestBuilder.New("hello").SendTo(_host);
 
-		// Act
-		E5ERequestBuilder.New("hello").SendTo(host);
-
-		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync();
+		var resp = await _host.ReadResponseFromStdoutAsync();
 		Assert.Equal("test", resp.Text());
 	}
 
 	[Fact]
 	public async Task HeadersAreReceived()
 	{
-		// Arrange
 		const string headerName = "Accept";
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(req =>
-			{
-				Assert.NotNull(req.Event?.RequestHeaders);
+		_host.SetTestEntrypoint(req =>
+		{
+			Assert.NotNull(req.Event?.RequestHeaders);
 
-				req.Event.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
-				return E5EResponse.From(acceptHeader!);
-			})
-			.Build();
-		await host.StartAsync();
+			req.Event.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
+			return E5EResponse.From(acceptHeader!);
+		});
 
-		// Act
+
 		E5ERequestBuilder.New("hello")
 			.AddHeader(headerName, "application/json")
-			.SendTo(host);
+			.SendTo(_host);
 
-		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync();
+		var resp = await _host.ReadResponseFromStdoutAsync();
 		Assert.Equal("application/json", resp.Text());
 	}
 
 	[Fact]
 	public async Task ParamsAreReceived()
 	{
-		// Arrange
-		const string paramName = "myParam";
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(req =>
-			{
-				Assert.NotNull(req.Event?.Params);
+		const string parameterName = "myParam";
+		_host.SetTestEntrypoint(req =>
+		{
+			Assert.NotNull(req.Event?.Params);
 
-				req.Event.Params.TryGetValue(paramName, out var parameter);
-				return E5EResponse.From(parameter!);
-			})
-			.Build();
-		await host.StartAsync();
+			req.Event.Params.TryGetValue(parameterName, out var acceptHeader);
+			return E5EResponse.From(acceptHeader!);
+		});
 
-		// Act
-		E5ERequestBuilder.New("test")
-			.AddParam(paramName, "this is my parameter")
-			.SendTo(host);
 
-		// Assert
-		var resp = await host.ReadResponseFromStdoutAsync();
+		E5ERequestBuilder.New("hello")
+			.AddParam(parameterName, "this is my parameter")
+			.SendTo(_host);
+
+		var resp = await _host.ReadResponseFromStdoutAsync();
 		Assert.Equal("this is my parameter", resp.As<List<string>>().FirstOrDefault());
 	}
 
 	[Fact]
 	public async Task ShouldHaveCorrectStdoutFormatting()
 	{
-		// Arrange
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(_ => E5EResponse.From("response"))
-			.Build();
-		await host.StartAsync();
+		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
+		E5ERequestBuilder.New("request").SendTo(_host);
+		await _host.DisposeAsync();
 
-		// Act
-		E5ERequestBuilder.New("request").SendTo(host);
-
-		// Assert
-		await host.StopAsync();
-		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", host.Stdout());
+		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", _host.GetStdout());
 	}
 
 	[Fact]
 	public async Task ShouldHaveCorrectStderrFormatting()
 	{
-		// Arrange
-		await using var host = E5EHostBuilder.New(_outputHelper)
-			.WithDefaultHandler(_ => E5EResponse.From("response"))
-			.Build();
-		await host.StartAsync();
+		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
+		E5ERequestBuilder.New("request").SendTo(_host);
+		await _host.DisposeAsync();
 
-		// Act
-		E5ERequestBuilder.New("request").SendTo(host);
-
-		// Assert
-		await host.StopAsync();
-		Assert.Equal("---", host.Stderr());
+		Assert.Equal("---", _host.GetStderr());
 	}
+
 }

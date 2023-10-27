@@ -6,11 +6,6 @@ namespace Anexia.E5E.Functions;
 public interface IE5EFunctionHandler
 {
 	/// <summary>
-	/// The name of the entrypoint that's handled by this implementation.
-	/// </summary>
-	string Name { get; }
-
-	/// <summary>
 	/// Runs the function with the given request.
 	/// </summary>
 	/// <param name="request">The current request with all the provided metadata.</param>

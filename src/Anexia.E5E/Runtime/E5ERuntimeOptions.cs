@@ -1,4 +1,5 @@
 using Anexia.E5E.DependencyInjection;
+using Anexia.E5E.Exceptions;
 
 namespace Anexia.E5E.Runtime;
 
@@ -18,4 +19,22 @@ public record E5ERuntimeOptions(
 	bool WriteMetadataOnStartup = false)
 {
 	internal static readonly E5ERuntimeOptions WriteMetadata = new("", "", "", false, true);
+
+	internal static E5ERuntimeOptions Parse(string[] args)
+	{
+		if (args.Length == 0)
+			throw new E5EMissingArgumentsException("There were no arguments given.");
+
+		if (args[0] == "metadata")
+			return WriteMetadata;
+
+		if (args.Length != 4)
+			throw new E5EMissingArgumentsException($"Expected exactly four arguments given, got {args.Length}");
+
+		var entrypoint = args[0];
+		var stdoutTerminationSequence = args[1].Replace("\\0", "\0");
+		var keepAlive = args[2] == "1";
+		var daemonExecutionSequence = args[3].Replace("\\0", "\0");
+		return new E5ERuntimeOptions(entrypoint, stdoutTerminationSequence, daemonExecutionSequence, keepAlive);
+	}
 }

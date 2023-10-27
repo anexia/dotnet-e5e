@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 
 using Anexia.E5E.Exceptions;
-using Anexia.E5E.Extensions;
+using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -18,18 +18,17 @@ public class HostApplicationBuilderExtensionsTests
 	[Fact]
 	public void EmptyListOfArgumentsThrowsException()
 	{
-		Assert.Throws<E5EMissingArgumentsException>(() =>
-			Host.CreateDefaultBuilder().ConfigureE5E(Array.Empty<string>()).Build());
+		Assert.Throws<E5EMissingArgumentsException>(() => E5EApplication.CreateBuilder(Array.Empty<string>()).Build());
 	}
 
 	[Fact]
 	public void IncorrectListOfArgumentsThrowsException()
 	{
 		Assert.Throws<E5EMissingArgumentsException>(() =>
-			Host.CreateDefaultBuilder().ConfigureE5E(new[] { "foo", "bar" }).Build());
+			E5EApplication.CreateBuilder(new[] { "foo", "bar" }).Build());
 	}
 
-	[Fact]
+	[Fact(Timeout = 3000)]
 	public void MetadataIsReturned()
 	{
 		using var _ = Console.Out;
@@ -37,7 +36,7 @@ public class HostApplicationBuilderExtensionsTests
 		Console.SetOut(sw);
 
 		var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata());
-		Host.CreateDefaultBuilder().ConfigureE5E(new[] { "metadata" }).Build().RunE5E();
+		E5EApplication.CreateBuilder(new[] { "metadata" }).Build().Run();
 
 		Assert.Equal(expected, sw.ToString());
 	}
@@ -45,17 +44,10 @@ public class HostApplicationBuilderExtensionsTests
 	[Fact]
 	public void ShouldReadEscapedNullBytes()
 	{
-		var host = Host.CreateDefaultBuilder().ConfigureE5E(new[] { "entrypoint", "\\0", "1", "\\0" }).Build();
+		var host = E5EApplication.CreateBuilder(new[] { "entrypoint", "\\0", "1", "\\0" }).Build();
 		var got = host.Services.GetRequiredService<E5ERuntimeOptions>();
 		var expected = new E5ERuntimeOptions("entrypoint", "\0", "\0", true);
 
 		Assert.Equal(expected, got);
-	}
-
-	[Fact]
-	public void StopsInvocationWithMissingEntrypoint()
-	{
-		var host = Host.CreateDefaultBuilder().ConfigureE5E(new[] { "entrypoint", "\\0", "1", "\\0" }).Build();
-		Assert.Throws<E5EMissingEntrypointException>(() => host.Run());
 	}
 }

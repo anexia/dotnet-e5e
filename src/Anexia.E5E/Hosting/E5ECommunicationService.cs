@@ -1,12 +1,12 @@
 using System.Text.Json;
 
 using Anexia.E5E.Abstractions;
-using Anexia.E5E.DependencyInjection;
 using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -14,20 +14,20 @@ namespace Anexia.E5E.Hosting;
 
 internal class E5ECommunicationService : BackgroundService
 {
-	private readonly IE5EFunctionHandler _functionHandler;
+	private readonly IServiceProvider _provider;
 	private readonly IConsoleAbstraction _console;
 	private readonly E5ERuntimeOptions _options;
 	private readonly ILogger<E5ECommunicationService> _logger;
 	private readonly IHostApplicationLifetime _lifetime;
 
 	public E5ECommunicationService(
-		E5EFunctionHandlerResolver resolve,
+		IServiceProvider provider,
 		IConsoleAbstraction console,
 		E5ERuntimeOptions options,
 		ILogger<E5ECommunicationService> logger,
 		IHostApplicationLifetime lifetime)
 	{
-		_functionHandler = resolve();
+		_provider = provider;
 		_console = console;
 		_options = options;
 		_logger = logger;
@@ -93,10 +93,14 @@ internal class E5ECommunicationService : BackgroundService
 				continue;
 			}
 
+
 			using var _ = _logger.BeginScope("Processing line '{line}'", line);
+			using var scope = _provider.CreateScope();
+			var handler = scope.ServiceProvider.GetRequiredService<IE5EFunctionHandler>();
+
 			try
 			{
-				await ExecuteFunctionAsync(line, stoppingToken);
+				await ExecuteFunctionAsync(handler, line, stoppingToken);
 			}
 			catch (E5EException e)
 			{
@@ -120,7 +124,8 @@ internal class E5ECommunicationService : BackgroundService
 		_logger.LogInformation("Execution stopped successfully");
 	}
 
-	private async Task ExecuteFunctionAsync(string line, CancellationToken stoppingToken)
+	private async Task ExecuteFunctionAsync(IE5EFunctionHandler handler, string line,
+		CancellationToken stoppingToken)
 	{
 		E5ERequest request = ParseRequest(line);
 		if (request.Event is null || request.Context is null)
@@ -133,7 +138,7 @@ internal class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.LogDebug("Executing function with {Event}", request.Event);
-			response = await _functionHandler.HandleAsync(request, stoppingToken);
+			response = await handler.HandleAsync(request, stoppingToken);
 		}
 		catch (Exception e)
 		{
