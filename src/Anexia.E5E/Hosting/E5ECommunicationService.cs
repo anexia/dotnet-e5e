@@ -3,6 +3,7 @@ using System.Text.Json;
 using Anexia.E5E.Abstractions;
 using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
+using Anexia.E5E.Logging;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
 
@@ -41,6 +42,8 @@ internal class E5ECommunicationService : BackgroundService
 		stoppingToken.Register(_console.Close);
 		_console.Open();
 
+		using var _ = _logger.BeginScope(new { _options.Entrypoint });
+
 		// > No further services are started until ExecuteAsync becomes asynchronous, such as by calling await.
 		// > Avoid performing long, blocking initialization work in ExecuteAsync.
 		//
@@ -53,18 +56,18 @@ internal class E5ECommunicationService : BackgroundService
 		}
 		catch (E5EException e)
 		{
-			_logger.LogError(e, "An error occured during message processing");
+			_logger.MessageProcessingFailed(e);
 		}
 		catch (Exception e)
 		{
-			_logger.LogCritical(e, "The background process crashed unexpectedly");
+			_logger.UnexpectedRuntimeException(e);
 			throw;
 		}
 	}
 
 	private async Task ListenForIncomingMessagesAsync(CancellationToken stoppingToken)
 	{
-		_logger.LogInformation("Execution started, waiting for E5E requests on standard input");
+		_logger.ListeningForIncomingMessages();
 
 		while (!stoppingToken.IsCancellationRequested)
 		{
@@ -74,7 +77,7 @@ internal class E5ECommunicationService : BackgroundService
 			// Stop the execution as soon as possible.
 			if (stoppingToken.IsCancellationRequested)
 			{
-				_logger.LogInformation("Cancellation requested, processing stopped");
+				_logger.CancellationRequested();
 				continue;
 			}
 
@@ -82,73 +85,64 @@ internal class E5ECommunicationService : BackgroundService
 			// Also, the ReadLineFromStdinAsync returns null if the underlying stream is closed.
 			if (string.IsNullOrEmpty(line))
 			{
-				_logger.LogDebug("Empty line received, processing skipped");
+				_logger.EmptyLineReceived();
 				continue;
 			}
 
 			if (line == "ping" && _options.KeepAlive)
 			{
 				await _console.WriteToStdoutAsync("pong");
-				_logger.LogInformation("Responded to ping message from E5E");
+				_logger.PingReceived();
 				continue;
 			}
 
 
-			using var _ = _logger.BeginScope("Processing line '{line}'", line);
-			using var scope = _provider.CreateScope();
-			var handler = scope.ServiceProvider.GetRequiredService<IE5EFunctionHandler>();
+			var request = ParseRequest(line);
+			using (_logger.BeginScope(new { Line = line, Request = request }))
+			{
+				if (request.Event is null || request.Context is null)
+					throw new E5ERuntimeException("Apparently the deserialization failed, the given event is null.");
 
-			try
-			{
-				await ExecuteFunctionAsync(handler, line, stoppingToken);
-			}
-			catch (E5EException e)
-			{
-				// do not abort on our exceptions, only on others, unexpected ones.
-				_logger.LogError(e, "The function execution failed");
+				using var scope = _provider.CreateScope();
+				var handler = scope.ServiceProvider.GetRequiredService<IE5EFunctionHandler>();
+
+				await ExecuteFunctionAsync(handler, request, stoppingToken);
 			}
 
 			// If we should run it only once, end the application afterwards.
 			if (!_options.KeepAlive)
 			{
-				_logger.LogDebug("Stopping application, because KeepAlive is set to false");
+				_logger.StopApplication();
 				_lifetime.StopApplication();
 				break;
 			}
+
 
 			// ...and notify the engine of the end on stdout and stderr.
 			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
 			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
 		}
 
-		_logger.LogInformation("Execution stopped successfully");
+		_logger.MessageProcessingStopped();
 	}
 
-	private async Task ExecuteFunctionAsync(IE5EFunctionHandler handler, string line,
+	private async Task ExecuteFunctionAsync(IE5EFunctionHandler handler, E5ERequest request,
 		CancellationToken stoppingToken)
 	{
-		E5ERequest request = ParseRequest(line);
-		if (request.Event is null || request.Context is null)
-			throw new E5ERuntimeException(
-				"Apparently the deserialization failed, the given event is null. Please create a bug report at https://github.com/anexia/dotnet-e5e/issues/new");
-
-		using var _ = _logger.BeginScope(request);
-
 		E5EResponse? response;
 		try
 		{
-			_logger.LogDebug("Executing function with {Event}", request.Event);
+			_logger.ExecuteFunction(handler.GetType(), request);
 			response = await handler.HandleAsync(request, stoppingToken);
 		}
 		catch (Exception e)
 		{
-			_logger.LogError(e, "The function execution failed for the given {Event}", request.Event);
 			throw new E5EFunctionExecutionFailedException(request, e);
 		}
 
 		try
 		{
-			_logger.LogDebug("Received {Response}", response);
+			_logger.ReceivedResponse(response);
 			var json = JsonSerializer.Serialize(response, E5EJsonSerializerOptions.Default);
 
 			await _console.WriteToStdoutAsync(_options.StdoutTerminationSequence);
@@ -165,7 +159,7 @@ internal class E5ECommunicationService : BackgroundService
 		E5ERequest? request;
 		try
 		{
-			_logger.LogDebug("Deserializing line");
+			_logger.DeserializingLine(line);
 			request = JsonSerializer.Deserialize<E5ERequest>(line, E5EJsonSerializerOptions.Default);
 		}
 		catch (JsonException e)
