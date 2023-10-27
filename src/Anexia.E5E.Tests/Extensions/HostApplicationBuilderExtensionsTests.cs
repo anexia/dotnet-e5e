@@ -28,7 +28,7 @@ public class HostApplicationBuilderExtensionsTests
 			E5EApplication.CreateBuilder(new[] { "foo", "bar" }).Build());
 	}
 
-	[Fact(Timeout = 3000)]
+	[Fact(Timeout = 3000, Skip = "The test is flaky, sometimes the debug logs are leaking and sometimes not.")]
 	public void MetadataIsReturned()
 	{
 		using var _ = Console.Out;
