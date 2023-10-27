@@ -17,7 +17,7 @@ jobs:
        cache-dependency-path: src/**/packages.lock.json
     - run: dotnet restore --locked-mode
     - name: Run tests with coverage
-      run: dotnet test /p:CollectCoverage=true --logger trx --results-directory "TestResults"
+      run: dotnet test --no-restore /p:CollectCoverage=true --logger trx --results-directory "TestResults"
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v3
       with:
