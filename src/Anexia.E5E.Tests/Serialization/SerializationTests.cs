@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -116,6 +117,23 @@ public class SerializationTests
 		// deserialization
 		var deserialized = JsonSerializer.Deserialize(json, type.GetType(), _options);
 		Assert.Equal(type, deserialized);
+	}
+
+	[Fact]
+	public void MetadataIsProperSerialized()
+	{
+		var json = JsonSerializer.Serialize(new E5ERuntimeMetadata(), _options);
+		var deserialized = JsonSerializer.Deserialize<JsonElement>(json);
+		var sut = deserialized.EnumerateObject().ToDictionary(x => x.Name, x => x.Value);
+
+		Assert.Multiple(
+			() => Assert.Equal(4, sut.Count),
+			() => Assert.Contains("runtime_version", sut),
+			() => Assert.Contains("runtime", sut),
+			() => Assert.Contains("features", sut),
+			() => Assert.Contains("library_version", sut),
+			() => Assert.Equal(1, sut["features"].GetArrayLength())
+		);
 	}
 
 	class SerializationTestsData : IEnumerable<object[]>
