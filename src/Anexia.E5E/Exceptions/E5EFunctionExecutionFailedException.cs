@@ -16,7 +16,7 @@ public class E5EFunctionExecutionFailedException : E5EException
 	public E5ERequest Request { get; }
 
 	internal E5EFunctionExecutionFailedException(E5ERequest request, Exception inner)
-		: base("The execution of the function failed.", inner)
+		: base("The entrypoint handler for the function failed.", inner)
 	{
 		Request = request;
 	}
