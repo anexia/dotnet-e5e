@@ -7,13 +7,14 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 		<Authors>Anexia</Authors>
 		<Description>A helper library to help you build functions on top of the Anexia Engine.</Description>
-		<PackageLicenseUrl>https://github.com/anexia/dotnet-e5e/blob/main/LICENSE</PackageLicenseUrl>
+		<License>MIT</License>
 		<RepositoryUrl>https://github.com/anexia/dotnet-e5e</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>anexia,faas</PackageTags>
-		<DocumentationFile>bin\Release\net6.0\Anexia.E5E.xml</DocumentationFile>
+		<PackRelease>true</PackRelease>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnablePackageValidation>true</EnablePackageValidation>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AnalysisMode>Recommended</AnalysisMode>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<AnalysisLevelDocumentation>latest</AnalysisLevelDocumentation>
