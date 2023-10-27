@@ -33,7 +33,7 @@ public static class E5ERequestBuilder
 			{
 				string => E5ERequestDataType.Text,
 				IEnumerable<byte> => E5ERequestDataType.Binary,
-				_ => E5ERequestDataType.Object
+				_ => E5ERequestDataType.StructuredObject
 			};
 
 			_data = JsonSerializer.SerializeToElement(data);

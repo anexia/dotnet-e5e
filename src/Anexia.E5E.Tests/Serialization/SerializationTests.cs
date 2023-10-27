@@ -96,7 +96,20 @@ public class SerializationTests
 		Assert.Equal(E5EResponseType.Text, E5EResponse.From("test").Type);
 		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test")).Type);
 		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test").AsEnumerable()).Type);
-		Assert.Equal(E5EResponseType.Object, E5EResponse.From(new E5ERuntimeMetadata()).Type);
+		Assert.Equal(E5EResponseType.StructuredObject, E5EResponse.From(new E5ERuntimeMetadata()).Type);
+	}
+
+	[Theory]
+	[InlineData(E5ERequestDataType.Text, "text")]
+	[InlineData(E5ERequestDataType.Binary, "binary")]
+	[InlineData(E5ERequestDataType.StructuredObject, "object")]
+	[InlineData(E5ERequestDataType.Mixed, "mixed")]
+	[InlineData(E5EResponseType.Text, "text")]
+	[InlineData(E5EResponseType.Binary, "binary")]
+	[InlineData(E5EResponseType.StructuredObject, "object")]
+	public void EnumsAreProperSerialized(Enum type, string expected)
+	{
+		Assert.Equal(expected, JsonSerializer.Serialize(type, _options));
 	}
 
 	class SerializationTestsData : IEnumerable<object[]>

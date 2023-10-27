@@ -16,7 +16,7 @@ public static class E5EResponseTestHelperExtensions
 
 	public static T As<T>(this E5EResponse response)
 	{
-		Assert.Equal(E5EResponseType.Object, response.Type);
+		Assert.Equal(E5EResponseType.StructuredObject, response.Type);
 		var res = response.Data.Deserialize<T>();
 		Assert.NotNull(res);
 		return res;

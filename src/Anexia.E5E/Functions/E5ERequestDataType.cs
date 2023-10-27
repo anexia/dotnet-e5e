@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Anexia.E5E.Functions;
 
 /// <summary>
@@ -18,7 +20,7 @@ public enum E5ERequestDataType
 	/// Primitive data types such as string, integer, decimal, boolean or null-type as well as structured data such as lists or dictionaries.
 	/// Basically, the data attribute contains the object you would receive if you deserialized a JSON in your runtime of choice.
 	/// </summary>
-	Object,
+	[JsonPropertyName("object")] StructuredObject,
 
 	/// <summary>
 	/// The <see cref="E5EEvent.Data"/> property contains a key/value pair object, where each key

@@ -24,5 +24,5 @@ public enum E5EResponseType
 	/// Primitive data types such as string, integer, decimal, boolean or null-type as well as structured data such as
 	/// lists or dictionaries. Basically anything that can be represented as JSON structure in your runtime of choice.
 	/// </summary>
-	Object
+	[JsonPropertyName("object")] StructuredObject
 }

@@ -29,7 +29,7 @@ public class E5EResponse
 	public E5EHttpHeaders? ResponseHeaders { get; init; }
 
 	/// <summary>
-	/// Creates a new <see cref="E5EResponse"/> from the given object with the type <see cref="E5EResponseType.Object"/>.
+	/// Creates a new <see cref="E5EResponse"/> from the given object with the type <see cref="E5EResponseType.StructuredObject"/>.
 	/// </summary>
 	/// <param name="cls">The data object.</param>
 	/// <param name="status">An optional HTTP status code.</param>
@@ -42,7 +42,7 @@ public class E5EResponse
 			{
 				IEnumerable<char> => E5EResponseType.Text,
 				IEnumerable<byte> => E5EResponseType.Binary,
-				_ => E5EResponseType.Object
+				_ => E5EResponseType.StructuredObject
 			},
 			Data = JsonSerializer.SerializeToElement(cls),
 			Status = status,
