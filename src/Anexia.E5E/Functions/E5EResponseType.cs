@@ -1,13 +1,8 @@
-using System.Text.Json.Serialization;
-
-using Anexia.E5E.Serialization;
-
 namespace Anexia.E5E.Functions;
 
 /// <summary>
 /// Determines the type of the <see cref="E5EResponse.Data"/>.
 /// </summary>
-[JsonConverter(typeof(E5EEnumJsonConverter))]
 public enum E5EResponseType
 {
 	/// <summary>
@@ -24,5 +19,5 @@ public enum E5EResponseType
 	/// Primitive data types such as string, integer, decimal, boolean or null-type as well as structured data such as
 	/// lists or dictionaries. Basically anything that can be represented as JSON structure in your runtime of choice.
 	/// </summary>
-	[JsonPropertyName("object")] StructuredObject
+	StructuredObject
 }

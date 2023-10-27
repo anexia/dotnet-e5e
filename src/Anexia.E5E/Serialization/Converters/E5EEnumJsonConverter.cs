@@ -3,8 +3,9 @@ using System.Text.Json.Serialization;
 
 using Anexia.E5E.Functions;
 
-namespace Anexia.E5E.Serialization;
+namespace Anexia.E5E.Serialization.Converters;
 
+[Obsolete]
 internal class E5EEnumJsonConverter : JsonConverterFactory
 {
 	private readonly JsonStringEnumConverter _converter = new(new JsonLowerSnakeCasePolicy());

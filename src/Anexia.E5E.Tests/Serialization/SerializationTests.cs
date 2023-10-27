@@ -107,9 +107,15 @@ public class SerializationTests
 	[InlineData(E5EResponseType.Text, "text")]
 	[InlineData(E5EResponseType.Binary, "binary")]
 	[InlineData(E5EResponseType.StructuredObject, "object")]
-	public void EnumsAreProperSerialized(Enum type, string expected)
+	public void EnumsAreProperSerialized(object type, string expected)
 	{
-		Assert.Equal(expected, JsonSerializer.Serialize(type, _options));
+		// serialization
+		var json = JsonSerializer.Serialize(type, _options);
+		Assert.Equal($"\"{expected}\"", json);
+
+		// deserialization
+		var deserialized = JsonSerializer.Deserialize(json, type.GetType(), _options);
+		Assert.Equal(type, deserialized);
 	}
 
 	class SerializationTestsData : IEnumerable<object[]>

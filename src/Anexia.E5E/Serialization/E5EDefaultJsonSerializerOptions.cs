@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Anexia.E5E.Serialization.Converters;
+
 namespace Anexia.E5E.Serialization;
 
 /// <summary>
@@ -20,6 +22,9 @@ public static class E5EJsonSerializerOptions
 		PropertyNamingPolicy = new JsonLowerSnakeCasePolicy(),
 		DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
 		IgnoreReadOnlyProperties = false,
-		Converters = { new E5EHttpHeadersConverter(), new E5EEnumJsonConverter() }
+		Converters =
+		{
+			new E5EHttpHeadersConverter(), new E5EResponseTypeConverter(), new E5ERequestDataTypeConverter()
+		}
 	};
 }
