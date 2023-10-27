@@ -24,11 +24,33 @@ public class TestConsoleAbstraction : IConsoleAbstraction
 	private readonly StringBuilder _stderrStr = new();
 	private readonly StringBuilder _stdoutStr = new();
 
-	public void Open() => _logger.LogDebug("Console opened for reading");
-	public void Close() => _logger.LogDebug("Stdin closed");
+	private bool _isOpen;
 
-	public string Stdout() => _stdoutStr.ToString();
-	public string Stderr() => _stderrStr.ToString();
+	public void Open()
+	{
+		_logger.LogDebug("Console opened for reading");
+		_isOpen = true;
+	}
+
+	public void Close()
+	{
+		_logger.LogDebug("Closed console");
+		_isOpen = false;
+	}
+
+	public string Stdout()
+	{
+		while (_isOpen) { } // Wait until the console is closed to get all of the output.
+
+		return _stdoutStr.ToString();
+	}
+
+	public string Stderr()
+	{
+		while (_isOpen) { } // Wait until the console is closed to get all of the output.
+
+		return _stderrStr.ToString();
+	}
 
 	public Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
