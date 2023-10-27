@@ -13,6 +13,10 @@
 		<PackageTags>anexia,faas</PackageTags>
 		<DocumentationFile>bin\Release\net6.0\Anexia.E5E.xml</DocumentationFile>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<AnalysisMode>Recommended</AnalysisMode>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<AnalysisLevelDocumentation>latest</AnalysisLevelDocumentation>
 	</PropertyGroup>
 
 	<ItemGroup>
