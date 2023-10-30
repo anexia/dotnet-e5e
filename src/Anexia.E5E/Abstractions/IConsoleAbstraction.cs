@@ -1,3 +1,4 @@
+using Anexia.E5E.Extensions;
 using Anexia.E5E.Hosting;
 
 namespace Anexia.E5E.Abstractions;
@@ -60,12 +61,23 @@ internal class ConsoleAbstraction : IConsoleAbstraction
 
 	public void Close() => this.Dispose();
 
-	public Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
+	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
 		if (_stdin is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
 
-		return _stdin.ReadLineAsync();
+
+		var line = "";
+		try
+		{
+			line = await _stdin.ReadLineAsync().WithWaitCancellation(token);
+		}
+		catch (TaskCanceledException)
+		{
+			return null;
+		}
+
+		return line;
 	}
 
 	public async Task WriteToStdoutAsync(string? s)
