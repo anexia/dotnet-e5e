@@ -5,8 +5,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<Authors>Anexia</Authors>
-		<Description>A helper library to help you build functions on top of the Anexia Engine.</Description>
+		<Authors>Jasmin Oster</Authors>
+		<Company>Anexia</Company>
+		<Description>A helper library to help you build serverless functions on top of the Anexia Engine.</Description>
 		<License>MIT</License>
 		<RepositoryUrl>https://github.com/anexia/dotnet-e5e</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
