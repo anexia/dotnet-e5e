@@ -12,18 +12,21 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>anexia,faas</PackageTags>
 		<PackRelease>true</PackRelease>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnablePackageValidation>true</EnablePackageValidation>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AnalysisMode>Recommended</AnalysisMode>
-		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<AnalysisLevelDocumentation>latest</AnalysisLevelDocumentation>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
-    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="PublicAPI.Shipped.txt"/>
+		<AdditionalFiles Include="PublicAPI.Unshipped.txt"/>
+	</ItemGroup>
+
+	<PropertyGroup Condition="Configuration == Release">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>

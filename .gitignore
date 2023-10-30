@@ -121,3 +121,4 @@ fabric.properties
 *.DotSettings.user
 TestResults/
 *.nupkg
+*.snupkg
