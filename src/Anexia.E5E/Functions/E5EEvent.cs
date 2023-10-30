@@ -36,10 +36,10 @@ public record E5EEvent(E5ERequestDataType Type,
 	}
 
 	/// <summary>
-	/// Returns the value as string. 
+	/// Returns the value as byte enumerable. 
 	/// </summary>
 	/// <exception cref="E5EInvalidConversionException">Thrown if <see cref="Type"/> is not <see cref="E5ERequestDataType.Binary"/>.</exception>
-	public byte[]? AsByteArray()
+	public IEnumerable<byte>? AsBytes()
 	{
 		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Binary, Type);
 		return As<byte[]>();

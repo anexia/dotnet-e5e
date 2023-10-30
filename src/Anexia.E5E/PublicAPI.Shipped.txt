@@ -24,7 +24,7 @@ Anexia.E5E.Extensions.HostExtensions
 Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions
 Anexia.E5E.Functions.E5EEvent
 Anexia.E5E.Functions.E5EEvent.As<TValue>(System.Text.Json.JsonSerializerOptions? options = null) -> TValue?
-Anexia.E5E.Functions.E5EEvent.AsByteArray() -> byte[]?
+Anexia.E5E.Functions.E5EEvent.AsBytes() -> System.Collections.Generic.IEnumerable<byte>?
 Anexia.E5E.Functions.E5EEvent.AsText() -> string?
 Anexia.E5E.Functions.E5EEvent.Data.get -> System.Text.Json.JsonElement
 Anexia.E5E.Functions.E5EEvent.Data.init -> void
