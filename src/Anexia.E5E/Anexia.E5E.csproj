@@ -26,6 +26,12 @@
 	<PropertyGroup Condition="Configuration == Release">
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+		<!-- Enable deterministic builds using SourceLink (https://github.com/dotnet/sourcelink) -->
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
