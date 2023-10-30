@@ -26,7 +26,9 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	{
 		_host.SetTestEntrypoint(_ => throw new Exception("This method should not have been called"));
 		_host.WriteToStdinAndClose("ping");
-		Assert.Equal("pong", await _host.ReadLineFromStdoutAsync());
+		await _host.DisposeAsync();
+		Assert.Equal("pong---", _host.GetStdout());
+		Assert.Equal("---", _host.GetStderr());
 	}
 
 	[Fact]

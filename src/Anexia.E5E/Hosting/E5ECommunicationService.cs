@@ -92,6 +92,8 @@ internal class E5ECommunicationService : BackgroundService
 			if (line == "ping" && _options.KeepAlive)
 			{
 				await _console.WriteToStdoutAsync("pong");
+				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
+				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
 				_logger.PingReceived();
 				continue;
 			}
