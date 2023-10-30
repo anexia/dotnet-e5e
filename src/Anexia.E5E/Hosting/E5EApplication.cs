@@ -23,7 +23,7 @@ public static class E5EApplication
 	/// </summary>
 	/// <param name="args">The command line arguments.</param>
 	/// <returns>An e5e-specific application builder.</returns>
-	public static IE5EHostBuilder CreateBuilder(string[] args)
+	public static IHostBuilder CreateBuilder(string[] args)
 	{
 		var options = E5ERuntimeOptions.Parse(args);
 		return new HostBuilderInner(options);
@@ -37,10 +37,10 @@ public static class E5EApplication
 	/// </summary>
 	/// <param name="options">The runtime arguments.</param>
 	/// <returns>An e5e-specific application builder.</returns>
-	public static IE5EHostBuilder CreateBuilder(E5ERuntimeOptions options)
+	public static IHostBuilder CreateBuilder(E5ERuntimeOptions options)
 		=> new HostBuilderInner(options);
 
-	private sealed class HostBuilderInner : IE5EHostBuilder
+	private sealed class HostBuilderInner : IHostBuilder
 	{
 		private readonly IHostBuilder _hb;
 		private Action<IHostBuilder> _configure;
@@ -118,14 +118,19 @@ public static class E5EApplication
 
 		#endregion
 
-		public IE5EHostBuilder OverrideRuntimeOptions(
+		public IHostBuilder OverrideRuntimeOptions(
 			Func<E5ERuntimeOptions, E5ERuntimeOptions> configureDelegate)
 		{
 			_options = configureDelegate.Invoke(this._options);
 			return this;
 		}
 
-		public IE5EHost Build()
+		/// <summary>
+		/// This is the whole magic, this differentiates from a generic default builder.
+		/// Because are returning a <see cref="E5EHost"/> here, we can properly react to
+		/// the metadata requests by e5e. 
+		/// </summary>
+		private IHost Build()
 		{
 			_hb.ConfigureServices(svc => svc.AddSingleton(_options));
 			_configure.Invoke(_hb);
@@ -135,7 +140,7 @@ public static class E5EApplication
 		}
 	}
 
-	private sealed class E5EHost : IE5EHost
+	private sealed class E5EHost : IHost
 	{
 		private readonly IHost _host;
 		private readonly E5ERuntimeOptions _options;
@@ -175,29 +180,5 @@ public static class E5EApplication
 		}
 
 		public IServiceProvider Services => _host.Services;
-
-		/// <summary>
-		/// Register an entrypoint with the given handler type.
-		/// </summary>
-		/// <param name="entrypoint">The name of the entrypoint.</param>
-		/// <typeparam name="T">The type of the handler.</typeparam>
-		public void RegisterEntrypoint<T>(string entrypoint) where T : IE5EFunctionHandler
-		{
-			var resolver = this.Services.GetRequiredService<E5EFunctionHandlerResolver>();
-			var impl = (IE5EFunctionHandler)Services.GetRequiredService(typeof(T));
-
-			resolver.Add(entrypoint, impl);
-		}
-
-		/// <summary>
-		/// Register an entrypoint with the given inline handler.
-		/// </summary>
-		/// <param name="entrypoint">The name of the entrypoint.</param>
-		/// <param name="func">The handler.</param>
-		public void RegisterEntrypoint(string entrypoint, Func<E5ERequest, Task<E5EResponse>> func)
-		{
-			var resolver = this.Services.GetRequiredService<E5EFunctionHandlerResolver>();
-			resolver.Add(entrypoint, new E5EInlineFunctionHandler(func));
-		}
 	}
 }

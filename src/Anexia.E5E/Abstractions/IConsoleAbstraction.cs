@@ -1,5 +1,6 @@
 using Anexia.E5E.Extensions;
-using Anexia.E5E.Hosting;
+
+using Microsoft.Extensions.Hosting;
 
 namespace Anexia.E5E.Abstractions;
 
@@ -7,7 +8,7 @@ namespace Anexia.E5E.Abstractions;
 /// Abstraction of the input and output streams for the console.
 /// </summary>
 /// <remarks>
-/// A concrete implementation is already added with the default <see cref="IE5EHostBuilder"/>,
+/// A concrete implementation is already added with the default <see cref="IHostBuilder"/>,
 /// there's no need to provide a custom implementation.
 /// </remarks>
 public interface IConsoleAbstraction : IDisposable, IAsyncDisposable

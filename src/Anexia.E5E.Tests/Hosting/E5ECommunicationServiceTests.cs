@@ -102,5 +102,4 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 
 		Assert.Equal("---", _host.GetStderr());
 	}
-
 }

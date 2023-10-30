@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
+using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
@@ -23,11 +24,11 @@ namespace Anexia.E5E.Tests.Fixtures;
 public class HostFixture : IAsyncLifetime
 {
 	// ReSharper disable once MemberCanBePrivate.Global
-	public IE5EHost Host { get; }
+	public IHost Host { get; }
 
 	public HostFixture(ITestOutputHelper testOutput)
 	{
-		Host = (IE5EHost)E5EApplication.CreateBuilder(new TestE5ERuntimeOptions())
+		Host = E5EApplication.CreateBuilder(new TestE5ERuntimeOptions())
 			.ConfigureHostOptions((_, hostOptions) =>
 				hostOptions.ShutdownTimeout = TimeSpan.FromMilliseconds(100))
 			.ConfigureServices(services => services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>())
