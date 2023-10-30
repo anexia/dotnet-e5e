@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 
 namespace Anexia.E5E.Functions;
@@ -17,6 +18,7 @@ public class E5EHttpHeaders : HttpHeaders
 	/// <param name="name">The specified header.</param>
 	/// <param name="header">The specified value.</param>
 	/// <returns>true if the specified header name and values are stored in the collection; otherwise false.</returns>
+	[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 	public bool TryGetValue(string name, out string? header)
 	{
 		if (!this.TryGetValues(name, out var headers))

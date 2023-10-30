@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Exceptions;
@@ -5,6 +7,7 @@ namespace Anexia.E5E.Exceptions;
 /// <summary>
 /// Thrown when a <see cref="E5EEvent" /> is converted into the wrong format.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class E5EInvalidConversionException : E5EException
 {
 	/// <summary>
@@ -17,7 +20,7 @@ public class E5EInvalidConversionException : E5EException
 	/// </summary>
 	public E5ERequestDataType Actual { get; }
 
-	internal E5EInvalidConversionException(E5ERequestDataType expected, E5ERequestDataType actual)
+	private E5EInvalidConversionException(E5ERequestDataType expected, E5ERequestDataType actual)
 		: base($"Cannot convert data of type {actual} into the type {expected}")
 	{
 		Expected = expected;

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Anexia.E5E.Tests.Helpers;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class TestConsoleAbstraction : IConsoleAbstraction
+public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
 

@@ -83,18 +83,6 @@ public class HostFixture : IAsyncLifetime
 		return resp!;
 	}
 
-	public async Task<string> ReadLineFromStdoutAsync(TimeSpan? timeout = null)
-	{
-		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
-
-		timeout ??= TimeSpan.FromSeconds(3);
-		using var cts = new CancellationTokenSource(timeout.Value);
-
-		var line = await console.ReadLineFromStdoutAsync(cts.Token);
-		return line ?? throw new TimeoutException("No valid line was read within the timeout.");
-	}
-
 	public string GetStdout()
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??

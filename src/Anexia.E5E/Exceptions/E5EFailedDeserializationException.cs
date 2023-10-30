@@ -18,10 +18,4 @@ public class E5EFailedDeserializationException : E5EException
 	{
 		Line = line;
 	}
-
-	internal E5EFailedDeserializationException(string line)
-		: base("The JSON deserialization of the given line failed.")
-	{
-		Line = line;
-	}
 }

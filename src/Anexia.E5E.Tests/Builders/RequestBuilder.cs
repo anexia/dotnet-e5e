@@ -56,7 +56,7 @@ public static class E5ERequestBuilder
 		public IE5ERequestBuilder AddParam(string key, string value)
 		{
 			_parameters ??= new E5ERequestParameters();
-			_parameters.Add(key, new List<string>() { value });
+			_parameters.Add(key, new List<string> { value });
 			return this;
 		}
 	}

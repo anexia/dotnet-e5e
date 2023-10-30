@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -142,7 +141,7 @@ public class SerializationTests
 		{
 			new E5ERequestContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
-			new E5ERuntimeMetadata(),
+			new E5ERuntimeMetadata()
 		};
 
 		private IEnumerable<object[]> Data => _objects.Select(obj => new[] { obj });

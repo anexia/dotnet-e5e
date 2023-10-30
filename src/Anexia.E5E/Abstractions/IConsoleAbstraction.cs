@@ -68,7 +68,7 @@ internal sealed class ConsoleAbstraction : IConsoleAbstraction
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
 
 
-		var line = "";
+		string? line;
 		try
 		{
 			line = await _stdin.ReadLineAsync().WithWaitCancellation(token);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 using Anexia.E5E.Abstractions;
@@ -118,6 +119,7 @@ public static class E5EApplication
 
 		#endregion
 
+		[SuppressMessage("ReSharper", "UnusedMember.Local")]
 		public IHostBuilder OverrideRuntimeOptions(
 			Func<E5ERuntimeOptions, E5ERuntimeOptions> configureDelegate)
 		{
@@ -173,10 +175,9 @@ public static class E5EApplication
 		{
 			// If we wrote the metadata, circumvent the default host mechanism as used by Run/RunAsync extensions.
 			// Otherwise we might write additional logs to the output which is not as expected.
-			if (_options.WriteMetadataOnStartup)
-				return Task.CompletedTask;
-
-			return _host.StopAsync(cancellationToken);
+			return _options.WriteMetadataOnStartup
+				? Task.CompletedTask
+				: _host.StopAsync(cancellationToken);
 		}
 
 		public IServiceProvider Services => _host.Services;

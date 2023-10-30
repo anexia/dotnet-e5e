@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Anexia.E5E.Exceptions;
 
 /// <summary>
 /// Thrown if an entrypoint is registered twice or more.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class E5EEntrypointAlreadyRegisteredException : E5EException
 {
 	/// <summary>

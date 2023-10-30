@@ -18,7 +18,7 @@ public record E5ERuntimeOptions(
 	bool KeepAlive,
 	bool WriteMetadataOnStartup = false)
 {
-	internal static readonly E5ERuntimeOptions WriteMetadata = new("", "", "", false, true);
+	private static readonly E5ERuntimeOptions WriteMetadata = new("", "", "", false, true);
 
 	internal static E5ERuntimeOptions Parse(string[] args)
 	{

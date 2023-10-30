@@ -1,6 +1,7 @@
 using Anexia.E5E.Functions;
 
 using Microsoft.Extensions.DependencyInjection;
+// ReSharper disable UnusedMember.Global
 
 namespace Anexia.E5E.Extensions;
 
