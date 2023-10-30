@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Hosting;
 
-internal class E5ECommunicationService : BackgroundService
+internal sealed class E5ECommunicationService : BackgroundService
 {
 	private readonly IServiceProvider _provider;
 	private readonly IConsoleAbstraction _console;

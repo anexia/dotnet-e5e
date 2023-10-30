@@ -7,7 +7,7 @@ namespace Anexia.E5E.DependencyInjection;
 /// <summary>
 /// Resolves the implementation for the entrypoint that's passed during startup.
 /// </summary>
-internal class E5EFunctionHandlerResolver
+internal sealed class E5EFunctionHandlerResolver
 {
 	private readonly E5ERuntimeOptions _options;
 	private readonly Dictionary<string, IE5EFunctionHandler> _handlers = new();

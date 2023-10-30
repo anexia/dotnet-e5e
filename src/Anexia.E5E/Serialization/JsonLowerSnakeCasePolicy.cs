@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Anexia.E5E.Serialization;
 
-internal class JsonLowerSnakeCasePolicy : JsonNamingPolicy
+internal sealed class JsonLowerSnakeCasePolicy : JsonNamingPolicy
 {
 	public override string ConvertName(string name)
 	{

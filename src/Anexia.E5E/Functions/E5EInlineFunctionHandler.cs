@@ -1,6 +1,6 @@
 namespace Anexia.E5E.Functions;
 
-internal class E5EInlineFunctionHandler : IE5EFunctionHandler
+internal sealed class E5EInlineFunctionHandler : IE5EFunctionHandler
 {
 	private readonly Func<E5ERequest, Task<E5EResponse>> _func;
 

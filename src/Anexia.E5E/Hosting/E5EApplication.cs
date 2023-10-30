@@ -40,7 +40,7 @@ public static class E5EApplication
 	public static IE5EHostBuilder CreateBuilder(E5ERuntimeOptions options)
 		=> new HostBuilderInner(options);
 
-	private class HostBuilderInner : IE5EHostBuilder
+	private sealed class HostBuilderInner : IE5EHostBuilder
 	{
 		private readonly IHostBuilder _hb;
 		private Action<IHostBuilder> _configure;
@@ -135,7 +135,7 @@ public static class E5EApplication
 		}
 	}
 
-	private class E5EHost : IE5EHost
+	private sealed class E5EHost : IE5EHost
 	{
 		private readonly IHost _host;
 		private readonly E5ERuntimeOptions _options;

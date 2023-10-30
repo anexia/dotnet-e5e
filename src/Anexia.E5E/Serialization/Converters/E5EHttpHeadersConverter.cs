@@ -5,7 +5,7 @@ using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Serialization.Converters;
 
-internal class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
+internal sealed class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
 {
 	public override E5EHttpHeaders Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{

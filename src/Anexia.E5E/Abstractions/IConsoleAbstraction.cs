@@ -42,7 +42,7 @@ public interface IConsoleAbstraction : IDisposable, IAsyncDisposable
 	Task WriteToStderrAsync(string? s);
 }
 
-internal class ConsoleAbstraction : IConsoleAbstraction
+internal sealed class ConsoleAbstraction : IConsoleAbstraction
 {
 	private StreamReader? _stdin;
 	private StreamWriter? _stdout;

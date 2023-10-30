@@ -2,7 +2,7 @@ using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Serialization.Converters;
 
-internal class E5EResponseTypeConverter : CustomEnumStringConverterBase<E5EResponseType>
+internal sealed class E5EResponseTypeConverter : CustomEnumStringConverterBase<E5EResponseType>
 {
 	public E5EResponseTypeConverter()
 	{
