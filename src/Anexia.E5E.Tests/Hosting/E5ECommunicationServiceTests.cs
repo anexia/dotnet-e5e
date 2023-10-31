@@ -86,7 +86,6 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	{
 		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
 		await E5ERequestBuilder.New("request").SendAndShutdownAsync(_host);
-		await _host.DisposeAsync();
 
 		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", _host.GetStdout());
 	}
@@ -96,7 +95,6 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	{
 		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
 		await E5ERequestBuilder.New("request").SendAndShutdownAsync(_host);
-		await _host.DisposeAsync();
 
 		Assert.Equal("---", _host.GetStderr());
 	}

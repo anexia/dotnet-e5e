@@ -36,7 +36,15 @@ public class HostFixture : IAsyncLifetime
 			.Build();
 	}
 
-	public Task InitializeAsync() => Host.StartAsync();
+	public async Task InitializeAsync()
+	{
+		var lifetime = Host.Services.GetService<IHostApplicationLifetime>()!;
+		await Host.StartAsync();
+
+		// Wait until the application has actually fully started.
+		lifetime.ApplicationStarted.WaitHandle.WaitOne();
+	}
+
 	public Task DisposeAsync() => Host.StopAsync();
 
 	public Task WriteToStdinOnceAsync(string input)
