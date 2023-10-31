@@ -5,6 +5,7 @@ using System.Text.Json;
 using Anexia.E5E.Exceptions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
+using Anexia.E5E.Serialization;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,14 +29,14 @@ public class HostApplicationBuilderExtensionsTests
 			E5EApplication.CreateBuilder(new[] { "foo", "bar" }).Build());
 	}
 
-	[Fact(Timeout = 3000, Skip = "The test is flaky, sometimes the debug logs are leaking and sometimes not.")]
+	[Fact]
 	public void MetadataIsReturned()
 	{
 		using var _ = Console.Out;
 		using var sw = new StringWriter();
 		Console.SetOut(sw);
 
-		var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata());
+		var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
 		E5EApplication.CreateBuilder(new[] { "metadata" }).Build().Run();
 
 		Assert.Equal(expected, sw.ToString());
