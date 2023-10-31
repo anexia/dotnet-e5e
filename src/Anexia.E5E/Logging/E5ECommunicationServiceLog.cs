@@ -18,7 +18,7 @@ internal static partial class E5ECommunicationServiceLog
 	[LoggerMessage(
 		Level = LogLevel.Information,
 		EventId = 1001,
-		Message = "Execution stopped successfully")]
+		Message = "Message processing stopped successfully")]
 	public static partial void MessageProcessingStopped(this ILogger<E5ECommunicationService> logger);
 
 	[LoggerMessage(
