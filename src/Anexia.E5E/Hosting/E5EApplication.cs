@@ -163,6 +163,11 @@ public static class E5EApplication
 			var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
 			Console.Out.Write(metadata);
 
+			// For the remaining logs, just send them into the void.
+			// This is not an elegant solution, but since the host shouldn't have been started in the first place,
+			// it's a workaround.
+			Console.SetOut(new StreamWriter(Stream.Null));
+
 			// If we wrote the metadata, circumvent the default host mechanism as used by Run/RunAsync extensions
 			// and just stop the application.
 			var lifetime = _host.Services.GetService<IHostApplicationLifetime>();
