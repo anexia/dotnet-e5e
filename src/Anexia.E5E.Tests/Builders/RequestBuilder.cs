@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
 using Anexia.E5E.Tests.Fixtures;
@@ -10,7 +11,10 @@ namespace Anexia.E5E.Tests.Builders;
 public interface IE5ERequestBuilder
 {
 	E5EEvent Build();
-	void SendTo(HostFixture host) { host.WriteToStdinAndClose(Build()); }
+
+	// TODO: refactor into HostFixture itself
+	Task SendAndShutdownAsync(HostFixture host) => host.WriteToStdinOnceAsync(Build());
+
 	IE5ERequestBuilder AddHeader(string key, string value);
 	IE5ERequestBuilder AddParam(string key, string value);
 }

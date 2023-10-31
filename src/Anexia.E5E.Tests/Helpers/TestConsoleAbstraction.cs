@@ -14,8 +14,7 @@ namespace Anexia.E5E.Tests.Helpers;
 public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
-
-	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger) => _logger = logger;
+	private readonly CancellationTokenSource _closedCts;
 
 	private readonly Queue<string> _stderr = new();
 	private readonly Queue<string> _stdin = new();
@@ -24,31 +23,37 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	private readonly StringBuilder _stderrStr = new();
 	private readonly StringBuilder _stdoutStr = new();
 
-	private bool _isOpen;
+	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger)
+	{
+		_logger = logger;
+		_closedCts = new CancellationTokenSource();
+	}
+
 
 	public void Open()
 	{
 		_logger.LogDebug("Console opened for reading");
-		_isOpen = true;
 	}
 
 	public void Close()
 	{
+		if (_closedCts.IsCancellationRequested)
+			throw new InvalidOperationException("The console is already closed, cannot close it again.");
+
+		_logger.LogDebug("Closing console");
+		_closedCts.Cancel();
 		_logger.LogDebug("Closed console");
-		_isOpen = false;
 	}
 
 	public string Stdout()
 	{
-		while (_isOpen) { } // Wait until the console is closed to get all of the output.
-
+		WaitUntilClosed();
 		return _stdoutStr.ToString();
 	}
 
 	public string Stderr()
 	{
-		while (_isOpen) { } // Wait until the console is closed to get all of the output.
-
+		WaitUntilClosed();
 		return _stderrStr.ToString();
 	}
 
@@ -68,7 +73,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
-		_logger.LogInformation("Wrote {text} to stdout", s);
+		_logger.LogDebug("Wrote {text} to stdout", s);
 		_stdout.Enqueue(s);
 		_stdoutStr.Append(s);
 		return Task.CompletedTask;
@@ -79,7 +84,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
-		_logger.LogError("Wrote {text} to stderr", s);
+		_logger.LogDebug("Wrote {text} to stderr", s);
 		_stderr.Enqueue(s);
 		_stderrStr.Append(s);
 		return Task.CompletedTask;
@@ -88,6 +93,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 	public void Dispose()
 	{
+		_closedCts.Dispose();
 		_stdin.Clear();
 		_stdout.Clear();
 		_stderr.Clear();
@@ -105,20 +111,22 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public void WriteToStdin(string s)
 	{
-		_logger.LogInformation("Wrote {text} to stdin", s);
+		_logger.LogDebug("Wrote {text} to stdin", s);
 		_stdin.Enqueue(s);
 	}
 
-	public Task<string?> ReadLineFromStdoutAsync(CancellationToken token = default)
+	public string ReadLineFromStdout()
 	{
-		string? res;
-		while (!_stdout.TryDequeue(out res) && !token.IsCancellationRequested)
-		{
-			// wait until we have a result
-		}
+		WaitUntilClosed();
+		var hasLine = _stdout.TryDequeue(out var line);
+		if (!hasLine || line is null)
+			throw new InvalidOperationException("Cannot read more lines from stdout");
 
-		token.ThrowIfCancellationRequested();
+		return line;
+	}
 
-		return Task.FromResult(res);
+	private void WaitUntilClosed(int timeoutMs = 3000)
+	{
+		_closedCts.Token.WaitHandle.WaitOne(timeoutMs);
 	}
 }

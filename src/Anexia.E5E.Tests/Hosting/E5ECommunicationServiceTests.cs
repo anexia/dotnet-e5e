@@ -25,8 +25,7 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	public async Task PingResponds()
 	{
 		_host.SetTestEntrypoint(_ => throw new Exception("This method should not have been called"));
-		_host.WriteToStdinAndClose("ping");
-		await _host.DisposeAsync();
+		await _host.WriteToStdinOnceAsync("ping");
 		Assert.Equal("pong---", _host.GetStdout());
 		Assert.Equal("---", _host.GetStderr());
 	}
@@ -35,9 +34,9 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	public async Task PlainInput()
 	{
 		_host.SetTestEntrypoint(_ => E5EResponse.From("test"));
-		E5ERequestBuilder.New("hello").SendTo(_host);
+		await E5ERequestBuilder.New("hello").SendAndShutdownAsync(_host);
 
-		var resp = await _host.ReadResponseFromStdoutAsync();
+		var resp = _host.ReadResponse();
 		Assert.Equal("test", resp.Text());
 	}
 
@@ -53,12 +52,11 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 			return E5EResponse.From(acceptHeader!);
 		});
 
-
-		E5ERequestBuilder.New("hello")
+		await E5ERequestBuilder.New("hello")
 			.AddHeader(headerName, "application/json")
-			.SendTo(_host);
+			.SendAndShutdownAsync(_host);
 
-		var resp = await _host.ReadResponseFromStdoutAsync();
+		var resp = _host.ReadResponse();
 		Assert.Equal("application/json", resp.Text());
 	}
 
@@ -75,11 +73,11 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 		});
 
 
-		E5ERequestBuilder.New("hello")
+		await E5ERequestBuilder.New("hello")
 			.AddParam(parameterName, "this is my parameter")
-			.SendTo(_host);
+			.SendAndShutdownAsync(_host);
 
-		var resp = await _host.ReadResponseFromStdoutAsync();
+		var resp = _host.ReadResponse();
 		Assert.Equal("this is my parameter", resp.As<List<string>>().FirstOrDefault());
 	}
 
@@ -87,7 +85,7 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	public async Task ShouldHaveCorrectStdoutFormatting()
 	{
 		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
-		E5ERequestBuilder.New("request").SendTo(_host);
+		await E5ERequestBuilder.New("request").SendAndShutdownAsync(_host);
 		await _host.DisposeAsync();
 
 		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", _host.GetStdout());
@@ -97,7 +95,7 @@ public class E5ECommunicationServiceTests : IAsyncLifetime
 	public async Task ShouldHaveCorrectStderrFormatting()
 	{
 		_host.SetTestEntrypoint(_ => E5EResponse.From("response"));
-		E5ERequestBuilder.New("request").SendTo(_host);
+		await E5ERequestBuilder.New("request").SendAndShutdownAsync(_host);
 		await _host.DisposeAsync();
 
 		Assert.Equal("---", _host.GetStderr());

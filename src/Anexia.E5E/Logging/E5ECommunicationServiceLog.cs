@@ -82,5 +82,5 @@ internal static partial class E5ECommunicationServiceLog
 		EventId = 4001,
 		Message = $"Stopping application, because {nameof(E5ERuntimeOptions.KeepAlive)} is set to false"
 	)]
-	public static partial void StopApplication(this ILogger<E5ECommunicationService> logger);
+	public static partial void RequestStopDueToKeepAliveFalse(this ILogger<E5ECommunicationService> logger);
 }

@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
@@ -9,6 +9,7 @@ using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
+using Anexia.E5E.Tests.Builders;
 using Anexia.E5E.Tests.Helpers;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,7 @@ public class HostFixture : IAsyncLifetime
 	public HostFixture(ITestOutputHelper testOutput)
 	{
 		Host = E5EApplication.CreateBuilder(new TestE5ERuntimeOptions())
-			.ConfigureHostOptions((_, hostOptions) =>
-				hostOptions.ShutdownTimeout = TimeSpan.FromMilliseconds(100))
+			.ConfigureHostOptions((_, hostOptions) => hostOptions.ShutdownTimeout = TimeSpan.FromMilliseconds(100))
 			.ConfigureServices(services => services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>())
 			.ConfigureLogging(lb => lb.AddXUnit(testOutput).AddDebug().SetMinimumLevel(LogLevel.Debug))
 			.Build();
@@ -39,15 +39,15 @@ public class HostFixture : IAsyncLifetime
 	public Task InitializeAsync() => Host.StartAsync();
 	public Task DisposeAsync() => Host.StopAsync();
 
-	public void WriteToStdinAndClose(string input)
+	public Task WriteToStdinOnceAsync(string input)
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
 		console.WriteToStdin(input);
-		console.Close();
+		return DisposeAsync();
 	}
 
-	public void WriteToStdinAndClose(E5EEvent evt)
+	public Task WriteToStdinOnceAsync(E5EEvent evt)
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
@@ -55,27 +55,23 @@ public class HostFixture : IAsyncLifetime
 		var req = new E5ERequest(evt, new E5ERequestContext("test", DateTimeOffset.Now, true));
 		var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
 		console.WriteToStdin(json);
-		console.Close();
+		return DisposeAsync();
 	}
 
-	public async Task<E5EResponse> ReadResponseFromStdoutAsync(TimeSpan? timeout = null)
+	public E5EResponse ReadResponse()
 	{
-		timeout ??= TimeSpan.FromSeconds(3);
-		using var cts = new CancellationTokenSource(timeout.Value);
-
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
 		var options = Host.Services.GetRequiredService<E5ERuntimeOptions>();
 
-		string? line = await console.ReadLineFromStdoutAsync(cts.Token);
-		while (line != options.StdoutTerminationSequence)
+		var line = console.ReadLineFromStdout();
+		while (!line.StartsWith(options.StdoutTerminationSequence))
 		{
-			line = await console.ReadLineFromStdoutAsync(cts.Token);
+			line = console.ReadLineFromStdout();
 		}
 
-		// The line is now the termination sequence, let's read the next line.
-		line = await console.ReadLineFromStdoutAsync(cts.Token) ??
-			   throw new InvalidOperationException("No next line found after termination sequence");
+		// Remove the termination sequence from the line
+		line = line[options.StdoutTerminationSequence.Length..];
 
 		var resp = JsonSerializer.Deserialize<E5EResponse>(line, E5EJsonSerializerOptions.Default);
 

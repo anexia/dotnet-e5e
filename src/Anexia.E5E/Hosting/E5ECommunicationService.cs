@@ -38,10 +38,6 @@ internal sealed class E5ECommunicationService : BackgroundService
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
-		// If the cancellation is requested, dispose our console streams and therefore end the processing loop below.
-		stoppingToken.Register(_console.Close);
-		_console.Open();
-
 		using var _ = _logger.BeginScope(new { _options.Entrypoint });
 
 		// > No further services are started until ExecuteAsync becomes asynchronous, such as by calling await.
@@ -51,6 +47,7 @@ internal sealed class E5ECommunicationService : BackgroundService
 		// https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0#queued-background-tasks
 		try
 		{
+			_console.Open();
 			await Task.Yield();
 			await ListenForIncomingMessagesAsync(stoppingToken);
 		}
@@ -63,6 +60,18 @@ internal sealed class E5ECommunicationService : BackgroundService
 			_logger.UnexpectedRuntimeException(e);
 			throw;
 		}
+		finally
+		{
+			// Once the message listener returned, close our console.
+			_console.Close();
+
+			// And stop the whole application if necessary.
+			if (!_options.KeepAlive)
+			{
+				_logger.RequestStopDueToKeepAliveFalse();
+				_lifetime.StopApplication();
+			}
+		}
 	}
 
 	private async Task ListenForIncomingMessagesAsync(CancellationToken stoppingToken)
@@ -74,13 +83,6 @@ internal sealed class E5ECommunicationService : BackgroundService
 			var line = await _console.ReadLineFromStdinAsync(stoppingToken);
 			line = line?.TrimEnd();
 
-			// Stop the execution as soon as possible.
-			if (stoppingToken.IsCancellationRequested)
-			{
-				_logger.CancellationRequested();
-				continue;
-			}
-
 			// Skip empty lines. They shouldn't occur in production, but can happen during testing.
 			// Also, the ReadLineFromStdinAsync returns null if the underlying stream is closed.
 			if (string.IsNullOrEmpty(line))
@@ -89,46 +91,50 @@ internal sealed class E5ECommunicationService : BackgroundService
 				continue;
 			}
 
-			if (line == "ping" && _options.KeepAlive)
+			try
 			{
-				await _console.WriteToStdoutAsync("pong");
+				var response = await RespondToLineAsync(line, stoppingToken);
+				await _console.WriteToStdoutAsync(response);
+			}
+			finally
+			{
+				// We need to notify the engine of the execution end, otherwise it'll run into a deadlock.
+				// This also needs to happen regardless if there's an error or not.
 				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
 				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
-				_logger.PingReceived();
-				continue;
 			}
 
+			// If we should keep it alive (which is notably the default), do that.
+			if (_options.KeepAlive) continue;
 
-			var request = ParseRequest(line);
-			using (_logger.BeginScope(new { Line = line, Request = request }))
-			{
-				if (request.Event is null || request.Context is null)
-					throw new E5ERuntimeException("Apparently the deserialization failed, the given event is null.");
-
-				using var scope = _provider.CreateScope();
-				var handler = scope.ServiceProvider.GetRequiredService<IE5EFunctionHandler>();
-
-				await ExecuteFunctionAsync(handler, request, stoppingToken);
-			}
-
-			// If we should run it only once, end the application afterwards.
-			if (!_options.KeepAlive)
-			{
-				_logger.StopApplication();
-				_lifetime.StopApplication();
-				break;
-			}
-
-
-			// ...and notify the engine of the end on stdout and stderr.
-			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
-			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
+			// Otherwise, we just stop the processing at this point.
+			break;
 		}
 
 		_logger.MessageProcessingStopped();
 	}
 
-	private async Task ExecuteFunctionAsync(IE5EFunctionHandler handler, E5ERequest request,
+	private Task<string> RespondToLineAsync(string line, CancellationToken stoppingToken)
+	{
+		if (line == "ping" && _options.KeepAlive)
+		{
+			_logger.PingReceived();
+			return Task.FromResult("pong");
+		}
+
+		var request = ParseRequest(line);
+		using var _ = _logger.BeginScope(new { Line = line, Request = request });
+
+		if (request.Event is null || request.Context is null)
+			throw new E5ERuntimeException("Apparently the deserialization failed, the given event is null.");
+
+		using var scope = _provider.CreateScope();
+		var handler = scope.ServiceProvider.GetRequiredService<IE5EFunctionHandler>();
+
+		return ExecuteFunctionAsync(handler, request, stoppingToken);
+	}
+
+	private async Task<string> ExecuteFunctionAsync(IE5EFunctionHandler handler, E5ERequest request,
 		CancellationToken stoppingToken)
 	{
 		E5EResponse? response;
@@ -147,8 +153,7 @@ internal sealed class E5ECommunicationService : BackgroundService
 			_logger.ReceivedResponse(response);
 			var json = JsonSerializer.Serialize(response, E5EJsonSerializerOptions.Default);
 
-			await _console.WriteToStdoutAsync(_options.StdoutTerminationSequence);
-			await _console.WriteToStdoutAsync(json);
+			return _options.StdoutTerminationSequence + json;
 		}
 		catch (Exception e)
 		{
