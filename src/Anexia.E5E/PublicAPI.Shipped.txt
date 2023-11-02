@@ -62,6 +62,7 @@ Anexia.E5E.Functions.E5ERequestParameters.E5ERequestParameters() -> void
 Anexia.E5E.Functions.E5EResponse
 Anexia.E5E.Functions.E5EResponse.Data.get -> System.Text.Json.JsonElement
 Anexia.E5E.Functions.E5EResponse.Data.init -> void
+Anexia.E5E.Functions.E5EResponse.E5EResponse() -> void
 Anexia.E5E.Functions.E5EResponse.ResponseHeaders.get -> Anexia.E5E.Functions.E5EHttpHeaders?
 Anexia.E5E.Functions.E5EResponse.ResponseHeaders.init -> void
 Anexia.E5E.Functions.E5EResponse.Status.get -> System.Net.HttpStatusCode?

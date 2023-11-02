@@ -8,8 +8,6 @@ namespace Anexia.E5E.Functions;
 /// </summary>
 public class E5EResponse
 {
-	private E5EResponse() { }
-
 	/// <summary>
 	/// The response data that's serialized back.
 	/// </summary>
