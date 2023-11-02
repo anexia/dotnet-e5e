@@ -79,15 +79,13 @@ Anexia.E5E.Runtime.E5ERuntimeMetadata
 Anexia.E5E.Runtime.E5ERuntimeOptions
 Anexia.E5E.Runtime.E5ERuntimeOptions.DaemonExecutionTerminationSequence.get -> string!
 Anexia.E5E.Runtime.E5ERuntimeOptions.DaemonExecutionTerminationSequence.init -> void
-Anexia.E5E.Runtime.E5ERuntimeOptions.E5ERuntimeOptions(string! Entrypoint, string! StdoutTerminationSequence, string! DaemonExecutionTerminationSequence, bool KeepAlive, bool WriteMetadataOnStartup = false) -> void
+Anexia.E5E.Runtime.E5ERuntimeOptions.E5ERuntimeOptions(string! Entrypoint, string! StdoutTerminationSequence, string! DaemonExecutionTerminationSequence, bool KeepAlive) -> void
 Anexia.E5E.Runtime.E5ERuntimeOptions.Entrypoint.get -> string!
 Anexia.E5E.Runtime.E5ERuntimeOptions.Entrypoint.init -> void
 Anexia.E5E.Runtime.E5ERuntimeOptions.KeepAlive.get -> bool
 Anexia.E5E.Runtime.E5ERuntimeOptions.KeepAlive.init -> void
 Anexia.E5E.Runtime.E5ERuntimeOptions.StdoutTerminationSequence.get -> string!
 Anexia.E5E.Runtime.E5ERuntimeOptions.StdoutTerminationSequence.init -> void
-Anexia.E5E.Runtime.E5ERuntimeOptions.WriteMetadataOnStartup.get -> bool
-Anexia.E5E.Runtime.E5ERuntimeOptions.WriteMetadataOnStartup.init -> void
 Anexia.E5E.Serialization.E5EJsonSerializerOptions
 static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddE5EFunctionHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Anexia.E5E.Functions.E5EResponse.From<T>(T! cls, System.Net.HttpStatusCode? status = null, Anexia.E5E.Functions.E5EHttpHeaders? responseHeaders = null) -> Anexia.E5E.Functions.E5EResponse!

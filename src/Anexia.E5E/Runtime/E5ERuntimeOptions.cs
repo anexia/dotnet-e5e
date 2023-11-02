@@ -10,15 +10,15 @@ namespace Anexia.E5E.Runtime;
 /// <param name="StdoutTerminationSequence">Sequence that's written to differentiate responses from generic logs.</param>
 /// <param name="DaemonExecutionTerminationSequence">Sequence that's written on shutdown.</param>
 /// <param name="KeepAlive">Whether to keep the function alive after the first execution or not.</param>
-/// <param name="WriteMetadataOnStartup">True if the <seealso cref="E5ERuntimeMetadata"/> should be written on startup.</param>
 public record E5ERuntimeOptions(
 	string Entrypoint,
 	string StdoutTerminationSequence,
 	string DaemonExecutionTerminationSequence,
-	bool KeepAlive,
-	bool WriteMetadataOnStartup = false)
+	bool KeepAlive)
 {
-	private static readonly E5ERuntimeOptions WriteMetadata = new("", "", "", false, true);
+	private static readonly E5ERuntimeOptions WriteMetadata = new("", "", "", false) { WriteMetadataOnStartup = true };
+
+	internal bool WriteMetadataOnStartup { get; private init; }
 
 	internal static E5ERuntimeOptions Parse(string[] args)
 	{
