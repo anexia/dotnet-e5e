@@ -69,6 +69,25 @@ public class HelloHandler : IE5EFunctionHandler {
 Those handlers are registered during startup as scoped. That means, that you can use dependency injection,
 just like you'd do for ASP.NET Controllers!
 
+```csharp
+using Anexia.E5E.Extensions;
+using Anexia.E5E.Functions;
+
+using var host = Host.CreateDefaultBuilder(args)
+	.UseAnexiaE5E(args)
+    .ConfigureServices(services => {
+        services.AddFunctionHandler<HelloHandler>();
+    })
+	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
+	.Build();
+
+// Register our entrypoint "Hello" which just responds with "test", ignoring the request.
+host.RegisterEntrypoint<HelloHandler>("Hello");
+
+// Finally run the host.
+await host.RunAsync();
+```
+
 # Supported versions
 
 |          | Supported |

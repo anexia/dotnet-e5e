@@ -10,7 +10,7 @@ namespace Anexia.E5E.DependencyInjection;
 internal sealed class E5EFunctionHandlerResolver
 {
 	private readonly E5ERuntimeOptions _options;
-	private readonly Dictionary<string, IE5EFunctionHandler> _handlers = new();
+	private readonly Dictionary<string, Func<IServiceProvider, IE5EFunctionHandler>> _handlers = new();
 
 	public E5EFunctionHandlerResolver(E5ERuntimeOptions options)
 	{
@@ -22,14 +22,21 @@ internal sealed class E5EFunctionHandlerResolver
 		if (_handlers.ContainsKey(entrypoint))
 			throw new E5EEntrypointAlreadyRegisteredException(entrypoint);
 
-		_handlers.Add(entrypoint, handler);
+		_handlers.Add(entrypoint, _ => handler);
+	}
+	public void Add(string entrypoint, Type handler)
+	{
+		if (_handlers.ContainsKey(entrypoint))
+			throw new E5EEntrypointAlreadyRegisteredException(entrypoint);
+
+		_handlers.Add(entrypoint, svc => (svc.GetService(handler) as IE5EFunctionHandler)!);
 	}
 
-	public IE5EFunctionHandler Resolve()
+	public IE5EFunctionHandler ResolveFrom(IServiceProvider services)
 	{
-		if (!_handlers.TryGetValue(_options.Entrypoint, out var handler))
+		if (!_handlers.TryGetValue(_options.Entrypoint, out var resolve))
 			throw new E5EMissingEntrypointException(_options.Entrypoint);
 
-		return handler;
+		return resolve.Invoke(services);
 	}
 }

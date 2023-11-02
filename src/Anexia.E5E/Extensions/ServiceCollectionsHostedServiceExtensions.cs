@@ -11,20 +11,27 @@ namespace Anexia.E5E.Extensions;
 public static class ServiceCollectionHostedServiceExtensions
 {
 	/// <summary>
-	/// Searches for all implementations of <see cref="IE5EFunctionHandler"/> and registers them.
+	/// Registers an implementation of <see cref="IE5EFunctionHandler"/> for the usage with <see cref="HostExtensions.RegisterEntrypoint{T}"/> and scoped lifetime.
 	/// </summary>
-	/// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
-	/// <returns>The original <see cref="IServiceCollection"/>.</returns>
-	public static IServiceCollection AddE5EFunctionHandlers(this IServiceCollection services)
+	/// <param name="services">The service collection.</param>
+	/// <typeparam name="T">The type to register.</typeparam>
+	public static IServiceCollection AddFunctionHandler<T>(this IServiceCollection services)
+		where T : class, IE5EFunctionHandler =>
+		AddFunctionHandler(services, typeof(T));
+
+	/// <summary>
+	/// Registers an implementation of the given type for the usage with <see cref="HostExtensions.RegisterEntrypoint"/> and scoped lifetime.
+	/// </summary>
+	/// <param name="services">The service collection.</param>
+	/// <param name="serviceType">The type of the service.</param>
+	/// <exception cref="InvalidOperationException">Thrown if serviceType is not a class or does not implement <see cref="IE5EFunctionHandler"/>.</exception>
+	public static IServiceCollection AddFunctionHandler(this IServiceCollection services, Type serviceType)
 	{
-		var handlerType = typeof(IE5EFunctionHandler);
-		var allHandlers = AppDomain.CurrentDomain.GetAssemblies()
-			.SelectMany(s => s.GetTypes())
-			.Where(p => handlerType.IsAssignableFrom(p));
+		if (!serviceType.IsClass || !serviceType.IsAssignableTo(typeof(IE5EFunctionHandler)))
+			throw new InvalidOperationException("The type " + serviceType + " is not suitable for registration.");
 
-		foreach (var h in allHandlers)
-			services.AddSingleton(ServiceDescriptor.Scoped(handlerType, h));
-
+		var descriptor = ServiceDescriptor.Scoped(typeof(IE5EFunctionHandler), serviceType);
+		services.Add(descriptor);
 		return services;
 	}
 }

@@ -8,6 +8,7 @@ using Anexia.E5E.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Extensions;
 
@@ -43,7 +44,7 @@ public static class HostBuilderExtensions
 		public E5EHostBuilderWrapper(IHostBuilder inner, E5ERuntimeOptions runtimeOptions)
 		{
 			_inner = inner;
-			ConfigureServices((_, services) =>
+			_inner.ConfigureServices((_, services) =>
 			{
 				services.AddHostedService<E5ECommunicationService>();
 				services.AddSingleton<E5EFunctionHandlerResolver>();
@@ -52,7 +53,7 @@ public static class HostBuilderExtensions
 				services.AddScoped<IE5EFunctionHandler>(svc =>
 				{
 					var resolver = svc.GetRequiredService<E5EFunctionHandlerResolver>();
-					return resolver.Resolve();
+					return resolver.ResolveFrom(svc);
 				});
 			});
 		}

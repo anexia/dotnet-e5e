@@ -23,9 +23,7 @@ public static class HostExtensions
 	public static void RegisterEntrypoint<T>(this IHost host, string entrypoint) where T : IE5EFunctionHandler
 	{
 		var resolver = host.Services.GetRequiredService<E5EFunctionHandlerResolver>();
-		var impl = (IE5EFunctionHandler)host.Services.GetRequiredService(typeof(T));
-
-		resolver.Add(entrypoint, impl);
+		resolver.Add(entrypoint, typeof(T));
 	}
 
 	/// <summary>

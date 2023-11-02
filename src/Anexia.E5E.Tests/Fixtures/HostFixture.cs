@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
-using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
-using Anexia.E5E.Tests.Builders;
 using Anexia.E5E.Tests.Helpers;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -27,14 +24,15 @@ public class HostFixture : IAsyncLifetime
 	// ReSharper disable once MemberCanBePrivate.Global
 	public IHost Host { get; }
 
-	public HostFixture(ITestOutputHelper testOutput)
+	public HostFixture(ITestOutputHelper testOutput, Action<IHostBuilder>? configure = null)
 	{
-		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+		var builder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
 			.UseAnexiaE5E(new TestE5ERuntimeOptions())
 			.ConfigureHostOptions((_, hostOptions) => hostOptions.ShutdownTimeout = TimeSpan.FromMilliseconds(100))
 			.ConfigureServices(services => services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>())
-			.ConfigureLogging(lb => lb.AddXUnit(testOutput).AddDebug().SetMinimumLevel(LogLevel.Debug))
-			.Build();
+			.ConfigureLogging(lb => lb.AddXUnit(testOutput).AddDebug().SetMinimumLevel(LogLevel.Debug));
+		configure?.Invoke(builder);
+		Host = builder.Build();
 	}
 
 	public async Task InitializeAsync()
