@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
 
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Tests.Helpers;
@@ -15,6 +16,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
 	private readonly CancellationTokenSource _closedCts;
+	private readonly CancellationTokenSource _wroteFirstTimeCts = new();
 
 	private readonly Queue<string> _stderr = new();
 	private readonly Queue<string> _stdin = new();
@@ -76,6 +78,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		_logger.LogDebug("Wrote {text} to stdout", s);
 		_stdout.Enqueue(s);
 		_stdoutStr.Append(s);
+		_wroteFirstTimeCts.Cancel();
+
 		return Task.CompletedTask;
 	}
 
@@ -125,8 +129,18 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		return line;
 	}
 
-	private void WaitUntilClosed(int timeoutMs = 3000)
+	private void WaitUntilClosed(int timeoutMs = DefaultTimeoutMs)
 	{
 		_closedCts.Token.WaitHandle.WaitOne(timeoutMs);
 	}
+
+	private const int DefaultTimeoutMs = 3000;
+
+	/// <summary>
+	/// Waits until the application wrote to one of the streams.
+	///
+	/// This is a workaround only required for tests, because otherwise the <see cref="IHost"/> might be closed
+	/// before the first line was even read.
+	/// </summary>
+	public void WaitForFirstWriteAction() => _wroteFirstTimeCts.Token.WaitHandle.WaitOne(DefaultTimeoutMs);
 }

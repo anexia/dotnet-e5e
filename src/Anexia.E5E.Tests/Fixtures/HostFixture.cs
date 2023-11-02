@@ -52,6 +52,7 @@ public class HostFixture : IAsyncLifetime
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
 		console.WriteToStdin(input);
+		console.WaitForFirstWriteAction();
 		return DisposeAsync();
 	}
 
@@ -62,8 +63,7 @@ public class HostFixture : IAsyncLifetime
 
 		var req = new E5ERequest(evt, new E5ERequestContext("test", DateTimeOffset.Now, true));
 		var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
-		console.WriteToStdin(json);
-		return DisposeAsync();
+		return WriteToStdinOnceAsync(json);
 	}
 
 	public E5EResponse ReadResponse()
