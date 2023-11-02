@@ -75,7 +75,6 @@ Anexia.E5E.Functions.E5EResponseType.StructuredObject = 2 -> Anexia.E5E.Function
 Anexia.E5E.Functions.E5EResponseType.Text = 0 -> Anexia.E5E.Functions.E5EResponseType
 Anexia.E5E.Functions.IE5EFunctionHandler
 Anexia.E5E.Functions.IE5EFunctionHandler.HandleAsync(Anexia.E5E.Functions.E5ERequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!
-Anexia.E5E.Hosting.E5EApplication
 Anexia.E5E.Runtime.E5ERuntimeMetadata
 Anexia.E5E.Runtime.E5ERuntimeOptions
 Anexia.E5E.Runtime.E5ERuntimeOptions.DaemonExecutionTerminationSequence.get -> string!
@@ -92,8 +91,6 @@ Anexia.E5E.Runtime.E5ERuntimeOptions.WriteMetadataOnStartup.init -> void
 Anexia.E5E.Serialization.E5EJsonSerializerOptions
 static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddE5EFunctionHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Anexia.E5E.Functions.E5EResponse.From<T>(T! cls, System.Net.HttpStatusCode? status = null, Anexia.E5E.Functions.E5EHttpHeaders? responseHeaders = null) -> Anexia.E5E.Functions.E5EResponse!
-static Anexia.E5E.Hosting.E5EApplication.CreateBuilder(Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Microsoft.Extensions.Hosting.IHostBuilder!
-static Anexia.E5E.Hosting.E5EApplication.CreateBuilder(string![]! args) -> Microsoft.Extensions.Hosting.IHostBuilder!
 static Anexia.E5E.Serialization.E5EJsonSerializerOptions.Default.get -> System.Text.Json.JsonSerializerOptions!
 Anexia.E5E.Runtime.E5ERuntimeMetadata.Features.get -> System.Collections.Generic.IReadOnlyList<string!>!
 Anexia.E5E.Runtime.E5ERuntimeMetadata.LibraryVersion.get -> string!
@@ -102,3 +99,6 @@ Anexia.E5E.Runtime.E5ERuntimeMetadata.RuntimeVersion.get -> string!
 static readonly Anexia.E5E.Runtime.E5ERuntimeMetadata.Current -> Anexia.E5E.Runtime.E5ERuntimeMetadata!
 static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Func<Anexia.E5E.Functions.E5ERequest!, System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!>! func) -> void
 static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint<T>(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint) -> void
+Anexia.E5E.Extensions.HostBuilderExtensions
+static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Microsoft.Extensions.Hosting.IHostBuilder!
+static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]! args) -> Microsoft.Extensions.Hosting.IHostBuilder!

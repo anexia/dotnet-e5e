@@ -33,11 +33,10 @@ With that, we have a `Program.cs` that we can modify to use our library:
 ```cs
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
-using Anexia.E5E.Hosting;
 
-// Create our new host
-using var host = E5EApplication.CreateBuilder(args)
-	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C
+using var host = Host.CreateDefaultBuilder(args)
+	.UseAnexiaE5E(args)
+	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
 	.Build();
 
 // Register our entrypoint "Hello" which just responds with "test", ignoring the request.

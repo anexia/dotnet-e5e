@@ -1,8 +1,8 @@
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
-using Anexia.E5E.Hosting;
 
-using var host = E5EApplication.CreateBuilder(args)
+using var host = Host.CreateDefaultBuilder(args)
+	.UseAnexiaE5E(args)
 	.UseConsoleLifetime()
 	.Build();
 host.RegisterEntrypoint("Hello", _ =>

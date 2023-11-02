@@ -29,7 +29,8 @@ public class HostFixture : IAsyncLifetime
 
 	public HostFixture(ITestOutputHelper testOutput)
 	{
-		Host = E5EApplication.CreateBuilder(new TestE5ERuntimeOptions())
+		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+			.UseAnexiaE5E(new TestE5ERuntimeOptions())
 			.ConfigureHostOptions((_, hostOptions) => hostOptions.ShutdownTimeout = TimeSpan.FromMilliseconds(100))
 			.ConfigureServices(services => services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>())
 			.ConfigureLogging(lb => lb.AddXUnit(testOutput).AddDebug().SetMinimumLevel(LogLevel.Debug))
@@ -50,7 +51,7 @@ public class HostFixture : IAsyncLifetime
 	public Task WriteToStdinOnceAsync(string input)
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
+		              throw new InvalidOperationException("There's no console registered");
 		console.WriteToStdin(input);
 		console.WaitForFirstWriteAction();
 		return DisposeAsync();
@@ -59,7 +60,7 @@ public class HostFixture : IAsyncLifetime
 	public Task WriteToStdinOnceAsync(E5EEvent evt)
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
+		              throw new InvalidOperationException("There's no console registered");
 
 		var req = new E5ERequest(evt, new E5ERequestContext("test", DateTimeOffset.Now, true));
 		var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
@@ -69,7 +70,7 @@ public class HostFixture : IAsyncLifetime
 	public E5EResponse ReadResponse()
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
+		              throw new InvalidOperationException("There's no console registered");
 		var options = Host.Services.GetRequiredService<E5ERuntimeOptions>();
 
 		var line = console.ReadLineFromStdout();
@@ -90,14 +91,14 @@ public class HostFixture : IAsyncLifetime
 	public string GetStdout()
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
+		              throw new InvalidOperationException("There's no console registered");
 		return console.Stdout();
 	}
 
 	public string GetStderr()
 	{
 		var console = Host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-					  throw new InvalidOperationException("There's no console registered");
+		              throw new InvalidOperationException("There's no console registered");
 		return console.Stderr();
 	}
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
+using Anexia.E5E.Extensions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Tests.Helpers;
 
@@ -23,7 +24,8 @@ public class ConsoleAbstractionTest
 	{
 		// set dummy stdin
 		Console.SetIn(new StreamReader(new MemoryStream()));
-		_host = E5EApplication.CreateBuilder(new TestE5ERuntimeOptions())
+		_host = Host.CreateDefaultBuilder()
+			.UseAnexiaE5E(new TestE5ERuntimeOptions())
 			.ConfigureLogging(l => l.AddXUnit(outputHelper))
 			.Build();
 	}
