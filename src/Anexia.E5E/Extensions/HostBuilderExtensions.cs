@@ -59,29 +59,47 @@ public static class HostBuilderExtensions
 		}
 
 
-		public IHostBuilder ConfigureHostConfiguration(Action<IConfigurationBuilder> configureDelegate) =>
+		public IHostBuilder ConfigureHostConfiguration(Action<IConfigurationBuilder> configureDelegate)
+		{
 			_inner.ConfigureHostConfiguration(configureDelegate);
+			return this;
+		}
 
 
 		public IHostBuilder ConfigureAppConfiguration(
-			Action<HostBuilderContext, IConfigurationBuilder> configureDelegate) =>
+			Action<HostBuilderContext, IConfigurationBuilder> configureDelegate)
+		{
 			_inner.ConfigureAppConfiguration(configureDelegate);
+			return this;
+		}
 
 
-		public IHostBuilder ConfigureServices(Action<HostBuilderContext, IServiceCollection> configureDelegate) =>
+		public IHostBuilder ConfigureServices(Action<HostBuilderContext, IServiceCollection> configureDelegate)
+		{
 			_inner.ConfigureServices(configureDelegate);
+			return this;
+		}
 #nullable disable
 		public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(
-			IServiceProviderFactory<TContainerBuilder> factory) =>
+			IServiceProviderFactory<TContainerBuilder> factory)
+		{
 			_inner.UseServiceProviderFactory(factory);
+			return this;
+		}
 
 		public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(
-			Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory) =>
+			Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory)
+		{
 			_inner.UseServiceProviderFactory(factory);
+			return this;
+		}
 
 		public IHostBuilder ConfigureContainer<TContainerBuilder>(
-			Action<HostBuilderContext, TContainerBuilder> configureDelegate) =>
+			Action<HostBuilderContext, TContainerBuilder> configureDelegate)
+		{
 			_inner.ConfigureContainer(configureDelegate);
+			return this;
+		}
 #nullable restore
 
 
