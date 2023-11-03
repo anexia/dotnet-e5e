@@ -1,7 +1,7 @@
 dotnet-e5e
 ===============
-[![Nuget](https://img.shields.io/nuget/v/Anexia.E5E)](https://www.nuget.org/packages/Anexia.E5E)
-[![Test status](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml)
+[![](https://img.shields.io/nuget/v/Anexia.E5E "The version badge for NuGet")](https://www.nuget.org/packages/Anexia.E5E)
+[![](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml/badge.svg?branch=main "CI status")](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml)
 
 `dotnet-e5e` is a client library for Anexia e5e - our *Functions as a Service* offering.
 With our client library, it's easy to build functions that can scale indefinitely!
