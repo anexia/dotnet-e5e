@@ -5,6 +5,15 @@ Anexia.E5E.Abstractions.IConsoleAbstraction.Open() -> void
 Anexia.E5E.Abstractions.IConsoleAbstraction.ReadLineFromStdinAsync(System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
 Anexia.E5E.Abstractions.IConsoleAbstraction.WriteToStderrAsync(string? s) -> System.Threading.Tasks.Task!
 Anexia.E5E.Abstractions.IConsoleAbstraction.WriteToStdoutAsync(string? s) -> System.Threading.Tasks.Task!
+Anexia.E5E.Abstractions.ConsoleAbstraction
+Anexia.E5E.Abstractions.ConsoleAbstraction.ConsoleAbstraction() -> void
+Anexia.E5E.Abstractions.ConsoleAbstraction.Open() -> void
+Anexia.E5E.Abstractions.ConsoleAbstraction.Close() -> void
+Anexia.E5E.Abstractions.ConsoleAbstraction.Dispose() -> void
+Anexia.E5E.Abstractions.ConsoleAbstraction.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Anexia.E5E.Abstractions.ConsoleAbstraction.ReadLineFromStdinAsync(System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
+Anexia.E5E.Abstractions.ConsoleAbstraction.WriteToStderrAsync(string? s) -> System.Threading.Tasks.Task!
+Anexia.E5E.Abstractions.ConsoleAbstraction.WriteToStdoutAsync(string? s) -> System.Threading.Tasks.Task!
 Anexia.E5E.Exceptions.E5EEntrypointAlreadyRegisteredException
 Anexia.E5E.Exceptions.E5EEntrypointAlreadyRegisteredException.Entrypoint.get -> string!
 Anexia.E5E.Exceptions.E5EException

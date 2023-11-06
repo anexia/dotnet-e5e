@@ -1,5 +1,3 @@
-using Anexia.E5E.Extensions;
-
 using Microsoft.Extensions.Hosting;
 
 namespace Anexia.E5E.Abstractions;
@@ -41,78 +39,4 @@ public interface IConsoleAbstraction : IDisposable, IAsyncDisposable
 	/// </summary>
 	/// <param name="s">The text to write.</param>
 	Task WriteToStderrAsync(string? s);
-}
-
-internal sealed class ConsoleAbstraction : IConsoleAbstraction
-{
-	private StreamReader? _stdin;
-	private StreamWriter? _stdout;
-	private StreamWriter? _stderr;
-
-	public void Open()
-	{
-		var stdinStream = Console.OpenStandardInput();
-		var stdoutStream = Console.OpenStandardOutput();
-		var stderrStream = Console.OpenStandardError();
-
-		_stdin = new StreamReader(stdinStream);
-		_stdout = new StreamWriter(stdoutStream);
-		_stderr = new StreamWriter(stderrStream);
-	}
-
-	public void Close() => this.Dispose();
-
-	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
-	{
-		if (_stdin is null)
-			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
-
-
-		string? line;
-		try
-		{
-			line = await _stdin.ReadLineAsync().WithWaitCancellation(token).ConfigureAwait(false);
-		}
-		catch (TaskCanceledException)
-		{
-			return null;
-		}
-
-		return line;
-	}
-
-	public async Task WriteToStdoutAsync(string? s)
-	{
-		if (_stdout is null)
-			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
-
-		await _stdout.WriteAsync(s).ConfigureAwait(false);
-		await _stdout.FlushAsync().ConfigureAwait(false);
-	}
-
-	public async Task WriteToStderrAsync(string? s)
-	{
-		if (_stderr is null)
-			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
-
-		await _stderr.WriteAsync(s).ConfigureAwait(false);
-		await _stderr.FlushAsync().ConfigureAwait(false);
-	}
-
-	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-	public void Dispose()
-	{
-		_stdin?.Dispose();
-		_stdout?.Dispose();
-		_stderr?.Dispose();
-	}
-
-	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.</summary>
-	/// <returns>A task that represents the asynchronous dispose operation.</returns>
-	public async ValueTask DisposeAsync()
-	{
-		_stdin?.Dispose();
-		if (_stdout != null) await _stdout.DisposeAsync().ConfigureAwait(false);
-		if (_stderr != null) await _stderr.DisposeAsync().ConfigureAwait(false);
-	}
 }
