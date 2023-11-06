@@ -22,6 +22,8 @@ public static class HostExtensions
 	/// <typeparam name="T">The type of the handler.</typeparam>
 	public static void RegisterEntrypoint<T>(this IHost host, string entrypoint) where T : IE5EFunctionHandler
 	{
+		ArgumentNullException.ThrowIfNull(host);
+
 		var resolver = host.Services.GetRequiredService<E5EFunctionHandlerResolver>();
 		resolver.Add(entrypoint, typeof(T));
 	}
@@ -34,6 +36,8 @@ public static class HostExtensions
 	/// <param name="func">The handler.</param>
 	public static void RegisterEntrypoint(this IHost host, string entrypoint, Func<E5ERequest, Task<E5EResponse>> func)
 	{
+		ArgumentNullException.ThrowIfNull(host);
+
 		var resolver = host.Services.GetRequiredService<E5EFunctionHandlerResolver>();
 		resolver.Add(entrypoint, new E5EInlineFunctionHandler(func));
 	}

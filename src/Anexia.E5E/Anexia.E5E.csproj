@@ -17,6 +17,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AnalysisMode>Recommended</AnalysisMode>
 		<AnalysisLevelDocumentation>latest</AnalysisLevelDocumentation>
+		<AnalysisModeReliability>All</AnalysisModeReliability>
 	</PropertyGroup>
 
 	<ItemGroup>
