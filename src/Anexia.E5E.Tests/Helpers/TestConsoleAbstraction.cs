@@ -115,8 +115,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public void WriteToStdin(string s)
 	{
-		_logger.LogDebug("Wrote {text} to stdin", s);
 		_stdin.Enqueue(s);
+		_logger.LogDebug("Wrote {text} to stdin", s);
 	}
 
 	public string ReadLineFromStdout()
@@ -142,5 +142,10 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	/// This is a workaround only required for tests, because otherwise the <see cref="IHost"/> might be closed
 	/// before the first line was even read.
 	/// </summary>
-	public void WaitForFirstWriteAction() => _wroteFirstTimeCts.Token.WaitHandle.WaitOne(DefaultTimeoutMs);
+	public void WaitForFirstWriteAction()
+	{
+		_logger.LogDebug("Waiting for first write action...");
+		_wroteFirstTimeCts.Token.WaitHandle.WaitOne(DefaultTimeoutMs);
+		_logger.LogDebug("Line to _stdout written: {Line}", _stdout.Peek());
+	}
 }

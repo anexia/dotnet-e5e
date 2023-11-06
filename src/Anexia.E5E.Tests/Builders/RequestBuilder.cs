@@ -4,7 +4,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
-using Anexia.E5E.Tests.Fixtures;
+using Anexia.E5E.Tests.TestHelpers;
+
+using Microsoft.Extensions.Hosting;
 
 namespace Anexia.E5E.Tests.Builders;
 
@@ -13,7 +15,7 @@ public interface IE5ERequestBuilder
 	E5EEvent Build();
 
 	// TODO: refactor into HostFixture itself
-	Task SendAndShutdownAsync(HostFixture host) => host.WriteToStdinOnceAsync(Build());
+	Task SendAndShutdownAsync(IHost host) => host.WriteToStdinOnceAsync(Build());
 
 	IE5ERequestBuilder AddHeader(string key, string value);
 	IE5ERequestBuilder AddParam(string key, string value);
