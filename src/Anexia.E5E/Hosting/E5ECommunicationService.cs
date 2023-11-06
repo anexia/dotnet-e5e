@@ -49,7 +49,7 @@ internal sealed class E5ECommunicationService : BackgroundService
 		{
 			_console.Open();
 			await Task.Yield();
-			await ListenForIncomingMessagesAsync(stoppingToken);
+			await ListenForIncomingMessagesAsync(stoppingToken).ConfigureAwait(false);
 		}
 		catch (E5EException e)
 		{
@@ -77,10 +77,9 @@ internal sealed class E5ECommunicationService : BackgroundService
 	private async Task ListenForIncomingMessagesAsync(CancellationToken stoppingToken)
 	{
 		_logger.ListeningForIncomingMessages();
-
 		while (!stoppingToken.IsCancellationRequested)
 		{
-			var line = await _console.ReadLineFromStdinAsync(stoppingToken);
+			var line = await _console.ReadLineFromStdinAsync(stoppingToken).ConfigureAwait(false);
 			line = line?.TrimEnd();
 
 			// Skip empty lines. They shouldn't occur in production, but can happen during testing.
@@ -93,15 +92,15 @@ internal sealed class E5ECommunicationService : BackgroundService
 
 			try
 			{
-				var response = await RespondToLineAsync(line, stoppingToken);
-				await _console.WriteToStdoutAsync(response);
+				var response = await RespondToLineAsync(line, stoppingToken).ConfigureAwait(false);
+				await _console.WriteToStdoutAsync(response).ConfigureAwait(false);
 			}
 			finally
 			{
 				// We need to notify the engine of the execution end, otherwise it'll run into a deadlock.
 				// This also needs to happen regardless if there's an error or not.
-				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence);
-				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence);
+				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
+				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
 			}
 
 			// If we should keep it alive (which is notably the default), do that.
@@ -141,7 +140,7 @@ internal sealed class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.ExecuteFunction(handler.GetType(), request);
-			response = await handler.HandleAsync(request, stoppingToken);
+			response = await handler.HandleAsync(request, stoppingToken).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{

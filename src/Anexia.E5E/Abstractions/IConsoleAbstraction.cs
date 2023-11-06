@@ -71,7 +71,7 @@ internal sealed class ConsoleAbstraction : IConsoleAbstraction
 		string? line;
 		try
 		{
-			line = await _stdin.ReadLineAsync().WithWaitCancellation(token);
+			line = await _stdin.ReadLineAsync().WithWaitCancellation(token).ConfigureAwait(false);
 		}
 		catch (TaskCanceledException)
 		{
@@ -86,8 +86,8 @@ internal sealed class ConsoleAbstraction : IConsoleAbstraction
 		if (_stdout is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
 
-		await _stdout.WriteAsync(s);
-		await _stdout.FlushAsync();
+		await _stdout.WriteAsync(s).ConfigureAwait(false);
+		await _stdout.FlushAsync().ConfigureAwait(false);
 	}
 
 	public async Task WriteToStderrAsync(string? s)
@@ -95,8 +95,8 @@ internal sealed class ConsoleAbstraction : IConsoleAbstraction
 		if (_stderr is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
 
-		await _stderr.WriteAsync(s);
-		await _stderr.FlushAsync();
+		await _stderr.WriteAsync(s).ConfigureAwait(false);
+		await _stderr.FlushAsync().ConfigureAwait(false);
 	}
 
 	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
@@ -112,7 +112,7 @@ internal sealed class ConsoleAbstraction : IConsoleAbstraction
 	public async ValueTask DisposeAsync()
 	{
 		_stdin?.Dispose();
-		if (_stdout != null) await _stdout.DisposeAsync();
-		if (_stderr != null) await _stderr.DisposeAsync();
+		if (_stdout != null) await _stdout.DisposeAsync().ConfigureAwait(false);
+		if (_stderr != null) await _stderr.DisposeAsync().ConfigureAwait(false);
 	}
 }

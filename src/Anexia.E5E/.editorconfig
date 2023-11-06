@@ -1,0 +1,2 @@
+# Errors
+dotnet_diagnostic.CA2007.severity = error # Consider calling ConfigureAwait on the awaited task

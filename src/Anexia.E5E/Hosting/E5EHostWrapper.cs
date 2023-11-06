@@ -29,14 +29,14 @@ internal sealed class E5EHostWrapper : IHost
 	{
 		if (!_options.WriteMetadataOnStartup)
 		{
-			await _host.StartAsync(cancellationToken);
+			await _host.StartAsync(cancellationToken).ConfigureAwait(false);
 			return;
 		}
 
 		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
 
-		await using (IConsoleAbstraction c = _console)
-			await c.WriteToStdoutAsync(metadata);
+		await _console.WriteToStdoutAsync(metadata).ConfigureAwait(false);
+		_console.Close();
 
 		// If we wrote the metadata, circumvent the default host mechanism as used by Run/RunAsync extensions
 		// and just stop the application.
