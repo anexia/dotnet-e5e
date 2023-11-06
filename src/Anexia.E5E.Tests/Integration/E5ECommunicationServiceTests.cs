@@ -24,8 +24,12 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 	{
 		Host.SetTestEntrypoint(_ => throw new Exception("This method should not have been called"));
 		await Host.WriteToStdinOnceAsync("ping");
-		Assert.Equal("pong---", Host.GetStdout());
-		Assert.Equal("---", Host.GetStderr());
+
+		var stdout = await Host.GetStdoutAsync();
+		Assert.Equal("pong---", stdout);
+
+		var stderr = await Host.GetStderrAsync();
+		Assert.Equal("---", stderr);
 	}
 
 	[Fact]
@@ -34,7 +38,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 		Host.SetTestEntrypoint(_ => E5EResponse.From("test"));
 		await E5ERequestBuilder.New("hello").SendAndShutdownAsync(Host);
 
-		var resp = Host.ReadResponse();
+		var resp = await Host.ReadResponseAsync();
 		Assert.Equal("test", resp.Text());
 	}
 
@@ -54,7 +58,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 			.AddHeader(headerName, "application/json")
 			.SendAndShutdownAsync(Host);
 
-		var resp = Host.ReadResponse();
+		var resp = await Host.ReadResponseAsync();
 		Assert.Equal("application/json", resp.Text());
 	}
 
@@ -75,7 +79,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 			.AddParam(parameterName, "this is my parameter")
 			.SendAndShutdownAsync(Host);
 
-		var resp = Host.ReadResponse();
+		var resp = await Host.ReadResponseAsync();
 		Assert.Equal("this is my parameter", resp.As<List<string>>().FirstOrDefault());
 	}
 
@@ -85,7 +89,8 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 		Host.SetTestEntrypoint(_ => E5EResponse.From("response"));
 		await E5ERequestBuilder.New("request").SendAndShutdownAsync(Host);
 
-		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", Host.GetStdout());
+		var stdout = await Host.GetStdoutAsync();
+		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", stdout);
 	}
 
 	[Fact]
@@ -94,6 +99,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 		Host.SetTestEntrypoint(_ => E5EResponse.From("response"));
 		await E5ERequestBuilder.New("request").SendAndShutdownAsync(Host);
 
-		Assert.Equal("---", Host.GetStderr());
+		var stderr = await Host.GetStderrAsync();
+		Assert.Equal("---", stderr);
 	}
 }

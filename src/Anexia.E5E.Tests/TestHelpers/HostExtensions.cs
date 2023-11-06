@@ -16,13 +16,13 @@ namespace Anexia.E5E.Tests.TestHelpers;
 
 public static class HostExtensions
 {
-	public static Task WriteToStdinOnceAsync(this IHost host, string input)
+	public static async Task WriteToStdinOnceAsync(this IHost host, string input)
 	{
 		var console = host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
 		console.WriteToStdin(input);
-		console.WaitForFirstWriteAction();
-		return host.StopAsync(TimeSpan.FromSeconds(3));
+		await console.WaitForFirstWriteAsync();
+		await host.StopAsync(TimeSpan.FromSeconds(3));
 	}
 
 	public static Task WriteToStdinOnceAsync(this IHost host, E5EEvent evt)
@@ -32,39 +32,33 @@ public static class HostExtensions
 		return host.WriteToStdinOnceAsync(json);
 	}
 
-	public static E5EResponse ReadResponse(this IHost host)
+	public static async Task<E5EResponse> ReadResponseAsync(this IHost host)
 	{
 		var console = host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
 		var options = host.Services.GetRequiredService<E5ERuntimeOptions>();
-
-		var line = console.ReadLineFromStdout();
-		while (!line.StartsWith(options.StdoutTerminationSequence))
-		{
-			line = console.ReadLineFromStdout();
-		}
-
-		// Remove the termination sequence from the line
-		line = line[options.StdoutTerminationSequence.Length..];
-
-		var resp = JsonSerializer.Deserialize<E5EResponse>(line, E5EJsonSerializerOptions.Default);
+		var stdout = await console.GetStdoutAsync();
+		var json = stdout
+			.Replace(options.StdoutTerminationSequence, "")
+			.Replace(options.DaemonExecutionTerminationSequence, "");
+		var resp = JsonSerializer.Deserialize<E5EResponse>(json, E5EJsonSerializerOptions.Default);
 
 		// ReSharper disable once NullableWarningSuppressionIsUsed
 		return resp!;
 	}
 
-	public static string GetStdout(this IHost host)
+	public static Task<string> GetStdoutAsync(this IHost host)
 	{
 		var console = host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
-		return console.Stdout();
+		return console.GetStdoutAsync();
 	}
 
-	public static string GetStderr(this IHost host)
+	public static Task<string> GetStderrAsync(this IHost host)
 	{
 		var console = host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
 					  throw new InvalidOperationException("There's no console registered");
-		return console.Stderr();
+		return console.GetStderrAsync();
 	}
 
 	public static void SetTestEntrypoint(this IHost host, Func<E5ERequest, E5EResponse> func)

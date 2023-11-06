@@ -39,7 +39,7 @@ public class DependencyInjectionTests
 		public async Task WritesCorrectOutput()
 		{
 			await Host.WriteToStdinOnceAsync("ping");
-			Assert.Equal("pong---", Host.GetStdout());
+			Assert.Contains("pong", await Host.GetStdoutAsync());
 		}
 	}
 

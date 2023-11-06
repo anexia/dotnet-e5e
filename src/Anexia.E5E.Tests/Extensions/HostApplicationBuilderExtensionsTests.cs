@@ -53,17 +53,19 @@ public class HostApplicationBuilderExtensionsTests
 
 	public class MetadataOnStartup : IntegrationTestBase
 	{
-		protected override IHostBuilder ConfigureE5E(IHostBuilder builder) => builder.UseAnexiaE5E(new[] { "metadata" });
+		protected override IHostBuilder ConfigureE5E(IHostBuilder builder) =>
+			builder.UseAnexiaE5E(new[] { "metadata" });
 
 		public MetadataOnStartup(ITestOutputHelper outputHelper) : base(outputHelper)
 		{
 		}
 
 		[Fact]
-		public void OutputMatches()
+		public async Task OutputMatches()
 		{
 			var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
-			Assert.Equal(expected, Host.GetStdout());
+			string stdout = await Host.GetStdoutAsync();
+			Assert.Equal(expected, stdout);
 		}
 
 		[Fact]
