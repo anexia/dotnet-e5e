@@ -29,6 +29,7 @@ public sealed class UnitTestConsoleFormatter : ConsoleFormatter
 		TextWriter textWriter)
 	{
 		textWriter.WriteLine($"{_opts.TestName} ({DateTimeOffset.Now.ToLocalTime():T}): {logEntry.State}");
+		if (logEntry.Exception is not null) textWriter.WriteLine($"\t{logEntry.Exception}");
 	}
 }
 
