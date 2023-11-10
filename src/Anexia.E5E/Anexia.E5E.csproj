@@ -9,7 +9,7 @@
 		<Company>Anexia</Company>
 		<Description>A helper library to help you build serverless functions on top of the Anexia Engine.</Description>
 		<License>MIT</License>
-		<RepositoryUrl>https://github.com/anexia/dotnet-e5e</RepositoryUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>anexia,faas</PackageTags>
 		<PackRelease>true</PackRelease>
@@ -28,16 +28,7 @@
 	<PropertyGroup Condition="Configuration == Release">
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-
-		<!-- Enable deterministic builds using SourceLink (https://github.com/dotnet/sourcelink) -->
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,7 +38,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0"/>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0"/>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
 	</ItemGroup>
 
 </Project>
