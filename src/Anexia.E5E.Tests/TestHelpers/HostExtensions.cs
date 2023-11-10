@@ -32,6 +32,12 @@ public static class HostExtensions
 		return host.WriteToStdinOnceAsync(json);
 	}
 
+	public static Task WriteToStdinOnceAsync(this IHost host, E5ERequest req)
+	{
+		var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
+		return host.WriteToStdinOnceAsync(json);
+	}
+
 	public static async Task<E5EResponse> ReadResponseAsync(this IHost host)
 	{
 		var console = host.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??

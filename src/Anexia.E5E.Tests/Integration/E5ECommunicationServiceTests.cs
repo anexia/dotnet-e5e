@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
@@ -60,6 +61,25 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 
 		var resp = await Host.ReadResponseAsync();
 		Assert.Equal("application/json", resp.Text());
+	}
+
+	[Fact]
+	public async Task DataIsReceived()
+	{
+		Host.SetTestEntrypoint(req =>
+		{
+			Assert.NotNull(req.Context.Data);
+			Assert.Equal("data", req.Context.Data.ToString());
+
+			return E5EResponse.From("success");
+		});
+
+
+		var evt = E5ERequestBuilder.New("hello").Build();
+		var ctx = new E5ERequestContext("test", DateTimeOffset.Now, true,
+			JsonSerializer.SerializeToElement("data"));
+
+		await Host.WriteToStdinOnceAsync(new E5ERequest(evt, ctx));
 	}
 
 	[Fact]
