@@ -23,8 +23,13 @@ public static class HostBuilderExtensions
 	/// <param name="hb">The host builder.</param>
 	/// <param name="args">The command line arguments.</param>
 	/// <exception cref="E5EMissingArgumentsException">Thrown if there are missing arguments.</exception>
-	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, string[] args)
-		=> UseAnexiaE5E(hb, E5ERuntimeOptions.Parse(args));
+	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, string[]? args = null)
+	{
+		// Environment.GetCommandLineArgs() *includes* the program name while args (passed via Main) doesn't, therefore
+		// we skip the first element.
+		args ??= Environment.GetCommandLineArgs()[1..];
+		return UseAnexiaE5E(hb, E5ERuntimeOptions.Parse(args));
+	}
 
 	/// <summary>
 	/// Adds the e5e support to the given <see cref="IHostBuilder"/> with the given <see cref="E5ERuntimeOptions"/>.

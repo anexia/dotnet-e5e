@@ -110,6 +110,6 @@ static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint<T>(this Microsoft
 static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Type! handlerType) -> void
 Anexia.E5E.Extensions.HostBuilderExtensions
 static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Microsoft.Extensions.Hosting.IHostBuilder!
-static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]! args) -> Microsoft.Extensions.Hosting.IHostBuilder!
+static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]? args = null) -> Microsoft.Extensions.Hosting.IHostBuilder!
 static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddFunctionHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Type! serviceType) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddFunctionHandler<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
