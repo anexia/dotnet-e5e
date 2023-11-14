@@ -5,19 +5,30 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<Authors>Jasmin Oster</Authors>
-		<Company>Anexia</Company>
-		<Description>A helper library to help you build serverless functions on top of the Anexia Engine.</Description>
-		<License>MIT</License>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageTags>anexia,faas</PackageTags>
 		<PackRelease>true</PackRelease>
-		<EnablePackageValidation>true</EnablePackageValidation>
+
+		<!-- NuGet specific metadata, according to: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/nuget#important-nuget-package-metadata -->
+		<PackageId>Anexia.E5E</PackageId>
+		<PackageVersion>1.0.0</PackageVersion> <!-- This is a placeholder, overridden by Nerdbank.GitVersioning -->
+		<Description>A helper library to help you build serverless functions on top of the Anexia Engine.</Description>
+		<Authors>anexia</Authors> <!-- needs to match the NuGet profiles -->
+		<Company>ANEXIA Internetdienstleistungs GmbH</Company>
+		<PackageTags>anexia;faas</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/anexia/dotnet-e5e/</PackageProjectUrl>
+
+		<!--Build documentation based on XML metadata -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<!-- Analyzer configuration to incorporate best practices -->
+		<EnablePackageValidation>true</EnablePackageValidation>
 		<AnalysisMode>Recommended</AnalysisMode>
 		<AnalysisLevelDocumentation>latest</AnalysisLevelDocumentation>
 		<AnalysisModeReliability>All</AnalysisModeReliability>
+
+		<!-- Build a *.snupkg symbol package for easier debugging: https://learn.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg#creating-a-symbol-package -->
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,7 +39,6 @@
 	<PropertyGroup Condition="Configuration == Release">
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
