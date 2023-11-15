@@ -92,5 +92,5 @@ await host.RunAsync();
 
 |          | Supported |
 |----------|-----------|
-| .Net 6.0 | ✓         |
-| .Net 7.0 | ✓         |
+| .NET 6.0 | ✓         |
+| .NET 8.0 | ✓         |
