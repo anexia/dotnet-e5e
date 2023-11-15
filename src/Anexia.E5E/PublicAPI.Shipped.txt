@@ -107,6 +107,7 @@ Anexia.E5E.Runtime.E5ERuntimeMetadata.RuntimeVersion.get -> string!
 static readonly Anexia.E5E.Runtime.E5ERuntimeMetadata.Current -> Anexia.E5E.Runtime.E5ERuntimeMetadata!
 static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Func<Anexia.E5E.Functions.E5ERequest!, System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!>! func) -> void
 static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint<T>(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint) -> void
+static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Type! handlerType) -> void
 Anexia.E5E.Extensions.HostBuilderExtensions
 static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Microsoft.Extensions.Hosting.IHostBuilder!
 static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]! args) -> Microsoft.Extensions.Hosting.IHostBuilder!
