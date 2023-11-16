@@ -35,6 +35,7 @@ internal sealed class E5EHostWrapper : IHost
 
 		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
 
+		_console.Open();
 		await _console.WriteToStdoutAsync(metadata).ConfigureAwait(false);
 		_console.Close();
 

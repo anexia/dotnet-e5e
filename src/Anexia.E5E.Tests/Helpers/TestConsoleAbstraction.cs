@@ -14,6 +14,7 @@ namespace Anexia.E5E.Tests.Helpers;
 public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
+	private bool _isOpen = false;
 
 	private readonly TaskCompletionSource<string> _stderrCompletion = new();
 	private readonly TaskCompletionSource<string> _stdoutCompletion = new();
@@ -35,10 +36,13 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	public void Open()
 	{
 		_logger.LogDebug("Console opened for reading");
+		_isOpen = true;
 	}
 
 	public void Close()
 	{
+		if (!_isOpen) throw new InvalidOperationException("Cannot close an already closed console");
+		
 		_logger.LogDebug("Closing console");
 
 		_stdoutCompletion.TrySetResult(_stdoutStr.ToString());
@@ -53,6 +57,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
+		if (!_isOpen) throw new InvalidOperationException("Cannot read from a closed console");
+		
 		await Task.Yield();
 		string? res = null;
 		while (!token.IsCancellationRequested && !_stdin.TryDequeue(out res))
@@ -65,6 +71,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public Task WriteToStdoutAsync(string? s)
 	{
+		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
+		
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
@@ -79,6 +87,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public Task WriteToStderrAsync(string? s)
 	{
+		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
+		
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
@@ -110,6 +120,8 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public void WriteToStdin(string s)
 	{
+		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
+		
 		_stdin.Enqueue(s);
 		_logger.LogDebug("Wrote {text} to stdin", s);
 	}
