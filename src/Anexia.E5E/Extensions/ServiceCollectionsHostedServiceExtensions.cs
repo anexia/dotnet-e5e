@@ -20,7 +20,7 @@ public static class ServiceCollectionHostedServiceExtensions
 		AddFunctionHandler(services, typeof(T));
 
 	/// <summary>
-	/// Registers an implementation of the given type for the usage with <see cref="HostExtensions.RegisterEntrypoint"/> and scoped lifetime.
+	/// Registers an implementation of the given type for the usage with <see cref="HostExtensions.RegisterEntrypoint(Microsoft.Extensions.Hosting.IHost,string,System.Type)"/> and scoped lifetime.
 	/// </summary>
 	/// <param name="services">The service collection.</param>
 	/// <param name="serviceType">The type of the service.</param>
