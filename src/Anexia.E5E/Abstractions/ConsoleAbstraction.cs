@@ -47,6 +47,7 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 		if (_stdin is null)
 			throw new InvalidOperationException("Use the Open() method on the console abstraction before using it.");
 
+
 		string? line;
 		try
 		{

@@ -14,11 +14,8 @@ namespace Anexia.E5E.Tests.Helpers;
 public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
-
 	private readonly Queue<string> _stderr = new();
-
 	private readonly TaskCompletionSource<string> _stderrCompletion = new();
-
 	private readonly StringBuilder _stderrStr = new();
 	private readonly Queue<string> _stdin = new();
 	private readonly Queue<string> _stdout = new();
@@ -31,7 +28,6 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	{
 		_logger = logger;
 	}
-
 
 	public void Open()
 	{
@@ -50,7 +46,6 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 		_logger.LogDebug("Closed console");
 	}
-
 
 	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
