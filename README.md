@@ -1,7 +1,9 @@
 dotnet-e5e
-===============
-[![](https://img.shields.io/nuget/v/Anexia.E5E "The version badge for NuGet")](https://www.nuget.org/packages/Anexia.E5E)
-[![](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml/badge.svg?branch=main "CI status")](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml)
+==========
+[![](https://img.shields.io/nuget/v/Anexia.E5E "The version badge for NuGet")](https://www.nuget.org/packages/Anexia.
+E5E)
+[![](https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml/badge.svg?branch=main "Test status")]
+(https://github.com/anexia/dotnet-e5e/actions/workflows/test.yml)
 
 `dotnet-e5e` is a client library for Anexia e5e - our *Functions as a Service* offering.
 With our client library, it's easy to build functions that can scale indefinitely!
@@ -28,6 +30,7 @@ dotnet add package Anexia.E5E
 ```
 
 ### Inline handler
+
 With that, we have a `Program.cs` that we can modify to use our library:
 
 ```cs
@@ -39,10 +42,13 @@ using var host = Host.CreateDefaultBuilder(args)
 	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
 	.Build();
 
-// Register our entrypoint "Hello" which just responds with "test", ignoring the request.
-host.RegisterEntrypoint("Hello", _ =>
+// Register our entrypoint "Hello" which just responds with the name of the person.
+host.RegisterEntrypoint("Hello", request =>
 {
-	var res = E5EResponse.From("test");
+	var (evt, context) = request;
+	// Let's assume we got the name as a plain text message.
+	var name = evt.AsText();
+	var res = E5EResponse.From($"Hello {name}");
 	return Task.FromResult(res);
 });
 
@@ -59,10 +65,20 @@ A very simple adaption of the above handler would look like this:
 using Anexia.E5E.Functions;
 
 public class HelloHandler : IE5EFunctionHandler {
-  public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken token = default) {
-    var res = E5EResponse.From("test");
-  	return Task.FromResult(res);
-  }
+	private readonly ILogger<HelloHandler> _logger; 
+	public HelloHandler(ILogger<HelloHandler> logger) {
+		_logger = logger;
+	}
+	
+	public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken token = default) {
+		_logger.LogDebug("Received a {Request}", request);
+		
+		var (evt, context) = request;
+		// Let's assume we got the name as a plain text message.
+		var name = evt.AsText();
+		var res = E5EResponse.From($"Hello {name}");
+		return Task.FromResult(res);
+	}
 }
 ```
 
@@ -75,9 +91,9 @@ using Anexia.E5E.Functions;
 
 using var host = Host.CreateDefaultBuilder(args)
 	.UseAnexiaE5E(args)
-    .ConfigureServices(services => {
-        services.AddFunctionHandler<HelloHandler>();
-    })
+	.ConfigureServices(services => {
+		services.AddFunctionHandler<HelloHandler>();
+	})
 	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
 	.Build();
 
