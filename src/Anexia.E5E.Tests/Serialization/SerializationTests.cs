@@ -140,6 +140,18 @@ public class SerializationTests
 		);
 	}
 
+	[Fact]
+	public void DataIsNotAffectedByPropertyNamingPolicy()
+	{
+		var json = JsonSerializer.Serialize(E5EResponse.From(new DataIsNotAffectedByPropertyNamingPolicyTest()), _options);
+		Assert.Equal(@"{""data"":{""MyProperty"":""value""},""type"":""object""}", json);
+	}
+
+	private class DataIsNotAffectedByPropertyNamingPolicyTest
+	{
+		public string MyProperty { get; set; } = "value";
+	}
+
 	private class SerializationTestsData : IEnumerable<object[]>
 	{
 		private readonly List<object> _objects = new()
