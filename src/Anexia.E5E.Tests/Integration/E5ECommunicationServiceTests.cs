@@ -122,4 +122,12 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 		var stderr = await Host.GetStderrAsync();
 		Assert.Equal("---", stderr);
 	}
+
+	[Fact]
+	public async Task ErrorSetsEnvironmentExitCode()
+	{
+		Host.SetTestEntrypoint(_ => throw new Exception("please fail uwu"));
+		await E5ERequestBuilder.New("request").SendAndShutdownAsync(Host);
+		Assert.NotEqual(0, Environment.ExitCode);
+	}
 }

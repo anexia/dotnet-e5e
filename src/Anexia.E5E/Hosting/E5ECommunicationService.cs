@@ -53,10 +53,12 @@ internal sealed class E5ECommunicationService : BackgroundService
 		catch (E5EException e)
 		{
 			_logger.MessageProcessingFailed(e);
+			Environment.ExitCode = 100;
 		}
 		catch (Exception e)
 		{
 			_logger.UnexpectedRuntimeException(e);
+			Environment.ExitCode = 200;
 			throw;
 		}
 		finally
