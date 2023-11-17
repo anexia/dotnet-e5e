@@ -9,6 +9,10 @@ insert_final_newline = true
 [*.xml]
 indent_size = 2
 
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
 # C# files
 [*.cs]
 
