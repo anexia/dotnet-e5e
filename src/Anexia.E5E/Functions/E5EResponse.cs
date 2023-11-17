@@ -4,48 +4,52 @@ using System.Text.Json;
 namespace Anexia.E5E.Functions;
 
 /// <summary>
-/// The response for a given execution, serialized back as JSON.
+///     The response for a given execution, serialized back as JSON.
 /// </summary>
 public class E5EResponse
 {
 	/// <summary>
-	/// The response data that's serialized back.
+	///     The response data that's serialized back.
 	/// </summary>
 	public JsonElement Data { get; init; }
 
 	/// <summary>
-	/// The type of the <see cref="Data"/>.
+	///     The type of the <see cref="Data" />.
 	/// </summary>
 	public E5EResponseType Type { get; init; }
 
 	/// <summary>
-	/// The HTTP status code that should be returned. Optional.
+	///     The HTTP status code that should be returned. Optional.
 	/// </summary>
 	public HttpStatusCode? Status { get; init; }
 
 	/// <summary>
-	/// A list of HTTP headers that should be attached to the response. Optional.
+	///     A list of HTTP headers that should be attached to the response. Optional.
 	/// </summary>
 	public E5EHttpHeaders? ResponseHeaders { get; init; }
 
 	/// <summary>
-	/// Creates a new <see cref="E5EResponse"/> from the given object with the type <see cref="E5EResponseType.StructuredObject"/>.
+	///     Creates a new <see cref="E5EResponse" /> from the given object with the type
+	///     <see cref="E5EResponseType.StructuredObject" />.
 	/// </summary>
 	/// <param name="cls">The data object.</param>
 	/// <param name="status">An optional HTTP status code.</param>
 	/// <param name="responseHeaders">An optional list of HTTP headers.</param>
-	/// <returns>A valid <see cref="E5EResponse"/> with the given data.</returns>
+	/// <returns>A valid <see cref="E5EResponse" /> with the given data.</returns>
 	public static E5EResponse From<T>(T cls, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
-		where T : class => new()
+		where T : class
+	{
+		return new E5EResponse
 		{
 			Type = cls switch
 			{
 				IEnumerable<char> => E5EResponseType.Text,
 				IEnumerable<byte> => E5EResponseType.Binary,
-				_ => E5EResponseType.StructuredObject
+				_ => E5EResponseType.StructuredObject,
 			},
 			Data = JsonSerializer.SerializeToElement(cls),
 			Status = status,
-			ResponseHeaders = responseHeaders
+			ResponseHeaders = responseHeaders,
 		};
+	}
 }

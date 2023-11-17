@@ -8,17 +8,16 @@ using Anexia.E5E.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Extensions;
 
 /// <summary>
-/// Provides several extensions to setup <see cref="IHostBuilder"/> for the usage with Anexia e5e.
+///     Provides several extensions to setup <see cref="IHostBuilder" /> for the usage with Anexia e5e.
 /// </summary>
 public static class HostBuilderExtensions
 {
 	/// <summary>
-	/// Adds the e5e support to the given <see cref="IHostBuilder"/>.
+	///     Adds the e5e support to the given <see cref="IHostBuilder" />.
 	/// </summary>
 	/// <param name="hb">The host builder.</param>
 	/// <param name="args">The command line arguments.</param>
@@ -32,15 +31,18 @@ public static class HostBuilderExtensions
 	}
 
 	/// <summary>
-	/// Adds the e5e support to the given <see cref="IHostBuilder"/> with the given <see cref="E5ERuntimeOptions"/>.
-	/// This extension method should be used with care and it's almost always better to use <see cref="UseAnexiaE5E(Microsoft.Extensions.Hosting.IHostBuilder,string[])"/> instead.
-	/// It is provided by us to test your handlers in integration tests easily.
+	///     Adds the e5e support to the given <see cref="IHostBuilder" /> with the given <see cref="E5ERuntimeOptions" />.
+	///     This extension method should be used with care and it's almost always better to use
+	///     <see cref="UseAnexiaE5E(Microsoft.Extensions.Hosting.IHostBuilder,string[])" /> instead.
+	///     It is provided by us to test your handlers in integration tests easily.
 	/// </summary>
 	/// <param name="hb">The host builder.</param>
 	/// <param name="options">The runtime options.</param>
 	/// <exception cref="E5EMissingArgumentsException">Thrown if there are missing arguments.</exception>
 	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, E5ERuntimeOptions options)
-		=> new E5EHostBuilderWrapper(hb, options);
+	{
+		return new E5EHostBuilderWrapper(hb, options);
+	}
 
 	private class E5EHostBuilderWrapper : IHostBuilder
 	{
@@ -84,6 +86,14 @@ public static class HostBuilderExtensions
 			_inner.ConfigureServices(configureDelegate);
 			return this;
 		}
+
+
+		public IHost Build()
+		{
+			return new E5EHostWrapper(_inner.Build());
+		}
+
+		public IDictionary<object, object> Properties => _inner.Properties;
 #nullable disable
 		public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(
 			IServiceProviderFactory<TContainerBuilder> factory)
@@ -105,11 +115,5 @@ public static class HostBuilderExtensions
 			_inner.ConfigureContainer(configureDelegate);
 			return this;
 		}
-#nullable restore
-
-
-		public IHost Build() => new E5EHostWrapper(_inner.Build());
-
-		public IDictionary<object, object> Properties => _inner.Properties;
 	}
 }

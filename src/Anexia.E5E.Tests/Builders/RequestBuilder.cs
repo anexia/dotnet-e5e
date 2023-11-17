@@ -15,7 +15,10 @@ public interface IE5ERequestBuilder
 	E5EEvent Build();
 
 	// TODO: refactor into HostFixture itself
-	Task SendAndShutdownAsync(IHost host) => host.WriteToStdinOnceAsync(Build());
+	Task SendAndShutdownAsync(IHost host)
+	{
+		return host.WriteToStdinOnceAsync(Build());
+	}
 
 	IE5ERequestBuilder AddHeader(string key, string value);
 	IE5ERequestBuilder AddParam(string key, string value);
@@ -23,15 +26,17 @@ public interface IE5ERequestBuilder
 
 public static class E5ERequestBuilder
 {
-	public static IE5ERequestBuilder New<T>(T data) =>
-		new E5ERequestBuilderInner(data ?? throw new ArgumentNullException(nameof(data)));
+	public static IE5ERequestBuilder New<T>(T data)
+	{
+		return new E5ERequestBuilderInner(data ?? throw new ArgumentNullException(nameof(data)));
+	}
 
 	private class E5ERequestBuilderInner : IE5ERequestBuilder
 	{
-		private E5ERequestParameters? _parameters;
-		private E5EHttpHeaders? _headers;
 		private readonly JsonElement _data;
 		private readonly E5ERequestDataType? _requestType;
+		private E5EHttpHeaders? _headers;
+		private E5ERequestParameters? _parameters;
 
 		public E5ERequestBuilderInner(object data)
 		{
@@ -39,7 +44,7 @@ public static class E5ERequestBuilder
 			{
 				string => E5ERequestDataType.Text,
 				IEnumerable<byte> => E5ERequestDataType.Binary,
-				_ => E5ERequestDataType.StructuredObject
+				_ => E5ERequestDataType.StructuredObject,
 			};
 
 			_data = JsonSerializer.SerializeToElement(data);

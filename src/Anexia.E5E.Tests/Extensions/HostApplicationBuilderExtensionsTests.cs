@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -53,18 +51,20 @@ public class HostApplicationBuilderExtensionsTests
 
 	public class MetadataOnStartup : IntegrationTestBase
 	{
-		protected override IHostBuilder ConfigureE5E(IHostBuilder builder) =>
-			builder.UseAnexiaE5E(new[] { "metadata" });
-
 		public MetadataOnStartup(ITestOutputHelper outputHelper) : base(outputHelper)
 		{
+		}
+
+		protected override IHostBuilder ConfigureE5E(IHostBuilder builder)
+		{
+			return builder.UseAnexiaE5E(new[] { "metadata" });
 		}
 
 		[Fact]
 		public async Task OutputMatches()
 		{
 			var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
-			string stdout = await Host.GetStdoutAsync();
+			var stdout = await Host.GetStdoutAsync();
 			Assert.Equal(expected, stdout);
 		}
 

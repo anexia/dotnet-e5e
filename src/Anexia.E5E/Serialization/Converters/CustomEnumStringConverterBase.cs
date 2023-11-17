@@ -6,15 +6,19 @@ using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Serialization.Converters;
 
-abstract class CustomEnumStringConverterBase<T> : JsonConverter<T>
+internal abstract class CustomEnumStringConverterBase<T> : JsonConverter<T>
 {
+	protected readonly Dictionary<string, T> _mapping = new();
+
 	/// <summary>Determines whether the specified type can be converted.</summary>
 	/// <param name="typeToConvert">The type to compare against.</param>
 	/// <returns>
-	/// <see langword="true" /> if the type can be converted; otherwise, <see langword="false" />.</returns>
-	public override bool CanConvert(Type typeToConvert) => typeof(T) == typeToConvert;
-
-	protected readonly Dictionary<string, T> _mapping = new();
+	///     <see langword="true" /> if the type can be converted; otherwise, <see langword="false" />.
+	/// </returns>
+	public override bool CanConvert(Type typeToConvert)
+	{
+		return typeof(T) == typeToConvert;
+	}
 
 	/// <summary>Reads and converts the JSON to type <typeparamref name="T" />.</summary>
 	/// <param name="reader">The reader.</param>
@@ -38,7 +42,7 @@ abstract class CustomEnumStringConverterBase<T> : JsonConverter<T>
 	/// <param name="options">An object that specifies serialization options to use.</param>
 	public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 	{
-		(string key, T? _) = _mapping.FirstOrDefault(x => Equals(x.Value, value));
+		var (key, _) = _mapping.FirstOrDefault(x => Equals(x.Value, value));
 		if (key is null)
 			throw new E5ERuntimeException($"The enum ${value} has no known serialization value.");
 

@@ -5,12 +5,12 @@ using Anexia.E5E.Runtime;
 namespace Anexia.E5E.DependencyInjection;
 
 /// <summary>
-/// Resolves the implementation for the entrypoint that's passed during startup.
+///     Resolves the implementation for the entrypoint that's passed during startup.
 /// </summary>
 internal sealed class E5EFunctionHandlerResolver
 {
-	private readonly E5ERuntimeOptions _options;
 	private readonly Dictionary<string, Func<IServiceProvider, IE5EFunctionHandler>> _handlers = new();
+	private readonly E5ERuntimeOptions _options;
 
 	public E5EFunctionHandlerResolver(E5ERuntimeOptions options)
 	{
@@ -24,6 +24,7 @@ internal sealed class E5EFunctionHandlerResolver
 
 		_handlers.Add(entrypoint, _ => handler);
 	}
+
 	public void Add(string entrypoint, Type handler)
 	{
 		if (_handlers.ContainsKey(entrypoint))

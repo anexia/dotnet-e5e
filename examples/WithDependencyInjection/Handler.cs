@@ -5,10 +5,14 @@ namespace WithDependencyInjection;
 public class Handler : IE5EFunctionHandler
 {
 	private readonly ILogger<Handler> _logger;
-	public Handler(ILogger<Handler> logger) => _logger = logger;
+
+	public Handler(ILogger<Handler> logger)
+	{
+		_logger = logger;
+	}
 
 	/// <summary>
-	/// Runs the function with the given request.
+	///     Runs the function with the given request.
 	/// </summary>
 	/// <param name="request">The current request with all the provided metadata.</param>
 	/// <param name="cancellationToken">Used for cancelling the operation on shutdown.</param>

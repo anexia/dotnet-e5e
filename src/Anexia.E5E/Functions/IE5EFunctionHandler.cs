@@ -3,12 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Anexia.E5E.Functions;
 
 /// <summary>
-/// Defines methods for objects that provide function handlers.
+///     Defines methods for objects that provide function handlers.
 /// </summary>
 public interface IE5EFunctionHandler
 {
 	/// <summary>
-	/// Runs the function with the given request.
+	///     Runs the function with the given request.
 	/// </summary>
 	/// <param name="request">The current request with all the provided metadata.</param>
 	/// <param name="cancellationToken">Used for cancelling the operation on shutdown.</param>

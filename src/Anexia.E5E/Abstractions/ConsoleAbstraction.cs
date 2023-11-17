@@ -3,17 +3,18 @@ using Anexia.E5E.Extensions;
 namespace Anexia.E5E.Abstractions;
 
 /// <summary>
-/// The default console abstraction for the E5E library. Writes to <see cref="Console.Out"/> and <see cref="Console.Error"/>,
-/// reads from <see cref="Console.In"/>.
+///     The default console abstraction for the E5E library. Writes to <see cref="Console.Out" /> and
+///     <see cref="Console.Error" />,
+///     reads from <see cref="Console.In" />.
 /// </summary>
 public sealed class ConsoleAbstraction : IConsoleAbstraction
 {
+	private StreamWriter? _stderr;
 	private StreamReader? _stdin;
 	private StreamWriter? _stdout;
-	private StreamWriter? _stderr;
 
 	/// <summary>
-	/// Opens the console streams for reading and writing.
+	///     Opens the console streams for reading and writing.
 	/// </summary>
 	public void Open()
 	{
@@ -27,17 +28,20 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 	}
 
 	/// <summary>
-	/// Closes all streams.
+	///     Closes all streams.
 	/// </summary>
-	public void Close() => this.Dispose();
+	public void Close()
+	{
+		Dispose();
+	}
 
 	/// <summary>
-	/// Reads one line from the standard input, that is <see cref="Console.In"/>. If the method is cancelled with the
-	/// given <see cref="CancellationToken"/>, it returns <code>null</code>.
+	///     Reads one line from the standard input, that is <see cref="Console.In" />. If the method is cancelled with the
+	///     given <see cref="CancellationToken" />, it returns <code>null</code>.
 	/// </summary>
 	/// <param name="token">Token to cancel the operation.</param>
 	/// <returns>The line if any, null if the underlying stream is closed.</returns>
-	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open"/> was not called beforehand.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open" /> was not called beforehand.</exception>
 	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
 		if (_stdin is null)
@@ -57,10 +61,10 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 	}
 
 	/// <summary>
-	/// Writes a given string to <see cref="Console.Out"/> immediately.
+	///     Writes a given string to <see cref="Console.Out" /> immediately.
 	/// </summary>
 	/// <param name="s">The string.</param>
-	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open"/> was not called beforehand.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open" /> was not called beforehand.</exception>
 	public async Task WriteToStdoutAsync(string? s)
 	{
 		if (_stdout is null)
@@ -71,10 +75,10 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 	}
 
 	/// <summary>
-	/// Writes a given string to <see cref="Console.Error"/> immediately.
+	///     Writes a given string to <see cref="Console.Error" /> immediately.
 	/// </summary>
 	/// <param name="s">The string.</param>
-	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open"/> was not called beforehand.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if <see cref="Open" /> was not called beforehand.</exception>
 	public async Task WriteToStderrAsync(string? s)
 	{
 		if (_stderr is null)
@@ -92,7 +96,10 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 		_stderr?.Dispose();
 	}
 
-	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.</summary>
+	/// <summary>
+	///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources
+	///     asynchronously.
+	/// </summary>
 	/// <returns>A task that represents the asynchronous dispose operation.</returns>
 	public async ValueTask DisposeAsync()
 	{

@@ -40,7 +40,10 @@ public class SerializationTests
 
 	[Theory]
 	[ClassData(typeof(SerializationTestsData))]
-	public void ClassCanBeSerialized(object cls) => JsonSerializer.Serialize(cls, _options);
+	public void ClassCanBeSerialized(object cls)
+	{
+		JsonSerializer.Serialize(cls, _options);
+	}
 
 	[Theory]
 	[ClassData(typeof(RequestSerializationTestsData))]
@@ -68,7 +71,8 @@ public class SerializationTests
 		Assert.Multiple(
 			() => Assert.Equal(input.Type, got.Type),
 			() => Assert.Equal(input.RequestHeaders, got.RequestHeaders,
-				E5EHttpHeadersEqualityComparer.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
+				E5EHttpHeadersEqualityComparer
+					.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
 			() => Assert.Equal(input.Data.GetRawText(), got.Data.GetRawText())
 		);
 	}
@@ -85,7 +89,8 @@ public class SerializationTests
 		Assert.Multiple(
 			() => Assert.Equal(input.Status, got.Status),
 			() => Assert.Equal(input.ResponseHeaders, got.ResponseHeaders,
-				E5EHttpHeadersEqualityComparer.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
+				E5EHttpHeadersEqualityComparer
+					.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
 			() => Assert.Equal(input.Data.GetRawText(), got.Data.GetRawText())
 		);
 	}
@@ -135,21 +140,29 @@ public class SerializationTests
 		);
 	}
 
-	class SerializationTestsData : IEnumerable<object[]>
+	private class SerializationTestsData : IEnumerable<object[]>
 	{
 		private readonly List<object> _objects = new()
 		{
 			new E5ERequestContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
-			new E5ERuntimeMetadata()
+			new E5ERuntimeMetadata(),
 		};
 
 		private IEnumerable<object[]> Data => _objects.Select(obj => new[] { obj });
-		public IEnumerator<object[]> GetEnumerator() => Data.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<object[]> GetEnumerator()
+		{
+			return Data.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 	}
 
-	class RequestSerializationTestsData : IEnumerable<object[]>
+	private class RequestSerializationTestsData : IEnumerable<object[]>
 	{
 		private readonly Dictionary<string, E5EEvent> _tests = new()
 		{
@@ -164,32 +177,45 @@ public class SerializationTests
 					.AddParam("param", "value")
 					.AddHeader("Accept", "application/json")
 					.Build()
-			}
+			},
 		};
 
 		private IEnumerable<object[]> Data => _tests.Select(obj => new object[] { obj.Key, obj.Value });
-		public IEnumerator<object[]> GetEnumerator() => Data.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<object[]> GetEnumerator()
+		{
+			return Data.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 	}
 
-	class ResponseSerializationTestsData : IEnumerable<object[]>
+	private class ResponseSerializationTestsData : IEnumerable<object[]>
 	{
 		private readonly Dictionary<string, E5EResponse> _tests = new()
 		{
 			{ "simple text response", E5EResponse.From("test") },
 			{ "simple binary response", E5EResponse.From(Encoding.UTF8.GetBytes("test")) },
+			{ "simple object response", E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } }) },
 			{
-				"simple object response",
-				E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } })
-			},
-			{
-				"text response with headers and status code",E5EResponse.From("test", HttpStatusCode.Moved,
+				"text response with headers and status code", E5EResponse.From("test", HttpStatusCode.Moved,
 					new E5EHttpHeaders { { "Location", "https://example.com" } })
-			}
+			},
 		};
 
 		private IEnumerable<object[]> Data => _tests.Select(obj => new object[] { obj.Key, obj.Value });
-		public IEnumerator<object[]> GetEnumerator() => Data.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<object[]> GetEnumerator()
+		{
+			return Data.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 	}
 }

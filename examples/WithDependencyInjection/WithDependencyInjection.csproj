@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-WithDependencyInjection-71F2AECA-34F3-446D-9C1A-667E41EF823E</UserSecretsId>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dotnet-WithDependencyInjection-71F2AECA-34F3-446D-9C1A-667E41EF823E</UserSecretsId>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\Anexia.E5E\Anexia.E5E.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Anexia.E5E\Anexia.E5E.csproj"/>
+	</ItemGroup>
 </Project>

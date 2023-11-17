@@ -40,7 +40,7 @@ internal sealed class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
 	public override void Write(Utf8JsonWriter writer, E5EHttpHeaders value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
-		foreach ((string? key, IEnumerable<string>? values) in value)
+		foreach (var (key, values) in value)
 			writer.WriteString(key, string.Join(", ", values));
 
 		writer.WriteEndObject();

@@ -15,11 +15,11 @@ namespace Anexia.E5E.Hosting;
 
 internal sealed class E5ECommunicationService : BackgroundService
 {
-	private readonly IServiceProvider _provider;
 	private readonly IConsoleAbstraction _console;
-	private readonly E5ERuntimeOptions _options;
-	private readonly ILogger<E5ECommunicationService> _logger;
 	private readonly IHostApplicationLifetime _lifetime;
+	private readonly ILogger<E5ECommunicationService> _logger;
+	private readonly E5ERuntimeOptions _options;
+	private readonly IServiceProvider _provider;
 
 	public E5ECommunicationService(
 		IServiceProvider provider,
@@ -34,7 +34,6 @@ internal sealed class E5ECommunicationService : BackgroundService
 		_logger = logger;
 		_lifetime = lifetime;
 	}
-
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{

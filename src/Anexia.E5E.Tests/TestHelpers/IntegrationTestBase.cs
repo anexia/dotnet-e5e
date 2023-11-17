@@ -18,7 +18,6 @@ namespace Anexia.E5E.Tests.TestHelpers;
 public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 {
 	private IHostBuilder _builder;
-	protected IHost Host { get; private set; } = null!;
 
 	protected IntegrationTestBase(ITestOutputHelper outputHelper) : base(outputHelper)
 	{
@@ -35,13 +34,10 @@ public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 			});
 	}
 
-	protected virtual IHostBuilder ConfigureE5E(IHostBuilder builder) =>
-		builder.UseAnexiaE5E(new TestE5ERuntimeOptions());
-
-	protected virtual IHostBuilder ConfigureHost(IHostBuilder builder) => builder;
+	protected IHost Host { get; private set; } = null!;
 
 	/// <summary>
-	/// Called immediately after the class has been created, before it is used.
+	///     Called immediately after the class has been created, before it is used.
 	/// </summary>
 	public Task InitializeAsync()
 	{
@@ -49,7 +45,7 @@ public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 		_builder = ConfigureHost(_builder);
 		_builder = _builder.ConfigureServices(services =>
 			services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>());
-		this.Host = _builder.Build();
+		Host = _builder.Build();
 
 		var sw = Stopwatch.StartNew();
 		var lifetime = Host.Services.GetRequiredService<IHostApplicationLifetime>();
@@ -60,12 +56,25 @@ public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 			Assert.InRange(sw.ElapsedMilliseconds, 0, 3000);
 		}, true);
 
-		return this.Host.StartAsync();
+		return Host.StartAsync();
 	}
 
 	/// <summary>
-	/// Called when an object is no longer needed. Called just before <see cref="M:System.IDisposable.Dispose" />
-	/// if the class also implements that.
+	///     Called when an object is no longer needed. Called just before <see cref="M:System.IDisposable.Dispose" />
+	///     if the class also implements that.
 	/// </summary>
-	public Task DisposeAsync() => this.Host.StopAsync(TimeSpan.FromSeconds(1));
+	public Task DisposeAsync()
+	{
+		return Host.StopAsync(TimeSpan.FromSeconds(1));
+	}
+
+	protected virtual IHostBuilder ConfigureE5E(IHostBuilder builder)
+	{
+		return builder.UseAnexiaE5E(new TestE5ERuntimeOptions());
+	}
+
+	protected virtual IHostBuilder ConfigureHost(IHostBuilder builder)
+	{
+		return builder;
+	}
 }

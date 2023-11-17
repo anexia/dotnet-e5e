@@ -18,14 +18,26 @@ namespace Anexia.E5E.Tests.Integration;
 
 public class DependencyInjectionTests
 {
+	[Theory]
+	[InlineData(typeof(IE5EFunctionHandler))] // is an interface
+	[InlineData(typeof(E5ERequest))] // does not implement the interface
+	public void InvalidTypeThrowsError(Type t)
+	{
+		var serviceCollection = new ServiceCollection();
+		Assert.Throws<InvalidOperationException>(() => serviceCollection.AddFunctionHandler(t));
+	}
+
 	public class DependencyInjection_DependenciesAreInjected : IntegrationTestBase
 	{
 		public DependencyInjection_DependenciesAreInjected(ITestOutputHelper outputHelper) : base(outputHelper)
 		{
 		}
 
-		protected override IHostBuilder ConfigureHost(IHostBuilder builder) =>
-			builder.ConfigureServices(services => services.AddFunctionHandler<WorkingDependencyInjectionTestHandler>());
+		protected override IHostBuilder ConfigureHost(IHostBuilder builder)
+		{
+			return builder.ConfigureServices(services =>
+				services.AddFunctionHandler<WorkingDependencyInjectionTestHandler>());
+		}
 
 		[Fact]
 		public void ShouldBeInjected()
@@ -49,8 +61,11 @@ public class DependencyInjectionTests
 		{
 		}
 
-		protected override IHostBuilder ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services =>
-			services.AddFunctionHandler<NotWorkingDependencyInjectionTestHandler>());
+		protected override IHostBuilder ConfigureHost(IHostBuilder builder)
+		{
+			return builder.ConfigureServices(services =>
+				services.AddFunctionHandler<NotWorkingDependencyInjectionTestHandler>());
+		}
 
 		[Fact]
 		public void ShouldThrowError()
@@ -62,23 +77,15 @@ public class DependencyInjectionTests
 		}
 	}
 
-
-	[Theory]
-	[InlineData(typeof(IE5EFunctionHandler))] // is an interface
-	[InlineData(typeof(E5ERequest))] // does not implement the interface
-	public void InvalidTypeThrowsError(Type t)
-	{
-		var serviceCollection = new ServiceCollection();
-		Assert.Throws<InvalidOperationException>(() => serviceCollection.AddFunctionHandler(t));
-	}
-
 	// ReSharper disable once MemberCanBePrivate.Global // public visibility is required for the assembly loading mechanism
 	public class WorkingDependencyInjectionTestHandler : IE5EFunctionHandler
 	{
 		public WorkingDependencyInjectionTestHandler(ILogger<WorkingDependencyInjectionTestHandler> logger) { }
 
-		public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default) =>
-			Task.FromResult(E5EResponse.From("success"));
+		public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(E5EResponse.From("success"));
+		}
 	}
 
 	public interface IDoesNotExist
@@ -95,7 +102,9 @@ public class DependencyInjectionTests
 			_unknown = _;
 		}
 
-		public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default) =>
-			Task.FromResult(E5EResponse.From("success"));
+		public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(E5EResponse.From("success"));
+		}
 	}
 }

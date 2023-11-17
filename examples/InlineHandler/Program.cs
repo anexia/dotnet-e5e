@@ -5,6 +5,7 @@ using var host = Host.CreateDefaultBuilder(args)
 	.UseAnexiaE5E(args)
 	.UseConsoleLifetime()
 	.Build();
+
 host.RegisterEntrypoint("Hello", _ =>
 {
 	var res = E5EResponse.From("test");

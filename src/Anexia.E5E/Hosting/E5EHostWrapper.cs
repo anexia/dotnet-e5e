@@ -6,24 +6,26 @@ using Anexia.E5E.Serialization;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Hosting;
 
 internal sealed class E5EHostWrapper : IHost
 {
+	private readonly IConsoleAbstraction _console;
 	private readonly IHost _host;
 	private readonly E5ERuntimeOptions _options;
-	private readonly IConsoleAbstraction _console;
 
 	public E5EHostWrapper(IHost host)
 	{
 		_host = host;
-		_options = this.Services.GetRequiredService<E5ERuntimeOptions>();
-		_console = this.Services.GetRequiredService<IConsoleAbstraction>();
+		_options = Services.GetRequiredService<E5ERuntimeOptions>();
+		_console = Services.GetRequiredService<IConsoleAbstraction>();
 	}
 
-	public void Dispose() => _host.Dispose();
+	public void Dispose()
+	{
+		_host.Dispose();
+	}
 
 	public async Task StartAsync(CancellationToken cancellationToken = default)
 	{

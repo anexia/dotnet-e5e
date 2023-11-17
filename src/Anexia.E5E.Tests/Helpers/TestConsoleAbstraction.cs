@@ -14,18 +14,18 @@ namespace Anexia.E5E.Tests.Helpers;
 public sealed class TestConsoleAbstraction : IConsoleAbstraction
 {
 	private readonly ILogger<TestConsoleAbstraction> _logger;
-	private bool _isOpen = false;
-
-	private readonly TaskCompletionSource<string> _stderrCompletion = new();
-	private readonly TaskCompletionSource<string> _stdoutCompletion = new();
-	private readonly TaskCompletionSource<string> _wroteFirstLine = new();
 
 	private readonly Queue<string> _stderr = new();
-	private readonly Queue<string> _stdin = new();
-	private readonly Queue<string> _stdout = new();
+
+	private readonly TaskCompletionSource<string> _stderrCompletion = new();
 
 	private readonly StringBuilder _stderrStr = new();
+	private readonly Queue<string> _stdin = new();
+	private readonly Queue<string> _stdout = new();
+	private readonly TaskCompletionSource<string> _stdoutCompletion = new();
 	private readonly StringBuilder _stdoutStr = new();
+	private readonly TaskCompletionSource<string> _wroteFirstLine = new();
+	private bool _isOpen;
 
 	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger)
 	{
@@ -42,7 +42,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	public void Close()
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot close an already closed console");
-		
+
 		_logger.LogDebug("Closing console");
 
 		_stdoutCompletion.TrySetResult(_stdoutStr.ToString());
@@ -51,14 +51,11 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		_logger.LogDebug("Closed console");
 	}
 
-	public Task<string> GetStdoutAsync() => _stdoutCompletion.Task;
-	public Task<string> GetStderrAsync() => _stderrCompletion.Task;
-
 
 	public async Task<string?> ReadLineFromStdinAsync(CancellationToken token = default)
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot read from a closed console");
-		
+
 		await Task.Yield();
 		string? res = null;
 		while (!token.IsCancellationRequested && !_stdin.TryDequeue(out res))
@@ -72,7 +69,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	public Task WriteToStdoutAsync(string? s)
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
-		
+
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
@@ -88,7 +85,7 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	public Task WriteToStderrAsync(string? s)
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
-		
+
 		if (s is null)
 			throw new ArgumentNullException(nameof(s));
 
@@ -118,13 +115,26 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 		return ValueTask.CompletedTask;
 	}
 
+	public Task<string> GetStdoutAsync()
+	{
+		return _stdoutCompletion.Task;
+	}
+
+	public Task<string> GetStderrAsync()
+	{
+		return _stderrCompletion.Task;
+	}
+
 	public void WriteToStdin(string s)
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
-		
+
 		_stdin.Enqueue(s);
 		_logger.LogDebug("Wrote {text} to stdin", s);
 	}
 
-	public Task WaitForFirstWriteAsync() => _wroteFirstLine.Task;
+	public Task WaitForFirstWriteAsync()
+	{
+		return _wroteFirstLine.Task;
+	}
 }

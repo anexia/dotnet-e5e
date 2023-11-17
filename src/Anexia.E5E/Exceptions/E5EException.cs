@@ -1,7 +1,7 @@
 namespace Anexia.E5E.Exceptions;
 
 /// <summary>
-/// A generic exception that all E5E-specific errors inherit from.
+///     A generic exception that all E5E-specific errors inherit from.
 /// </summary>
 public abstract class E5EException : Exception
 {
