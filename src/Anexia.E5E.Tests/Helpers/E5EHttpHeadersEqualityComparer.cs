@@ -12,7 +12,10 @@ public sealed class E5EHttpHeadersEqualityComparer : IEqualityComparer<E5EHttpHe
 
 	public bool Equals(E5EHttpHeaders? x, E5EHttpHeaders? y)
 	{
-		if (x is null || y is null) return false;
+		if (x is null && y is null)
+			return true;
+		if (x is null || y is null)
+			return false;
 
 		foreach (var (k1, v1) in x)
 		{
