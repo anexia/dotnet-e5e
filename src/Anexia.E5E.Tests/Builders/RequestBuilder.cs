@@ -52,8 +52,6 @@ public static class E5ERequestBuilder
 
 		public E5EEvent Build()
 		{
-			if (_requestType is null) throw new ArgumentNullException(nameof(_requestType));
-
 			return new E5EEvent(_requestType.GetValueOrDefault(), _data, _headers, _parameters);
 		}
 
