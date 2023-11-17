@@ -48,21 +48,21 @@ Anexia.E5E.Functions.E5EHttpHeaders
 Anexia.E5E.Functions.E5EHttpHeaders.E5EHttpHeaders() -> void
 Anexia.E5E.Functions.E5EHttpHeaders.TryGetValue(string! name, out string? header) -> bool
 Anexia.E5E.Functions.E5ERequest
-Anexia.E5E.Functions.E5ERequest.Context.get -> Anexia.E5E.Functions.E5ERequestContext!
+Anexia.E5E.Functions.E5ERequest.Context.get -> Anexia.E5E.Functions.E5EContext!
 Anexia.E5E.Functions.E5ERequest.Context.init -> void
-Anexia.E5E.Functions.E5ERequest.E5ERequest(Anexia.E5E.Functions.E5EEvent! Event, Anexia.E5E.Functions.E5ERequestContext! Context) -> void
+Anexia.E5E.Functions.E5ERequest.E5ERequest(Anexia.E5E.Functions.E5EEvent! Event, Anexia.E5E.Functions.E5EContext! Context) -> void
 Anexia.E5E.Functions.E5ERequest.Event.get -> Anexia.E5E.Functions.E5EEvent!
 Anexia.E5E.Functions.E5ERequest.Event.init -> void
-Anexia.E5E.Functions.E5ERequestContext
-Anexia.E5E.Functions.E5ERequestContext.Date.get -> System.DateTimeOffset
-Anexia.E5E.Functions.E5ERequestContext.Date.init -> void
-Anexia.E5E.Functions.E5ERequestContext.E5ERequestContext(string! type, System.DateTimeOffset date, bool isAsynchronous, System.Text.Json.JsonElement? data = null) -> void
-Anexia.E5E.Functions.E5ERequestContext.IsAsynchronous.get -> bool
-Anexia.E5E.Functions.E5ERequestContext.IsAsynchronous.init -> void
-Anexia.E5E.Functions.E5ERequestContext.Type.get -> string!
-Anexia.E5E.Functions.E5ERequestContext.Type.init -> void
-Anexia.E5E.Functions.E5ERequestContext.Data.get -> System.Text.Json.JsonElement?
-Anexia.E5E.Functions.E5ERequestContext.Data.init -> void
+Anexia.E5E.Functions.E5EContext
+Anexia.E5E.Functions.E5EContext.Date.get -> System.DateTimeOffset
+Anexia.E5E.Functions.E5EContext.Date.init -> void
+Anexia.E5E.Functions.E5EContext.E5EContext(string! type, System.DateTimeOffset date, bool isAsynchronous, System.Text.Json.JsonElement? data = null) -> void
+Anexia.E5E.Functions.E5EContext.IsAsynchronous.get -> bool
+Anexia.E5E.Functions.E5EContext.IsAsynchronous.init -> void
+Anexia.E5E.Functions.E5EContext.Type.get -> string!
+Anexia.E5E.Functions.E5EContext.Type.init -> void
+Anexia.E5E.Functions.E5EContext.Data.get -> System.Text.Json.JsonElement?
+Anexia.E5E.Functions.E5EContext.Data.init -> void
 Anexia.E5E.Functions.E5ERequestDataType
 Anexia.E5E.Functions.E5ERequestDataType.Binary = 1 -> Anexia.E5E.Functions.E5ERequestDataType
 Anexia.E5E.Functions.E5ERequestDataType.Mixed = 3 -> Anexia.E5E.Functions.E5ERequestDataType

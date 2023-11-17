@@ -27,7 +27,7 @@ public static class HostExtensions
 
 	public static Task WriteToStdinOnceAsync(this IHost host, E5EEvent evt)
 	{
-		var req = new E5ERequest(evt, new E5ERequestContext("test", DateTimeOffset.Now, true));
+		var req = new E5ERequest(evt, new E5EContext("test", DateTimeOffset.Now, true));
 		var json = JsonSerializer.Serialize(req, E5EJsonSerializerOptions.Default);
 		return host.WriteToStdinOnceAsync(json);
 	}

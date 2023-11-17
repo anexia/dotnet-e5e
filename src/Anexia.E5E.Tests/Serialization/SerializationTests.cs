@@ -144,7 +144,7 @@ public class SerializationTests
 	{
 		private readonly List<object> _objects = new()
 		{
-			new E5ERequestContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
+			new E5EContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
 			new E5ERuntimeMetadata(),
 		};

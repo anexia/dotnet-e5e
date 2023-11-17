@@ -8,4 +8,4 @@ namespace Anexia.E5E.Functions;
 ///     </param>
 ///     <param name="Context">Contains E5E-provided metadata about the current execution.</param>
 /// </summary>
-public record E5ERequest(E5EEvent Event, E5ERequestContext Context);
+public record E5ERequest(E5EEvent Event, E5EContext Context);

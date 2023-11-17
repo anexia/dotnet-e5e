@@ -76,7 +76,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 
 
 		var evt = E5ERequestBuilder.New("hello").Build();
-		var ctx = new E5ERequestContext("test", DateTimeOffset.Now, true,
+		var ctx = new E5EContext("test", DateTimeOffset.Now, true,
 			JsonSerializer.SerializeToElement("data"));
 
 		await Host.WriteToStdinOnceAsync(new E5ERequest(evt, ctx));
