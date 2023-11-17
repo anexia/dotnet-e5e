@@ -16,6 +16,7 @@
 		<PackageTags>anexia;faas</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/anexia/dotnet-e5e/</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 
 		<!--Build documentation based on XML metadata -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -34,6 +35,10 @@
 	<ItemGroup>
 		<AdditionalFiles Include="PublicAPI.Shipped.txt"/>
 		<AdditionalFiles Include="PublicAPI.Unshipped.txt"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../../README.md" Pack="true" PackagePath="/"/>
 	</ItemGroup>
 
 	<PropertyGroup Condition="Configuration == Release">
