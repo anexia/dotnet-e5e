@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - uses: actions/setup-dotnet@v3
       with:
        global-json-file: global.json
        cache: true
        cache-dependency-path: src/**/packages.lock.json
     - run: dotnet restore --locked-mode
-    - run: dotnet pack --no-restore --include-symbols -o . /p:Version=${GITHUB_REF_NAME}
+    - run: dotnet pack --no-restore --include-symbols -o . /p:Version=${VERSION}
 
   deploy:
     runs-on: ubuntu-latest
