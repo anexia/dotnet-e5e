@@ -33,7 +33,7 @@ dotnet add package Anexia.E5E
 
 With that, we have a `Program.cs` that we can modify to use our library:
 
-```cs
+```csharp
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 
@@ -61,7 +61,7 @@ await host.RunAsync();
 We can also use a handler that satisfies the [IE5EFunctionHandler](src/Anexia.E5E/Functions/IE5EFunctionHandler.cs).
 A very simple adaption of the above handler would look like this:
 
-```cs
+```csharp
 using Anexia.E5E.Functions;
 
 public class HelloHandler : IE5EFunctionHandler {
@@ -85,7 +85,7 @@ public class HelloHandler : IE5EFunctionHandler {
 Those handlers are registered during startup as scoped. That means, that you can use dependency injection,
 just like you'd do for ASP.NET Controllers!
 
-```csharp
+```csharpharp
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 
