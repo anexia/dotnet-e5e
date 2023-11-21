@@ -185,7 +185,8 @@ public class SerializationTests
 				E5ERequestBuilder.New(new Dictionary<string, string> { { "test", "value" } }).Build()
 			},
 			{
-				"request with headers and parameters", E5ERequestBuilder.New("test")
+				"request with headers and parameters",
+				E5ERequestBuilder.New("test")
 					.AddParam("param", "value")
 					.AddHeader("Accept", "application/json")
 					.Build()
@@ -213,7 +214,8 @@ public class SerializationTests
 			{ "simple binary response", E5EResponse.From(Encoding.UTF8.GetBytes("test")) },
 			{ "simple object response", E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } }) },
 			{
-				"text response with headers and status code", E5EResponse.From("test", HttpStatusCode.Moved,
+				"text response with headers and status code",
+				E5EResponse.From("test", HttpStatusCode.Moved,
 					new E5EHttpHeaders { { "Location", "https://example.com" } })
 			},
 		};

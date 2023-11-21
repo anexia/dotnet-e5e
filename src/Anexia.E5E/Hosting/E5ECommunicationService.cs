@@ -50,11 +50,6 @@ internal sealed class E5ECommunicationService : BackgroundService
 			await Task.Yield();
 			await ListenForIncomingMessagesAsync(stoppingToken).ConfigureAwait(false);
 		}
-		catch (E5EException e)
-		{
-			_logger.MessageProcessingFailed(e);
-			Environment.ExitCode = 100;
-		}
 		catch (Exception e)
 		{
 			_logger.UnexpectedRuntimeException(e);
@@ -91,18 +86,13 @@ internal sealed class E5ECommunicationService : BackgroundService
 				continue;
 			}
 
-			try
-			{
-				var response = await RespondToLineAsync(line, stoppingToken).ConfigureAwait(false);
-				await _console.WriteToStdoutAsync(response).ConfigureAwait(false);
-			}
-			finally
-			{
-				// We need to notify the engine of the execution end, otherwise it'll run into a deadlock.
-				// This also needs to happen regardless if there's an error or not.
-				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
-				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
-			}
+			var response = await RespondToLineAsync(line, stoppingToken).ConfigureAwait(false);
+			await _console.WriteToStdoutAsync(response).ConfigureAwait(false);
+
+			// After every *successful* execution, we need to write the execution sequence. This applies to ping
+			// messages as well. We do not write it after errors, otherwise our logs would get sent into the void.
+			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
+			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
 
 			// If we should keep it alive (which is notably the default), do that.
 			if (_options.KeepAlive) continue;

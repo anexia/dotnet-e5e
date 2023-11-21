@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
 
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Anexia.E5E.Tests.Helpers;
@@ -24,9 +25,12 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	private readonly TaskCompletionSource<string> _wroteFirstLine = new();
 	private bool _isOpen;
 
-	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger)
+	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger, IHostApplicationLifetime lifetime)
 	{
 		_logger = logger;
+
+		// Cancel our operations if the application already tried to shutdown, likely due to a crash.
+		lifetime.ApplicationStopping.Register(() => _wroteFirstLine.SetCanceled());
 	}
 
 	public void Open()

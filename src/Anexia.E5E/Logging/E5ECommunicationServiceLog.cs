@@ -35,13 +35,6 @@ internal static partial class E5ECommunicationServiceLog
 		Exception reason);
 
 	[LoggerMessage(
-		Level = LogLevel.Error,
-		EventId = 1011,
-		Message = "Message processing failed")]
-	public static partial void MessageProcessingFailed(this ILogger<E5ECommunicationService> logger,
-		E5EException reason);
-
-	[LoggerMessage(
 		Level = LogLevel.Debug,
 		EventId = 2000,
 		Message = "Deserializing {Line}"
