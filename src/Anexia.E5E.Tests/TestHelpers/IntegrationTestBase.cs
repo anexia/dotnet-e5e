@@ -1,14 +1,4 @@
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-
-using Anexia.E5E.Abstractions;
-using Anexia.E5E.Extensions;
-using Anexia.E5E.Tests.Helpers;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -17,64 +7,22 @@ namespace Anexia.E5E.Tests.TestHelpers;
 
 public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 {
-	private IHostBuilder _builder;
-
 	protected IntegrationTestBase(ITestOutputHelper outputHelper) : base(outputHelper)
 	{
-		_builder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
-			.ConfigureLogging(lb => lb.SetMinimumLevel(LogLevel.Debug))
-			.ConfigureLogging(builder =>
-			{
-				builder.SetMinimumLevel(LogLevel.Debug);
-				builder.AddConsole(options => options.FormatterName = "UnitTest")
-					.AddConsoleFormatter<UnitTestConsoleFormatter, UnitTestConsoleFormatterOptions>(cfg =>
-					{
-						cfg.TestName = XunitContext.Context.MethodName;
-					});
-			});
+		Host = TestHostBuilder.New(outputHelper);
 	}
 
-	protected IHost Host { get; private set; } = null!;
 
-	/// <summary>
-	///     Called immediately after the class has been created, before it is used.
-	/// </summary>
+	protected TestHostBuilder Host { get; }
+
 	public Task InitializeAsync()
 	{
-		_builder = ConfigureE5E(_builder);
-		_builder = ConfigureHost(_builder);
-		_builder = _builder.ConfigureServices(services =>
-			services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>());
-		Host = _builder.Build();
-
-		var sw = Stopwatch.StartNew();
-		var lifetime = Host.Services.GetRequiredService<IHostApplicationLifetime>();
-		lifetime.ApplicationStarted.Register(() =>
-		{
-			sw.Stop();
-			// Startup shouldn't take longer than three seconds.
-			Assert.InRange(sw.ElapsedMilliseconds, 0, 3000);
-		}, true);
-
-		return Host.StartAsync();
+		return Task.CompletedTask;
 	}
 
-	/// <summary>
-	///     Called when an object is no longer needed. Called just before <see cref="M:System.IDisposable.Dispose" />
-	///     if the class also implements that.
-	/// </summary>
+	// Stop the host on shutdown, avoid memory leaks.
 	public Task DisposeAsync()
 	{
-		return Host.StopAsync(TimeSpan.FromSeconds(1));
-	}
-
-	protected virtual IHostBuilder ConfigureE5E(IHostBuilder builder)
-	{
-		return builder.UseAnexiaE5E(new TestE5ERuntimeOptions());
-	}
-
-	protected virtual IHostBuilder ConfigureHost(IHostBuilder builder)
-	{
-		return builder;
+		return Host.StopAsync();
 	}
 }

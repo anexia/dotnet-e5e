@@ -1,4 +1,3 @@
-using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;

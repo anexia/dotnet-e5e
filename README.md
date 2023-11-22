@@ -38,19 +38,20 @@ using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 
 using var host = Host.CreateDefaultBuilder(args)
-	.UseAnexiaE5E(args)
+	.UseAnexiaE5E(builder =>
+	{
+		// Register our entrypoint "Hello" which just responds with the name of the person.
+		builder.RegisterEntrypoint("Hello", request =>
+		{
+			var (evt, context) = request;
+			// Let's assume we got the name as a plain text message.
+			var name = evt.AsText();
+			var res = E5EResponse.From($"Hello {name}");
+			return Task.FromResult(res);
+		});
+	})
 	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
 	.Build();
-
-// Register our entrypoint "Hello" which just responds with the name of the person.
-host.RegisterEntrypoint("Hello", request =>
-{
-	var (evt, context) = request;
-	// Let's assume we got the name as a plain text message.
-	var name = evt.AsText();
-	var res = E5EResponse.From($"Hello {name}");
-	return Task.FromResult(res);
-});
 
 // Finally run the host.
 await host.RunAsync();
@@ -82,25 +83,20 @@ public class HelloHandler : IE5EFunctionHandler {
 }
 ```
 
-Those handlers are registered during startup as scoped. That means, that you can use dependency injection,
+Those handlers are automatically registered as scoped. That means, that you can use dependency injection,
 just like you'd do for ASP.NET Controllers!
 
-```csharpharp
+```csharp
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 
 using var host = Host.CreateDefaultBuilder(args)
-	.UseAnexiaE5E(args)
-	.ConfigureServices(services => {
-		services.AddFunctionHandler<HelloHandler>();
+	.UseAnexiaE5E(builder =>
+	{
+		builder.RegisterEntrypoint<HelloHandler>("Hello");
 	})
 	.UseConsoleLifetime() // listen to SIGTERM and Ctrl+C, recommended by us
 	.Build();
-
-// Register our entrypoint "Hello" which just responds with "test", ignoring the request.
-host.RegisterEntrypoint<HelloHandler>("Hello");
-
-// Finally run the host.
 await host.RunAsync();
 ```
 

@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
-using Anexia.E5E.Tests.Builders;
 using Anexia.E5E.Tests.Helpers;
+using Anexia.E5E.Tests.TestHelpers;
 
 using VerifyTests;
 
@@ -73,7 +73,7 @@ public class SerializationTests
 			() => Assert.Equal(input.RequestHeaders, got.RequestHeaders,
 				E5EHttpHeadersEqualityComparer
 					.Instance), // todo: remove custom comparer once https://github.com/xunit/xunit/issues/2803 is closed
-			() => Assert.Equal(input.Data.GetRawText(), got.Data.GetRawText())
+			() => Assert.Equal(input.Data.GetValueOrDefault().GetRawText(), got.Data.GetValueOrDefault().GetRawText())
 		);
 	}
 
@@ -143,7 +143,8 @@ public class SerializationTests
 	[Fact]
 	public void DataIsNotAffectedByPropertyNamingPolicy()
 	{
-		var json = JsonSerializer.Serialize(E5EResponse.From(new DataIsNotAffectedByPropertyNamingPolicyTest()), _options);
+		var json = JsonSerializer.Serialize(E5EResponse.From(new DataIsNotAffectedByPropertyNamingPolicyTest()),
+			_options);
 		Assert.Equal(@"{""data"":{""MyProperty"":""value""},""type"":""object""}", json);
 	}
 
@@ -178,18 +179,17 @@ public class SerializationTests
 	{
 		private readonly Dictionary<string, E5EEvent> _tests = new()
 		{
-			{ "simple text request", E5ERequestBuilder.New("test").Build() },
-			{ "simple binary request", E5ERequestBuilder.New(Encoding.UTF8.GetBytes("test")).Build() },
+			{ "simple text request", new TestRequestBuilder().WithData("test").BuildEvent() },
+			{ "simple binary request", new TestRequestBuilder().WithData(Encoding.UTF8.GetBytes("test")).BuildEvent() },
 			{
 				"simple object request",
-				E5ERequestBuilder.New(new Dictionary<string, string> { { "test", "value" } }).Build()
+				new TestRequestBuilder().WithData(new Dictionary<string, string> { { "test", "value" } }).BuildEvent()
 			},
 			{
-				"request with headers and parameters",
-				E5ERequestBuilder.New("test")
+				"request with headers and parameters", new TestRequestBuilder().WithData("test")
 					.AddParam("param", "value")
 					.AddHeader("Accept", "application/json")
-					.Build()
+					.BuildEvent()
 			},
 		};
 
@@ -214,8 +214,7 @@ public class SerializationTests
 			{ "simple binary response", E5EResponse.From(Encoding.UTF8.GetBytes("test")) },
 			{ "simple object response", E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } }) },
 			{
-				"text response with headers and status code",
-				E5EResponse.From("test", HttpStatusCode.Moved,
+				"text response with headers and status code", E5EResponse.From("test", HttpStatusCode.Moved,
 					new E5EHttpHeaders { { "Location", "https://example.com" } })
 			},
 		};

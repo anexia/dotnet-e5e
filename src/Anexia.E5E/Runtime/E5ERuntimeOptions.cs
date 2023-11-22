@@ -1,4 +1,3 @@
-using Anexia.E5E.DependencyInjection;
 using Anexia.E5E.Exceptions;
 
 namespace Anexia.E5E.Runtime;
@@ -7,8 +6,7 @@ namespace Anexia.E5E.Runtime;
 ///     Contains information about the startup parameters.
 /// </summary>
 /// <param name="Entrypoint">
-///     The name of the entrypoint that the <seealso cref="E5EFunctionHandlerResolver" />  is
-///     searching for.
+///     The name of the entrypoint that the <see cref="Abstractions.IE5EEntrypointResolver" /> is searching for.
 /// </param>
 /// <param name="StdoutTerminationSequence">Sequence that's written to differentiate responses from generic logs.</param>
 /// <param name="DaemonExecutionTerminationSequence">Sequence that's written on shutdown.</param>

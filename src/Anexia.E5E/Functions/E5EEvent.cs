@@ -12,7 +12,7 @@ namespace Anexia.E5E.Functions;
 /// <param name="RequestHeaders">The request headers, if any.</param>
 /// <param name="Params">The request parameters, if any.</param>
 public record E5EEvent(E5ERequestDataType Type,
-	JsonElement Data,
+	JsonElement? Data = null,
 	E5EHttpHeaders? RequestHeaders = null,
 	E5ERequestParameters? Params = null)
 {
@@ -25,7 +25,7 @@ public record E5EEvent(E5ERequestDataType Type,
 	/// <exception cref="JsonException">If <typeparamref name="TValue" /> is not compatible with the JSON.</exception>
 	public TValue? As<TValue>(JsonSerializerOptions? options = null)
 	{
-		return Data.Deserialize<TValue>(options);
+		return Data.GetValueOrDefault().Deserialize<TValue>(options);
 	}
 
 	/// <summary>

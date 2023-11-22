@@ -1,6 +1,4 @@
 using Anexia.E5E.Abstractions;
-using Anexia.E5E.DependencyInjection;
-using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Hosting;
 using Anexia.E5E.Runtime;
@@ -17,31 +15,57 @@ namespace Anexia.E5E.Extensions;
 public static class HostBuilderExtensions
 {
 	/// <summary>
-	///     Adds the e5e support to the given <see cref="IHostBuilder" />.
+	///     Configures the <see cref="IHost" /> to be usable with Anexia E5E.
+	///     Any functions can be registered with the <paramref name="configure"/> action.
 	/// </summary>
-	/// <param name="hb">The host builder.</param>
-	/// <param name="args">The command line arguments.</param>
-	/// <exception cref="E5EMissingArgumentsException">Thrown if there are missing arguments.</exception>
-	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, string[]? args = null)
+	/// <remarks>
+	///     The required runtime arguments are automatically read from <see cref="Environment.GetCommandLineArgs" />.
+	/// </remarks>
+	/// <param name="hb">The host builder instance</param>
+	/// <param name="configure">
+	///     The delegate for configuring the <see cref="IE5EEntrypointBuilder" /> that will be used to construct the
+	///     <see cref="IE5EEntrypointResolver" />.
+	/// </param>
+	/// <returns>A E5E-specific <see cref="IHostBuilder" /> that's is wrapping <paramref name="hb" />.</returns>
+	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, Action<IE5EEntrypointBuilder> configure)
 	{
-		// Environment.GetCommandLineArgs() *includes* the program name while args (passed via Main) doesn't, therefore
-		// we skip the first element.
-		args ??= Environment.GetCommandLineArgs()[1..];
-		return UseAnexiaE5E(hb, E5ERuntimeOptions.Parse(args));
+		return UseAnexiaE5E(hb, null, configure);
 	}
 
 	/// <summary>
-	///     Adds the e5e support to the given <see cref="IHostBuilder" /> with the given <see cref="E5ERuntimeOptions" />.
-	///     This extension method should be used with care and it's almost always better to use
-	///     <see cref="UseAnexiaE5E(Microsoft.Extensions.Hosting.IHostBuilder,string[])" /> instead.
-	///     It is provided by us to test your handlers in integration tests easily.
+	///     Configures the <see cref="IHost" /> to be usable with Anexia E5E.
+	///     Any functions can be registered with the <paramref name="configure"/> action.
 	/// </summary>
-	/// <param name="hb">The host builder.</param>
-	/// <param name="options">The runtime options.</param>
-	/// <exception cref="E5EMissingArgumentsException">Thrown if there are missing arguments.</exception>
-	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, E5ERuntimeOptions options)
+	/// <remarks>
+	///     This method should be handled with care, as it can cause unexpected compatibility issues. It's recommended to
+	///     always use <see cref="UseAnexiaE5E(Microsoft.Extensions.Hosting.IHostBuilder,System.Action{Anexia.E5E.Abstractions.IE5EEntrypointBuilder})" />,
+	///	    with tests being the exception.
+	/// </remarks>
+	/// <param name="hb">The host builder instance</param>
+	/// <param name="args">The startup arguments that usually are given by the E5E engine.</param>
+	/// <param name="configure">
+	///     The delegate for configuring the <see cref="IE5EEntrypointBuilder" /> that will be used to construct the
+	///     <see cref="IE5EEntrypointResolver" />.
+	/// </param>
+	/// <returns>A E5E-specific <see cref="IHostBuilder" /> that's is wrapping <paramref name="hb" />.</returns>
+	public static IHostBuilder UseAnexiaE5E(this IHostBuilder hb, string[]? args,
+		Action<IE5EEntrypointBuilder> configure)
 	{
-		return new E5EHostBuilderWrapper(hb, options);
+		ArgumentNullException.ThrowIfNull(hb);
+
+		// Environment.GetCommandLineArgs() *includes* the program name while args (passed via Main) doesn't, therefore
+		// we skip the first element.
+		args ??= Environment.GetCommandLineArgs()[1..];
+		var opts = E5ERuntimeOptions.Parse(args);
+
+		hb.ConfigureServices((_, services) =>
+		{
+			var endpoints = new E5EEntrypointBuilder(services);
+			configure.Invoke(endpoints);
+			services.AddSingleton(endpoints.BuildResolver());
+		});
+
+		return new E5EHostBuilderWrapper(hb, opts);
 	}
 
 	private class E5EHostBuilderWrapper : IHostBuilder
@@ -54,14 +78,10 @@ public static class HostBuilderExtensions
 			_inner.ConfigureServices((_, services) =>
 			{
 				services.AddHostedService<E5ECommunicationService>();
-				services.AddSingleton<E5EFunctionHandlerResolver>();
 				services.AddSingleton<IConsoleAbstraction, ConsoleAbstraction>();
 				services.AddSingleton(runtimeOptions);
 				services.AddScoped<IE5EFunctionHandler>(svc =>
-				{
-					var resolver = svc.GetRequiredService<E5EFunctionHandlerResolver>();
-					return resolver.ResolveFrom(svc);
-				});
+					svc.GetRequiredService<IE5EEntrypointResolver>().Resolve(svc));
 			});
 		}
 

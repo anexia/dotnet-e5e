@@ -1,12 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 
-using Anexia.E5E.DependencyInjection;
-
 namespace Anexia.E5E.Exceptions;
 
 /// <summary>
 ///     The exception that's thrown when the requested entrypoint cannot be found by the
-///     <see cref="E5EFunctionHandlerResolver" />.
+///     <see cref="Abstractions.IE5EEntrypointResolver" />.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class E5EMissingEntrypointException : E5EException

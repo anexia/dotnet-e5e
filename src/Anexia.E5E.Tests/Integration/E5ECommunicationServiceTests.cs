@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
-using Anexia.E5E.Tests.Builders;
 using Anexia.E5E.Tests.Helpers;
 using Anexia.E5E.Tests.TestHelpers;
 
@@ -23,23 +20,17 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 	[Fact]
 	public async Task PingResponds()
 	{
-		Host.SetTestEntrypoint(_ => throw new Exception("This method should not have been called"));
-		await Host.WriteToStdinOnceAsync("ping");
-
-		var stdout = await Host.GetStdoutAsync();
+		await Host.StartWithTestEntrypointAsync(_ => throw new Exception("This method should not have been called"));
+		var (stdout, stderr) = await Host.WriteOnceAsync("ping");
 		Assert.Equal("pong---", stdout);
-
-		var stderr = await Host.GetStderrAsync();
 		Assert.Equal("---", stderr);
 	}
 
 	[Fact]
 	public async Task PlainInput()
 	{
-		Host.SetTestEntrypoint(_ => E5EResponse.From("test"));
-		await E5ERequestBuilder.New("hello").SendAndShutdownAsync(Host);
-
-		var resp = await Host.ReadResponseAsync();
+		await Host.StartWithTestEntrypointAsync(_ => E5EResponse.From("test"));
+		var resp = await Host.WriteExampleRequestOnceAsync();
 		Assert.Equal("test", resp.Text());
 	}
 
@@ -47,88 +38,67 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 	public async Task HeadersAreReceived()
 	{
 		const string headerName = "Accept";
-		Host.SetTestEntrypoint(req =>
+		await Host.StartWithTestEntrypointAsync(req =>
 		{
 			Assert.NotNull(req.Event.RequestHeaders);
 
 			req.Event.RequestHeaders.TryGetValue(headerName, out var acceptHeader);
 			return E5EResponse.From(acceptHeader!);
 		});
-
-		await E5ERequestBuilder.New("hello")
-			.AddHeader(headerName, "application/json")
-			.SendAndShutdownAsync(Host);
-
-		var resp = await Host.ReadResponseAsync();
+		var resp = await Host.WriteRequestOnceAsync(req => req.AddHeader(headerName, "application/json"));
 		Assert.Equal("application/json", resp.Text());
 	}
 
 	[Fact]
-	public async Task DataIsReceived()
+	public async Task EventDataIsReceived()
 	{
-		Host.SetTestEntrypoint(req =>
+		await Host.StartWithTestEntrypointAsync(req =>
 		{
-			Assert.NotNull(req.Context.Data);
-			Assert.Equal("data", req.Context.Data.ToString());
-
+			Assert.Equal("data", req.Event.Data.ToString());
 			return E5EResponse.From("success");
 		});
 
-
-		var evt = E5ERequestBuilder.New("hello").Build();
-		var ctx = new E5EContext("test", DateTimeOffset.Now, true,
-			JsonSerializer.SerializeToElement("data"));
-
-		await Host.WriteToStdinOnceAsync(new E5ERequest(evt, ctx));
+		var resp = await Host.WriteRequestOnceAsync(req => req.WithData("data"));
+		Assert.Equal("success", resp.Text());
 	}
 
 	[Fact]
 	public async Task ParamsAreReceived()
 	{
 		const string parameterName = "myParam";
-		Host.SetTestEntrypoint(req =>
+		await Host.StartWithTestEntrypointAsync(req =>
 		{
 			Assert.NotNull(req.Event.Params);
 
 			req.Event.Params.TryGetValue(parameterName, out var acceptHeader);
-			return E5EResponse.From(acceptHeader!);
+			return E5EResponse.From(acceptHeader!.First());
 		});
 
-
-		await E5ERequestBuilder.New("hello")
-			.AddParam(parameterName, "this is my parameter")
-			.SendAndShutdownAsync(Host);
-
-		var resp = await Host.ReadResponseAsync();
-		Assert.Equal("this is my parameter", resp.As<List<string>>().FirstOrDefault());
+		var resp = await Host.WriteRequestOnceAsync(req => req.AddParam(parameterName, "param"));
+		Assert.Equal("param", resp.Text());
 	}
 
 	[Fact]
 	public async Task ShouldHaveCorrectStdoutFormatting()
 	{
-		Host.SetTestEntrypoint(_ => E5EResponse.From("response"));
-		await E5ERequestBuilder.New("request").SendAndShutdownAsync(Host);
-
-		var stdout = await Host.GetStdoutAsync();
+		await Host.StartWithTestEntrypointAsync(_ => E5EResponse.From("response"));
+		var (stdout, _) = await Host.WriteOnceAsync(builder => builder.WithData("request"));
 		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", stdout);
 	}
 
 	[Fact]
 	public async Task ShouldHaveCorrectStderrFormatting()
 	{
-		Host.SetTestEntrypoint(_ => E5EResponse.From("response"));
-		await E5ERequestBuilder.New("request").SendAndShutdownAsync(Host);
-
-		var stderr = await Host.GetStderrAsync();
+		await Host.StartWithTestEntrypointAsync(_ => E5EResponse.From("response"));
+		var (_, stderr) = await Host.WriteOnceAsync(builder => builder.WithData("request"));
 		Assert.Equal("---", stderr);
 	}
 
 	[Fact]
 	public async Task ShouldHaveCorrectStderrFormattingOnException()
 	{
-		Host.SetTestEntrypoint(_ => throw new Exception("please fail uwu"));
-		await Assert.ThrowsAsync<TaskCanceledException>(()
-			=> E5ERequestBuilder.New("request").SendAndShutdownAsync(Host));
+		await Host.StartWithTestEntrypointAsync(_ => throw new Exception("please fail uwu"));
+		await Assert.ThrowsAsync<TaskCanceledException>(() => Host.WriteExampleRequestOnceAsync());
 
 		var stderr = await Host.GetStderrAsync();
 		Assert.Empty(stderr);
@@ -137,9 +107,8 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 	[Fact]
 	public async Task ErrorSetsEnvironmentExitCode()
 	{
-		Host.SetTestEntrypoint(_ => throw new Exception("please fail uwu"));
-		await Assert.ThrowsAsync<TaskCanceledException>(()
-			=> E5ERequestBuilder.New("request").SendAndShutdownAsync(Host));
+		await Host.StartWithTestEntrypointAsync(_ => throw new Exception("please fail uwu"));
+		await Assert.ThrowsAsync<TaskCanceledException>(() => Host.WriteExampleRequestOnceAsync());
 		Assert.NotEqual(0, Environment.ExitCode);
 	}
 }

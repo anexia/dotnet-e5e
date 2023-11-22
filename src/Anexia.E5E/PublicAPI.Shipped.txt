@@ -35,9 +35,9 @@ Anexia.E5E.Functions.E5EEvent
 Anexia.E5E.Functions.E5EEvent.As<TValue>(System.Text.Json.JsonSerializerOptions? options = null) -> TValue?
 Anexia.E5E.Functions.E5EEvent.AsBytes() -> System.Collections.Generic.IEnumerable<byte>?
 Anexia.E5E.Functions.E5EEvent.AsText() -> string?
-Anexia.E5E.Functions.E5EEvent.Data.get -> System.Text.Json.JsonElement
+Anexia.E5E.Functions.E5EEvent.Data.get -> System.Text.Json.JsonElement?
 Anexia.E5E.Functions.E5EEvent.Data.init -> void
-Anexia.E5E.Functions.E5EEvent.E5EEvent(Anexia.E5E.Functions.E5ERequestDataType Type, System.Text.Json.JsonElement Data, Anexia.E5E.Functions.E5EHttpHeaders? RequestHeaders = null, Anexia.E5E.Functions.E5ERequestParameters? Params = null) -> void
+Anexia.E5E.Functions.E5EEvent.E5EEvent(Anexia.E5E.Functions.E5ERequestDataType Type, System.Text.Json.JsonElement? Data = null, Anexia.E5E.Functions.E5EHttpHeaders? RequestHeaders = null, Anexia.E5E.Functions.E5ERequestParameters? Params = null) -> void
 Anexia.E5E.Functions.E5EEvent.Params.get -> Anexia.E5E.Functions.E5ERequestParameters?
 Anexia.E5E.Functions.E5EEvent.Params.init -> void
 Anexia.E5E.Functions.E5EEvent.RequestHeaders.get -> Anexia.E5E.Functions.E5EHttpHeaders?
@@ -105,11 +105,14 @@ Anexia.E5E.Runtime.E5ERuntimeMetadata.LibraryVersion.get -> string!
 Anexia.E5E.Runtime.E5ERuntimeMetadata.Runtime.get -> string!
 Anexia.E5E.Runtime.E5ERuntimeMetadata.RuntimeVersion.get -> string!
 static readonly Anexia.E5E.Runtime.E5ERuntimeMetadata.Current -> Anexia.E5E.Runtime.E5ERuntimeMetadata!
-static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Func<Anexia.E5E.Functions.E5ERequest!, System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!>! func) -> void
-static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint<T>(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint) -> void
-static Anexia.E5E.Extensions.HostExtensions.RegisterEntrypoint(this Microsoft.Extensions.Hosting.IHost! host, string! entrypoint, System.Type! handlerType) -> void
 Anexia.E5E.Extensions.HostBuilderExtensions
-static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, Anexia.E5E.Runtime.E5ERuntimeOptions! options) -> Microsoft.Extensions.Hosting.IHostBuilder!
-static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]? args = null) -> Microsoft.Extensions.Hosting.IHostBuilder!
-static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddFunctionHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Type! serviceType) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static Anexia.E5E.Extensions.ServiceCollectionHostedServiceExtensions.AddFunctionHandler<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, string![]? args, System.Action<Anexia.E5E.Abstractions.IE5EEntrypointBuilder!>! configure) -> Microsoft.Extensions.Hosting.IHostBuilder!
+static Anexia.E5E.Extensions.HostBuilderExtensions.UseAnexiaE5E(this Microsoft.Extensions.Hosting.IHostBuilder! hb, System.Action<Anexia.E5E.Abstractions.IE5EEntrypointBuilder!>! configure) -> Microsoft.Extensions.Hosting.IHostBuilder!
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder.BuildResolver() -> Anexia.E5E.Abstractions.IE5EEntrypointResolver!
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder.RegisterEntrypoint(string! entrypoint, Anexia.E5E.Functions.IE5EFunctionHandler! handler) -> void
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder.RegisterEntrypoint(string! entrypoint, System.Func<Anexia.E5E.Functions.E5ERequest!, System.Threading.Tasks.Task<Anexia.E5E.Functions.E5EResponse!>!>! func) -> void
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder.RegisterEntrypoint(string! entrypoint, System.Type! handlerType) -> void
+Anexia.E5E.Abstractions.IE5EEntrypointBuilder.RegisterEntrypoint<T>(string! entrypoint) -> void
+Anexia.E5E.Abstractions.IE5EEntrypointResolver
+Anexia.E5E.Abstractions.IE5EEntrypointResolver.Resolve(System.IServiceProvider! services) -> Anexia.E5E.Functions.IE5EFunctionHandler!
