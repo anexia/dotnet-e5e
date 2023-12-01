@@ -5,20 +5,23 @@ on: [ push, pull_request ]
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Run tests
+    name: Run tests (${{ matrix.dotnet-version }})
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    strategy:
+      matrix:
+        dotnet-version: ["6.0.x", "8.0.x"]
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v3
       with:
-       global-json-file: global.json
+       dotnet-version: "${{ matrix.dotnet-version }}"
        cache: true
        cache-dependency-path: src/**/packages.lock.json
     - run: dotnet restore --locked-mode
     - name: Run tests with coverage
       run: dotnet test --no-restore /p:CollectCoverage=true --logger trx --results-directory "test-results"
-    - name: Publish Test Results
+    - name: Publish Test Results (${{ matrix.dotnet-version }})
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
