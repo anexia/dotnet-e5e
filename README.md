@@ -98,6 +98,8 @@ using var host = Host.CreateDefaultBuilder(args)
 await host.RunAsync();
 ```
 
+Further examples can be found in the [examples folder](./examples).
+
 # Supported versions
 
 |          | Supported |
