@@ -102,7 +102,8 @@ Further examples can be found in the [examples folder](./examples).
 
 # Supported versions
 
-|          | Supported |
-|----------|-----------|
-| .NET 6.0 | ✓         |
-| .NET 8.0 | ✓         |
+|                        | Supported |
+|------------------------|-----------|
+| .NET 6.0               | ✓         |
+| .NET 8.0 (without AOT) | ✓         |
+| .NET 8.0 (with AOT)    | ✓         |
