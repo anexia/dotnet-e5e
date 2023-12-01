@@ -17,14 +17,19 @@ public static class E5EJsonSerializerOptions
 	///     - Read-only properties are (de-)serialized as well.
 	///     - Converters for <seealso cref="Functions.E5EHttpHeaders" /> and e5e-specific enums are added.
 	/// </summary>
-	public static JsonSerializerOptions Default { get; } = new(JsonSerializerDefaults.Web)
+	public static JsonSerializerOptions Default { get; } = new(JsonSerializerDefaults.General)
 	{
-		PropertyNamingPolicy = new JsonLowerSnakeCasePolicy(),
-		DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+		// Be sure to sync this with the options in the E5ESerializationContext!
 		IgnoreReadOnlyProperties = false,
+		DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
 		Converters =
 		{
 			new E5EHttpHeadersConverter(), new E5EResponseTypeConverter(), new E5ERequestDataTypeConverter(),
 		},
+#if NET8_0_OR_GREATER
+		PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+#else
+		PropertyNamingPolicy = new JsonLowerSnakeCasePolicy(),
+#endif
 	};
 }

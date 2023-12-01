@@ -141,7 +141,12 @@ internal sealed class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.ReceivedResponse(response);
-			var json = JsonSerializer.Serialize(response, E5EJsonSerializerOptions.Default);
+			string json = "";
+#if NET8_0_OR_GREATER
+			json = JsonSerializer.Serialize(response, E5ESerializationContext.Default.E5EResponse);
+#else
+			json = JsonSerializer.Serialize<E5EResponse>(response, E5EJsonSerializerOptions.Default);
+#endif
 
 			return _options.StdoutTerminationSequence + json;
 		}
@@ -157,7 +162,12 @@ internal sealed class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.DeserializingLine(line);
+
+#if NET8_0_OR_GREATER
+			request = JsonSerializer.Deserialize(line, E5ESerializationContext.Default.E5ERequest);
+#else
 			request = JsonSerializer.Deserialize<E5ERequest>(line, E5EJsonSerializerOptions.Default);
+#endif
 		}
 		catch (JsonException e)
 		{

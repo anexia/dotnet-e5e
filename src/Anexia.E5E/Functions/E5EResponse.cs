@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json;
 
@@ -32,22 +33,28 @@ public class E5EResponse
 	///     Creates a new <see cref="E5EResponse" /> from the given object with the type
 	///     <see cref="E5EResponseType.StructuredObject" />.
 	/// </summary>
-	/// <param name="cls">The data object.</param>
+	/// <param name="data">The data object.</param>
 	/// <param name="status">An optional HTTP status code.</param>
 	/// <param name="responseHeaders">An optional list of HTTP headers.</param>
 	/// <returns>A valid <see cref="E5EResponse" /> with the given data.</returns>
-	public static E5EResponse From<T>(T cls, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
+	[RequiresUnreferencedCode(
+		"This helper relies on runtime reflection for the JSON serialization. Initialize the E5EResponse by yourself for AOT.")]
+#if NET8_0_OR_GREATER
+	[RequiresDynamicCode(
+		"This helper relies on runtime reflection for the JSON serialization. Initialize the E5EResponse by yourself for AOT.")]
+#endif
+	public static E5EResponse From<T>(T data, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
 		where T : class
 	{
 		return new E5EResponse
 		{
-			Type = cls switch
+			Type = data switch
 			{
 				IEnumerable<char> => E5EResponseType.Text,
 				IEnumerable<byte> => E5EResponseType.Binary,
 				_ => E5EResponseType.StructuredObject,
 			},
-			Data = JsonSerializer.SerializeToElement(cls),
+			Data = JsonSerializer.SerializeToElement(data),
 			Status = status,
 			ResponseHeaders = responseHeaders,
 		};

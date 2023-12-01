@@ -51,7 +51,10 @@ public sealed class ConsoleAbstraction : IConsoleAbstraction
 		string? line;
 		try
 		{
+#pragma warning disable CA2016 // The ReadLineAsync method does not close the underlying stream as expected in current versions (.NET 6, .NET 8).
+			// ReSharper disable once MethodSupportsCancellation
 			line = await _stdin.ReadLineAsync().WithWaitCancellation(token).ConfigureAwait(false);
+#pragma warning restore CA2016
 		}
 		catch (TaskCanceledException)
 		{

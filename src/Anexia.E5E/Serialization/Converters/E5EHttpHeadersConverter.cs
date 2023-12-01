@@ -9,28 +9,31 @@ internal sealed class E5EHttpHeadersConverter : JsonConverter<E5EHttpHeaders>
 {
 	public override E5EHttpHeaders Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		var res = new E5EHttpHeaders();
-		var node = JsonSerializer.Deserialize<JsonDocument>(ref reader);
-		if (node is null)
-			throw new JsonException("Reading JSON into JSON document failed");
+		if (reader.TokenType != JsonTokenType.StartObject)
+			throw new JsonException("Expected StartObject token");
 
-		foreach (var prop in node.RootElement.EnumerateObject())
+		var res = new E5EHttpHeaders();
+		while (reader.Read())
 		{
-			switch (prop.Value.ValueKind)
-			{
-				case JsonValueKind.String:
-					res.Add(prop.Name, prop.Value.GetString());
-					break;
-				case JsonValueKind.Array:
-					res.Add(prop.Name, prop.Value.EnumerateArray().Select(x => x.GetString()));
-					break;
-				default:
-					throw new InvalidOperationException(
-						$"Value of JSON property {prop.Name} is neither an array nor a string.");
-			}
+			if (reader.TokenType == JsonTokenType.EndObject)
+				return res;
+
+			if (reader.TokenType != JsonTokenType.PropertyName)
+				throw new JsonException("Expected PropertyName token");
+
+			var propName = reader.GetString();
+			if (propName is null)
+				throw new JsonException("PropertyName cannot be null");
+
+			reader.Read();
+			if (reader.TokenType != JsonTokenType.String)
+				throw new JsonException("Only string properties are supported");
+
+			var value = reader.GetString();
+			res.Add(propName, value);
 		}
 
-		return res;
+		throw new JsonException("Expected EndObject token");
 	}
 
 	/// <summary>Writes a specified value as JSON.</summary>

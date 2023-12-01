@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Anexia.E5E.Functions;
 
 namespace Anexia.E5E.Abstractions;
@@ -18,7 +20,9 @@ public interface IE5EEntrypointBuilder
 	///     Thrown if the handlerType is neither a class nor does it implement
 	///     <see cref="IE5EFunctionHandler" />.
 	/// </exception>
-	void RegisterEntrypoint(string entrypoint, Type handlerType);
+	void RegisterEntrypoint(string entrypoint,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		Type handlerType);
 
 	/// <summary>
 	///     Register an entrypoint with the given handler type.
@@ -26,7 +30,9 @@ public interface IE5EEntrypointBuilder
 	/// </summary>
 	/// <param name="entrypoint">The name of the entrypoint.</param>
 	/// <typeparam name="T">The type of the handler.</typeparam>
-	void RegisterEntrypoint<T>(string entrypoint) where T : IE5EFunctionHandler
+	void RegisterEntrypoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		T>(string entrypoint) where T : IE5EFunctionHandler
 	{
 		RegisterEntrypoint(entrypoint, typeof(T));
 	}

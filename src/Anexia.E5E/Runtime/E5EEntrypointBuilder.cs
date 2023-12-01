@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Anexia.E5E.Abstractions;
 using Anexia.E5E.Exceptions;
 using Anexia.E5E.Functions;
@@ -27,7 +29,8 @@ internal sealed class E5EEntrypointBuilder : IE5EEntrypointBuilder
 		_handlers.Add(entrypoint, _ => handler);
 	}
 
-	public void RegisterEntrypoint(string entrypoint, Type handlerType)
+	public void RegisterEntrypoint(string entrypoint,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type handlerType)
 	{
 		if (!handlerType.IsClass || !handlerType.IsAssignableTo(typeof(IE5EFunctionHandler)))
 			throw new InvalidOperationException($"The type {handlerType} is not suitable for registration.");

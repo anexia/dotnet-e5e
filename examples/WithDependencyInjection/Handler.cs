@@ -17,9 +17,9 @@ public class Handler : IE5EFunctionHandler
 	/// <param name="request">The current request with all the provided metadata.</param>
 	/// <param name="cancellationToken">Used for cancelling the operation on shutdown.</param>
 	/// <returns>The response that's serialized and returned to E5E.</returns>
-	public async Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default)
+	public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken cancellationToken = default)
 	{
 		_logger.LogInformation("Running for {Request}", request);
-		return E5EResponse.From(DateTimeOffset.Now.ToString());
+		return Task.FromResult(E5EResponse.From(DateTimeOffset.Now.ToString()));
 	}
 }

@@ -26,7 +26,7 @@ public interface IConsoleAbstraction : IDisposable, IAsyncDisposable
 	/// </summary>
 	/// <param name="token">Can be used to cancel the operation.</param>
 	/// <returns>The line, null if the stream is closed.</returns>
-	Task<string?> ReadLineFromStdinAsync(CancellationToken token = default);
+	Task<string?> ReadLineFromStdinAsync(CancellationToken token);
 
 	/// <summary>
 	///     Write text to standard output.

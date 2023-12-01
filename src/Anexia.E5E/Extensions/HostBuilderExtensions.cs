@@ -68,7 +68,7 @@ public static class HostBuilderExtensions
 		return new E5EHostBuilderWrapper(hb, opts);
 	}
 
-	private class E5EHostBuilderWrapper : IHostBuilder
+	private sealed class E5EHostBuilderWrapper : IHostBuilder
 	{
 		private readonly IHostBuilder _inner;
 

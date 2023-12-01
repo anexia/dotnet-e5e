@@ -35,7 +35,13 @@ internal sealed class E5EHostWrapper : IHost
 			return;
 		}
 
-		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
+		string metadata = "";
+#if NET8_0_OR_GREATER
+		metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(),
+			E5ESerializationContext.Default.E5ERuntimeMetadata);
+#else
+		metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
+#endif
 
 		_console.Open();
 		await _console.WriteToStdoutAsync(metadata).ConfigureAwait(false);

@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 using Anexia.E5E.Exceptions;
+using Anexia.E5E.Serialization;
 
 namespace Anexia.E5E.Functions;
 
@@ -23,9 +26,27 @@ public record E5EEvent(E5ERequestDataType Type,
 	/// <typeparam name="TValue">The target type.</typeparam>
 	/// <returns>A <typeparamref name="TValue" /> representation of the JSON.</returns>
 	/// <exception cref="JsonException">If <typeparamref name="TValue" /> is not compatible with the JSON.</exception>
+	[RequiresUnreferencedCode(
+		$"If you want to use AOT with this library, it's recommended to decode the {nameof(Data)} property by yourself.")]
+#if NET8_0_OR_GREATER
+	[RequiresDynamicCode(
+		$"If you want to use AOT with this library, it's recommended to decode the {nameof(Data)} property by yourself.")]
+#endif
 	public TValue? As<TValue>(JsonSerializerOptions? options = null)
 	{
 		return Data.GetValueOrDefault().Deserialize<TValue>(options);
+	}
+
+	/// <summary>
+	///     Deserializes the request data into a <typeparamref name="TValue" />.
+	/// </summary>
+	/// <param name="typeInfo">Metadata about the type to convert.</param>
+	/// <typeparam name="TValue">The target type.</typeparam>
+	/// <returns>A <typeparamref name="TValue" /> representation of the JSON.</returns>
+	/// <exception cref="JsonException">If <typeparamref name="TValue" /> is not compatible with the JSON.</exception>
+	public TValue? As<TValue>(JsonTypeInfo<TValue> typeInfo)
+	{
+		return Data.GetValueOrDefault().Deserialize(typeInfo);
 	}
 
 	/// <summary>
@@ -38,7 +59,7 @@ public record E5EEvent(E5ERequestDataType Type,
 	public string? AsText()
 	{
 		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Text, Type);
-		return As<string>();
+		return As(E5ESerializationContext.Default.String);
 	}
 
 	/// <summary>
@@ -51,6 +72,6 @@ public record E5EEvent(E5ERequestDataType Type,
 	public IEnumerable<byte>? AsBytes()
 	{
 		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Binary, Type);
-		return As<byte[]>();
+		return As(E5ESerializationContext.Default.ByteArray);
 	}
 }
