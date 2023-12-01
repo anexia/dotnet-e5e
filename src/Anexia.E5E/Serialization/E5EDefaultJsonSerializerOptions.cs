@@ -11,11 +11,11 @@ namespace Anexia.E5E.Serialization;
 public static class E5EJsonSerializerOptions
 {
 	/// <summary>
-	///     The e5e-specific serializer options:
+	///     The E5E-specific serializer options:
 	///     - The naming policy is using lower_snake_case for property names.
 	///     - Null values are ignored.
 	///     - Read-only properties are (de-)serialized as well.
-	///     - Converters for <seealso cref="Functions.E5EHttpHeaders" /> and e5e-specific enums are added.
+	///     - Converters for <seealso cref="Functions.E5EHttpHeaders" /> and E5E-specific enums are added.
 	/// </summary>
 	public static JsonSerializerOptions Default { get; } = new(JsonSerializerDefaults.General)
 	{

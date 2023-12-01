@@ -11,7 +11,7 @@ internal static partial class E5ECommunicationServiceLog
 	[LoggerMessage(
 		Level = LogLevel.Information,
 		EventId = 1000,
-		Message = "Waiting for e5e requests on standard input")]
+		Message = "Waiting for E5E requests on standard input")]
 	public static partial void ListeningForIncomingMessages(this ILogger<E5ECommunicationService> logger);
 
 	[LoggerMessage(
@@ -65,7 +65,7 @@ internal static partial class E5ECommunicationServiceLog
 	[LoggerMessage(
 		Level = LogLevel.Debug,
 		EventId = 4000,
-		Message = "Responded to ping message from e5e"
+		Message = "Responded to ping message from E5E"
 	)]
 	public static partial void PingReceived(this ILogger<E5ECommunicationService> logger);
 

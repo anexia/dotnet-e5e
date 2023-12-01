@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Anexia.E5E.Runtime;
 
 /// <summary>
-///     Runtime metadata that's used internally by e5e to get basic information about the environment.
+///     Runtime metadata that's used internally by E5E to get basic information about the environment.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("Performance", "CA1822:Mark members as static")]

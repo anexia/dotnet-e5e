@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 namespace Anexia.E5E.Extensions;
 
 /// <summary>
-///     Provides several extensions to setup <see cref="IHostBuilder" /> for the usage with Anexia e5e.
+///     Provides several extensions to setup <see cref="IHostBuilder" /> for the usage with Anexia E5E.
 /// </summary>
 public static class HostBuilderExtensions
 {

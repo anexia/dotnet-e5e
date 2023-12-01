@@ -11,7 +11,7 @@ public enum E5ERequestDataType
 	Text,
 
 	/// <summary>Any unknown content type will result in this type.</summary>
-	/// <remarks>Keep in mind that e5e, as any FaaS platform, is not very efficient when it comes to dealing with binary data.</remarks>
+	/// <remarks>Keep in mind that E5E, as any FaaS platform, is not very efficient when it comes to dealing with binary data.</remarks>
 	Binary,
 
 	/// <summary>
