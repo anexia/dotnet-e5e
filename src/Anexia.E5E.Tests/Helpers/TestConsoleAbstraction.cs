@@ -25,6 +25,11 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	private readonly TaskCompletionSource<string> _wroteFirstLine = new();
 	private bool _isOpen;
 
+	private readonly ReaderWriterLockSlim _stdinLock = new();
+	private readonly ReaderWriterLockSlim _stdoutLock = new();
+	private readonly ReaderWriterLockSlim _stderrLock = new();
+
+
 	public TestConsoleAbstraction(ILogger<TestConsoleAbstraction> logger, IHostApplicationLifetime lifetime)
 	{
 		_logger = logger;
@@ -57,9 +62,17 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 		await Task.Yield();
 		string? res = null;
-		while (!token.IsCancellationRequested && !_stdin.TryDequeue(out res))
+		while (!token.IsCancellationRequested)
 		{
+			_stdinLock.EnterReadLock();
+			if (_stdin.TryDequeue(out res))
+			{
+				_stdinLock.ExitReadLock();
+				return res;
+			}
+
 			// wait until we have a result or the task was cancelled
+			_stdinLock.ExitReadLock();
 		}
 
 		return res;
@@ -67,30 +80,30 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 
 	public Task WriteToStdoutAsync(string? s)
 	{
+		ArgumentNullException.ThrowIfNull(s);
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
 
-		if (s is null)
-			throw new ArgumentNullException(nameof(s));
-
+		_stdoutLock.EnterWriteLock();
 		_logger.LogDebug("Wrote {text} to stdout", s);
 		_stdout.Enqueue(s);
 		_stdoutStr.Append(s);
 
 		_wroteFirstLine.TrySetResult(s);
+		_stdoutLock.ExitWriteLock();
 
 		return Task.CompletedTask;
 	}
 
 	public Task WriteToStderrAsync(string? s)
 	{
+		ArgumentNullException.ThrowIfNull(s);
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
-
-		if (s is null)
-			throw new ArgumentNullException(nameof(s));
+		_stderrLock.EnterWriteLock();
 
 		_logger.LogDebug("Wrote {text} to stderr", s);
 		_stderr.Enqueue(s);
 		_stderrStr.Append(s);
+		_stderrLock.ExitWriteLock();
 		return Task.CompletedTask;
 	}
 
@@ -127,8 +140,9 @@ public sealed class TestConsoleAbstraction : IConsoleAbstraction
 	public void WriteToStdin(string s)
 	{
 		if (!_isOpen) throw new InvalidOperationException("Cannot write to a closed console");
-
+		_stdinLock.EnterWriteLock();
 		_stdin.Enqueue(s);
+		_stdinLock.ExitWriteLock();
 		_logger.LogDebug("Wrote {text} to stdin", s);
 	}
 
