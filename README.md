@@ -64,14 +64,14 @@ A very simple adaption of the above handler would look like this:
 using Anexia.E5E.Functions;
 
 public class HelloHandler : IE5EFunctionHandler {
-	private readonly ILogger<HelloHandler> _logger; 
+	private readonly ILogger<HelloHandler> _logger;
 	public HelloHandler(ILogger<HelloHandler> logger) {
 		_logger = logger;
 	}
-	
+
 	public Task<E5EResponse> HandleAsync(E5ERequest request, CancellationToken token = default) {
 		_logger.LogDebug("Received a {Request}", request);
-		
+
 		var (evt, context) = request;
 		// Let's assume we got the name as a plain text message.
 		var name = evt.AsText();

@@ -32,7 +32,7 @@ public interface IE5EEntrypointBuilder
 	/// <typeparam name="T">The type of the handler.</typeparam>
 	void RegisterEntrypoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-		T>(string entrypoint) where T : IE5EFunctionHandler
+	T>(string entrypoint) where T : IE5EFunctionHandler
 	{
 		RegisterEntrypoint(entrypoint, typeof(T));
 	}

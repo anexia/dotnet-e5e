@@ -37,4 +37,3 @@ jobs:
         run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://nuget.pkg.github.com/anexia/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

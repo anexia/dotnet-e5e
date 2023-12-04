@@ -74,7 +74,7 @@ public class TestHostBuilder
 	public async Task<(string Stdout, string Stderr)> WriteOnceAsync(string message)
 	{
 		var console = Inner.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-		              throw new InvalidOperationException("There's no console registered");
+					  throw new InvalidOperationException("There's no console registered");
 		console.WriteToStdin(message);
 		await console.WaitForFirstWriteAsync();
 		await Inner.StopAsync(TimeSpan.FromSeconds(3));
@@ -113,7 +113,7 @@ public class TestHostBuilder
 	private async Task<E5EResponse> ReadResponseAsync()
 	{
 		var console = Inner.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-		              throw new InvalidOperationException("There's no console registered");
+					  throw new InvalidOperationException("There's no console registered");
 		var options = Inner.Services.GetRequiredService<E5ERuntimeOptions>();
 		var stdout = await console.GetStdoutAsync();
 		var json = stdout
@@ -141,14 +141,14 @@ public class TestHostBuilder
 	public Task<string> GetStderrAsync()
 	{
 		var console = Inner.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-		              throw new InvalidOperationException("There's no console registered");
+					  throw new InvalidOperationException("There's no console registered");
 		return console.GetStderrAsync();
 	}
 
 	public Task<string> GetStdoutAsync()
 	{
 		var console = Inner.Services.GetRequiredService<IConsoleAbstraction>() as TestConsoleAbstraction ??
-		              throw new InvalidOperationException("There's no console registered");
+					  throw new InvalidOperationException("There's no console registered");
 		return console.GetStdoutAsync();
 	}
 
