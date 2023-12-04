@@ -5,7 +5,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  pack:
+  nuget-release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -24,16 +24,12 @@ jobs:
     - run: dotnet restore --locked-mode
     - run: dotnet pack --no-restore --include-symbols -o . /p:Version=${VERSION}
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: pack
-    steps:
-      - name: Deploy to NuGet
-        run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://api.nuget.org/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
+    - name: Deploy to NuGet
+      run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://api.nuget.org/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
-      - name: Deploy to GitHub Package Registry
-        run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://nuget.pkg.github.com/anexia/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy to GitHub Package Registry
+      run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://nuget.pkg.github.com/anexia/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
