@@ -1,0 +1,1 @@
+﻿{"data":"test","type":"text","status":301,"response_headers":{"Location":"https://example.com/"}}

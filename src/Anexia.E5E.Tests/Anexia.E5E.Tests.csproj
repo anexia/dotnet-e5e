@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2"/>
+		<PackageReference Include="Verify.Xunit" Version="22.1.4"/>
+		<PackageReference Include="xunit" Version="2.5.3"/>
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="XunitContext" Version="3.3.1"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Anexia.E5E\Anexia.E5E.csproj"/>
+	</ItemGroup>
+
+</Project>
