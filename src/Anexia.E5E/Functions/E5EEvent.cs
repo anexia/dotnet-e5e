@@ -69,7 +69,7 @@ public record E5EEvent(E5ERequestDataType Type,
 	///     Thrown if <see cref="Type" /> is not
 	///     <see cref="E5ERequestDataType.Binary" />.
 	/// </exception>
-	public IEnumerable<byte>? AsBytes()
+	public byte[]? AsBytes()
 	{
 		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Binary, Type);
 		return As(E5ESerializationContext.Default.ByteArray);
