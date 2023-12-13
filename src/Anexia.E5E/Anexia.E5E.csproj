@@ -30,6 +30,12 @@
 		<!-- Build a *.snupkg symbol package for easier debugging: https://learn.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg#creating-a-symbol-package -->
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+		<!--
+			SIANXSVC-1170: Set the debug type to "Portable". This allows the generation of proper *.pdb files in the *.snupkg files.
+			Thanks to Piedone for the relevant NuGet discussion: https://github.com/NuGet/Home/discussions/11541
+		-->
+		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -50,5 +56,4 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
 		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
 	</ItemGroup>
-
 </Project>
