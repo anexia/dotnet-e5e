@@ -44,7 +44,6 @@ public class E5EResponse
 		"This helper relies on runtime reflection for the JSON serialization. Initialize the E5EResponse by yourself for AOT.")]
 #endif
 	public static E5EResponse From<T>(T data, HttpStatusCode? status = null, E5EHttpHeaders? responseHeaders = null)
-		where T : class
 	{
 		return new E5EResponse
 		{
