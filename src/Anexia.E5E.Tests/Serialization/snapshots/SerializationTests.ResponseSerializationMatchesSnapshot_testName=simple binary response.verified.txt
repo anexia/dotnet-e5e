@@ -1,1 +1,1 @@
-﻿{"data":"dGVzdA==","type":"binary"}
+﻿{"data":{"binary":"aGVsbG8=","type":"binary","size":0,"name":"dotnet-e5e-binary-response.blob","content_type":"application/octet-stream","charset":"utf-8"},"type":"binary"}

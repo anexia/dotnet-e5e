@@ -1,1 +1,1 @@
-﻿{"type":"binary","data":"dGVzdA=="}
+﻿{"type":"binary","data":{"binary":"aGVsbG8=","type":"binary","size":0,"name":null,"content_type":null,"charset":"utf-8"}}

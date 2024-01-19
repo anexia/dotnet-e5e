@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Functions;
@@ -42,7 +43,11 @@ public class DocumentationTests : IntegrationTestBase
 			var data = request.Event.As<SumData>()!;
 			return E5EResponse.From(data.A + data.B);
 		});
-		var response = await Host.WriteRequestOnceAsync(x => x.WithData(new SumData { A = 3, B = 2 }));
+		var response = await Host.WriteRequestOnceAsync(x => x.WithData(new SumData
+		{
+			A = 3,
+			B = 2,
+		}));
 		Assert.Equal(5, response.As<int>());
 	}
 
@@ -55,8 +60,8 @@ public class DocumentationTests : IntegrationTestBase
 			var resp = Encoding.UTF8.GetBytes($"Hello {name}");
 			return E5EResponse.From(resp);
 		});
-		var response = await Host.WriteRequestOnceAsync(x => x.WithData(Encoding.UTF8.GetBytes("Luna")));
-		Assert.Equal("\"SGVsbG8gTHVuYQ==\"", response.Data.GetRawText());
+		var response = await Host.WriteRequestOnceAsync(x => x.WithData(new E5EFileData("Luna"u8.ToArray())));
+		Assert.Equal("Hello Luna"u8.ToArray(), response.Data.Deserialize<E5EFileData>()!.Bytes);
 		Assert.Equal(E5EResponseType.Binary, response.Type);
 	}
 

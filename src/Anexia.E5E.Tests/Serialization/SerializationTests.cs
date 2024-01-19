@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -98,8 +97,9 @@ public class SerializationTests
 	public void ResponseSerializationRecognisesCorrectType()
 	{
 		Assert.Equal(E5EResponseType.Text, E5EResponse.From("test").Type);
-		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test")).Type);
-		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(Encoding.UTF8.GetBytes("test").AsEnumerable()).Type);
+		Assert.Equal(E5EResponseType.Binary, E5EResponse.From("test"u8.ToArray()).Type);
+		Assert.Equal(E5EResponseType.Binary, E5EResponse.From("test"u8.ToArray().AsEnumerable()).Type);
+		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(new E5EFileData("something"u8.ToArray())).Type);
 		Assert.Equal(E5EResponseType.StructuredObject, E5EResponse.From(new E5ERuntimeMetadata()).Type);
 	}
 
@@ -159,6 +159,7 @@ public class SerializationTests
 			new E5EContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
 			new E5ERuntimeMetadata(),
+			new E5EFileData("data"u8.ToArray()),
 		};
 
 		private IEnumerable<object[]> Data => _objects.Select(obj => new[] { obj });
@@ -179,11 +180,8 @@ public class SerializationTests
 		private readonly Dictionary<string, E5EEvent> _tests = new()
 		{
 			{ "simple text request", new TestRequestBuilder().WithData("test").BuildEvent() },
-			{ "simple binary request", new TestRequestBuilder().WithData(Encoding.UTF8.GetBytes("test")).BuildEvent() },
-			{
-				"simple object request",
-				new TestRequestBuilder().WithData(new Dictionary<string, string> { { "test", "value" } }).BuildEvent()
-			},
+			{ "simple binary request", new TestRequestBuilder().WithData(new E5EFileData("hello"u8.ToArray())).BuildEvent() },
+			{ "simple object request", new TestRequestBuilder().WithData(new Dictionary<string, string> { { "test", "value" } }).BuildEvent() },
 			{
 				"request with headers and parameters", new TestRequestBuilder().WithData("test")
 					.AddParam("param", "value")
@@ -210,12 +208,15 @@ public class SerializationTests
 		private readonly Dictionary<string, E5EResponse> _tests = new()
 		{
 			{ "simple text response", E5EResponse.From("test") },
-			{ "simple binary response", E5EResponse.From(Encoding.UTF8.GetBytes("test")) },
-			{ "simple object response", E5EResponse.From(new Dictionary<string, int> { { "a", 1 }, { "b", 2 } }) },
+			{ "simple binary response", E5EResponse.From("hello"u8.ToArray()) },
 			{
-				"text response with headers and status code", E5EResponse.From("test", HttpStatusCode.Moved,
-					new E5EHttpHeaders { { "Location", "https://example.com" } })
+				"simple object response", E5EResponse.From(new Dictionary<string, int>
+				{
+					{ "a", 1 },
+					{ "b", 2 },
+				})
 			},
+			{ "text response with headers and status code", E5EResponse.From("test", HttpStatusCode.Moved, new E5EHttpHeaders { { "Location", "https://example.com" } }) },
 		};
 
 		private IEnumerable<object[]> Data => _tests.Select(obj => new object[] { obj.Key, obj.Value });

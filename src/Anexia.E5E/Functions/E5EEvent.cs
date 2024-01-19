@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -14,7 +15,8 @@ namespace Anexia.E5E.Functions;
 /// <param name="Data">The data, not processed.</param>
 /// <param name="RequestHeaders">The request headers, if any.</param>
 /// <param name="Params">The request parameters, if any.</param>
-public record E5EEvent(E5ERequestDataType Type,
+public record E5EEvent(
+	E5ERequestDataType Type,
 	JsonElement? Data = null,
 	E5EHttpHeaders? RequestHeaders = null,
 	E5ERequestParameters? Params = null)
@@ -58,20 +60,41 @@ public record E5EEvent(E5ERequestDataType Type,
 	/// </exception>
 	public string? AsText()
 	{
-		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Text, Type);
+		E5EInvalidConversionException.ThrowIfNotMatch(Type, E5ERequestDataType.Text);
 		return As(E5ESerializationContext.Default.String);
 	}
 
 	/// <summary>
-	///     Returns the value as byte enumerable.
+	///     Returns the bytes of the attached file.
 	/// </summary>
 	/// <exception cref="E5EInvalidConversionException">
-	///     Thrown if <see cref="Type" /> is not
-	///     <see cref="E5ERequestDataType.Binary" />.
+	///     Thrown if <see cref="Type" /> is not <see cref="E5ERequestDataType.Binary" />.
 	/// </exception>
 	public byte[]? AsBytes()
 	{
-		E5EInvalidConversionException.ThrowIfNotMatch(E5ERequestDataType.Binary, Type);
-		return As(E5ESerializationContext.Default.ByteArray);
+		E5EInvalidConversionException.ThrowIfNotMatch(Type, E5ERequestDataType.Binary);
+		return AsFiles().SingleOrDefault()?.Bytes;
+	}
+
+	/// <summary>
+	///     If this request is a multipart/form-data request, all files attached to this request are deserialized.
+	/// </summary>
+	/// <returns>A list of files or an empty enumerable if they can't be decoded.</returns>
+	/// <exception cref="E5EInvalidConversionException">Thrown if <see cref="Type"/> is neither <see cref="E5ERequestDataType.Binary"/> nor <see cref="E5ERequestDataType.Mixed"/>.</exception>
+	public ReadOnlyCollection<E5EFileData> AsFiles()
+	{
+		E5EInvalidConversionException.ThrowIfNotMatch(Type, E5ERequestDataType.Binary, E5ERequestDataType.Mixed);
+		var data = Data.GetValueOrDefault().ValueKind switch
+		{
+#if NET8_0_OR_GREATER
+			JsonValueKind.Object => new[] { As(E5ESerializationContext.Default.E5EFileData)! },
+			JsonValueKind.Array  => As(E5ESerializationContext.Default.IEnumerableE5EFileData),
+#else
+			JsonValueKind.Object => new [] { As<E5EFileData>()! },
+			JsonValueKind.Array => As<IEnumerable<E5EFileData>>(),
+#endif
+			_ => null,
+		} ?? Enumerable.Empty<E5EFileData>();
+		return new ReadOnlyCollection<E5EFileData>(data.ToList());
 	}
 }

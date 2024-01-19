@@ -7,7 +7,6 @@ using Anexia.E5E.Serialization.Converters;
 
 namespace Anexia.E5E.Serialization;
 
-[JsonSerializable(typeof(byte[]))]
 [JsonSerializable(typeof(string))]
 #if NET8_0_OR_GREATER
 // The .NET 6 JSON generation is very limited, especially with the lack of init-only properties.
@@ -15,6 +14,8 @@ namespace Anexia.E5E.Serialization;
 [JsonSerializable(typeof(E5ERequest))]
 [JsonSerializable(typeof(E5EResponse))]
 [JsonSerializable(typeof(E5ERuntimeMetadata))]
+[JsonSerializable(typeof(E5EFileData))]
+[JsonSerializable(typeof(IEnumerable<E5EFileData>))]
 [JsonSourceGenerationOptions(
 	JsonSerializerDefaults.General,
 	IgnoreReadOnlyProperties = false,
