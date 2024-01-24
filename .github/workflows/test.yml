@@ -20,10 +20,8 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
        dotnet-version: "${{ matrix.dotnet-version }}"
-       cache: true
-       cache-dependency-path: src/**/packages.lock.json
 
-    - run: dotnet restore --locked-mode
+    - run: dotnet restore
 
     - name: Run tests with coverage
       run: dotnet test --no-restore --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover --logger trx --results-directory "test-results"

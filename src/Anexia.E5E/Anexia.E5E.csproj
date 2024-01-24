@@ -4,7 +4,6 @@
 		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 		<PackRelease>true</PackRelease>
 
 		<!-- NuGet specific metadata, according to: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/nuget#important-nuget-package-metadata -->
