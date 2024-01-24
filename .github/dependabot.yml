@@ -12,7 +12,7 @@ updates:
     assignees: [nachtjasmin, beachmachine]
 
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/src"
     schedule:
       interval: "weekly"
     assignees: [nachtjasmin, beachmachine]
