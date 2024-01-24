@@ -9,10 +9,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      assignees: [nachtjasmin, beachmachine]
+    assignees: [nachtjasmin, beachmachine]
 
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
       interval: "weekly"
-      assignees: [nachtjasmin, beachmachine]
+    assignees: [nachtjasmin, beachmachine]
