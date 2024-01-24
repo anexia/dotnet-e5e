@@ -25,7 +25,7 @@ public class StartupTests : IntegrationTestBase
 	public async Task OutputMatches()
 	{
 		await Host.StartAsync();
-		var expected = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
+		var expected = JsonSerializer.Serialize(E5ERuntimeMetadata.Current, E5EJsonSerializerOptions.Default);
 		var stdout = await Host.GetStdoutAsync();
 		Assert.Equal(expected, stdout);
 	}

@@ -23,7 +23,7 @@ jobs:
 
     - run: dotnet restore
 
-    - run: dotnet pack --no-restore --include-symbols -o . /p:PackageVersion=${VERSION}
+    - run: dotnet pack --no-restore --include-symbols -o . /p:Version=${VERSION}
 
     - name: Deploy to NuGet
       run: dotnet nuget push *.nupkg --api-key $NUGET_AUTH_TOKEN --source https://api.nuget.org/v3/index.json

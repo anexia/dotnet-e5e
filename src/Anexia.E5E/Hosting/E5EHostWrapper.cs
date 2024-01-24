@@ -39,10 +39,10 @@ internal sealed class E5EHostWrapper : IHost
 		}
 
 #if NET8_0_OR_GREATER
-		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(),
+		var metadata = JsonSerializer.Serialize(E5ERuntimeMetadata.Current,
 			E5ESerializationContext.Default.E5ERuntimeMetadata);
 #else
-		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
+		var metadata = JsonSerializer.Serialize(E5ERuntimeMetadata.Current, E5EJsonSerializerOptions.Default);
 #endif
 
 		_console.Open();

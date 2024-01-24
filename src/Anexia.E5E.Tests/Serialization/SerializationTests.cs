@@ -100,7 +100,7 @@ public class SerializationTests
 		Assert.Equal(E5EResponseType.Binary, E5EResponse.From("test"u8.ToArray()).Type);
 		Assert.Equal(E5EResponseType.Binary, E5EResponse.From("test"u8.ToArray().AsEnumerable()).Type);
 		Assert.Equal(E5EResponseType.Binary, E5EResponse.From(new E5EFileData("something"u8.ToArray())).Type);
-		Assert.Equal(E5EResponseType.StructuredObject, E5EResponse.From(new E5ERuntimeMetadata()).Type);
+		Assert.Equal(E5EResponseType.StructuredObject, E5EResponse.From(E5ERuntimeMetadata.Current).Type);
 	}
 
 	[Theory]
@@ -125,7 +125,7 @@ public class SerializationTests
 	[Fact]
 	public void MetadataIsProperSerialized()
 	{
-		var json = JsonSerializer.Serialize(new E5ERuntimeMetadata(), _options);
+		var json = JsonSerializer.Serialize(E5ERuntimeMetadata.Current, _options);
 		var deserialized = JsonSerializer.Deserialize<JsonElement>(json);
 		var sut = deserialized.EnumerateObject().ToDictionary(x => x.Name, x => x.Value);
 
@@ -135,7 +135,8 @@ public class SerializationTests
 			() => Assert.Contains("runtime", sut),
 			() => Assert.Contains("features", sut),
 			() => Assert.Contains("library_version", sut),
-			() => Assert.Equal(1, sut["features"].GetArrayLength())
+			() => Assert.Equal(1, sut["features"].GetArrayLength()),
+			() => Assert.Equal("1.0.0", sut["library_version"].GetString())
 		);
 	}
 
@@ -158,7 +159,7 @@ public class SerializationTests
 		{
 			new E5EContext("generic", DateTimeOffset.FromUnixTimeSeconds(0), true),
 			new E5ERequestParameters(),
-			new E5ERuntimeMetadata(),
+			E5ERuntimeMetadata.Current,
 			new E5EFileData("data"u8.ToArray()),
 		};
 
