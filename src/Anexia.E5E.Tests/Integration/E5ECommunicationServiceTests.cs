@@ -83,7 +83,7 @@ public class E5ECommunicationServiceTests : IntegrationTestBase
 	{
 		await Host.StartWithTestEntrypointAsync(_ => E5EResponse.From("response"));
 		var (stdout, _) = await Host.WriteOnceAsync(builder => builder.WithData("request"));
-		Assert.Equal(@"+++{""data"":""response"",""type"":""text""}---", stdout);
+		Assert.Equal(@"+++{""result"":{""data"":""response"",""type"":""text""}}---", stdout);
 	}
 
 	[Fact]
