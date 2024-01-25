@@ -26,13 +26,5 @@ jobs:
     - name: Run tests with coverage
       run: dotnet test --no-restore --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover --logger trx --results-directory "test-results"
 
-    - name: Publish test results (${{ matrix.dotnet-version }})
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        comment_mode: off
-        files: |
-          test-results/**/*.trx
-
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
