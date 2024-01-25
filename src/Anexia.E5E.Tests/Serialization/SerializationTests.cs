@@ -23,7 +23,6 @@ using static VerifyXunit.Verifier;
 
 namespace Anexia.E5E.Tests.Serialization;
 
-[UsesVerify]
 public class SerializationTests
 {
 	private readonly JsonSerializerOptions _options;
