@@ -100,6 +100,24 @@ await host.RunAsync();
 
 Further examples can be found in the [examples folder](./examples).
 
+### Note on startup initialization
+
+Due to the fact that the communication with e5e relies on the `IHost` to run, any initialization code should
+**not** be done before starting the host. It **must** be done after starting the host, for example by splitting
+up the `RunAsync` call like in the example below.
+
+```csharp
+using var host = /* ...omitted for brevity */
+
+// Don't do this or bad things are going to happen.
+await SomeExtremelyLongStartupTask();
+
+// Instead do this:
+await host.StartAsync();
+await SomeExtremelyLongStartupTask();
+await host.WaitForShutdownAsync();
+```
+
 # Supported versions
 
 |                        | Supported |
