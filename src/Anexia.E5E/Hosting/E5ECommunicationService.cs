@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 
 using Anexia.E5E.Abstractions;
@@ -141,14 +142,19 @@ internal sealed class E5ECommunicationService : BackgroundService
 		try
 		{
 			_logger.ReceivedResponse(response);
-			string json = "";
 #if NET8_0_OR_GREATER
-			json = JsonSerializer.Serialize(response, E5ESerializationContext.Default.E5EResponse);
+			var json = JsonSerializer.Serialize(response, E5ESerializationContext.Default.E5EResponse);
 #else
-			json = JsonSerializer.Serialize<E5EResponse>(response, E5EJsonSerializerOptions.Default);
+			var json = JsonSerializer.Serialize<E5EResponse>(response, E5EJsonSerializerOptions.Default);
 #endif
 
-			return _options.StdoutTerminationSequence + json;
+			// Although we could use a dedicated response class for serialization, this would create another overhead
+			// which is easily replaced with this string concatenation.
+			return new StringBuilder().Append(_options.StdoutTerminationSequence)
+				.Append("{\"result\":")
+				.Append(json)
+				.Append('}')
+				.ToString();
 		}
 		catch (Exception e)
 		{

@@ -119,10 +119,12 @@ public class TestHostBuilder
 		var json = stdout
 			.Replace(options.StdoutTerminationSequence, "")
 			.Replace(options.DaemonExecutionTerminationSequence, "");
-		var resp = JsonSerializer.Deserialize<E5EResponse>(json, E5EJsonSerializerOptions.Default);
 
-		// ReSharper disable once NullableWarningSuppressionIsUsed
-		return resp!;
+		var result = JsonSerializer.Deserialize<JsonElement>(json, E5EJsonSerializerOptions.Default);
+		if (!result.TryGetProperty("result", out result))
+			throw new InvalidOperationException("The response does not contain a 'result' property");
+
+		return result.Deserialize<E5EResponse>(E5EJsonSerializerOptions.Default)!;
 	}
 
 	public Task StartWithTestEntrypointAsync(Func<E5ERequest, E5EResponse> handler)
