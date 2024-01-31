@@ -2,9 +2,12 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Anexia.E5E.Abstractions.Termination;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
 using Anexia.E5E.Tests.TestHelpers;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -36,5 +39,7 @@ public class StartupTests : IntegrationTestBase
 		cts.Token.Register(() => Assert.Fail("Shutdown took longer than three seconds"), true);
 
 		await Host.WaitForShutdownAsync(cts.Token);
+		var terminator = Host.Inner.Services.GetRequiredService<ITerminator>() as TerminatorMock;
+		Assert.True(terminator?.Called);
 	}
 }

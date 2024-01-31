@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Anexia.E5E.Abstractions;
+using Anexia.E5E.Abstractions.Termination;
 using Anexia.E5E.Extensions;
 using Anexia.E5E.Functions;
 using Anexia.E5E.Runtime;
@@ -53,7 +54,11 @@ public class TestHostBuilder
 	public Task StartAsync(int maximumLifetimeMs = 5000)
 	{
 		// In order to override the default implementation, we need to call this just before we build our host.
-		_hb.ConfigureServices(services => services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>());
+		_hb.ConfigureServices(services =>
+		{
+			services.AddSingleton<IConsoleAbstraction, TestConsoleAbstraction>();
+			services.AddSingleton<ITerminator, TerminatorMock>();
+		});
 		_host = _hb.Build();
 
 		// Shutdown the host automatically after five seconds, there's no test that should run that long.

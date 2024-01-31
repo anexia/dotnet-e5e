@@ -1,6 +1,7 @@
 using System.Text.Json;
 
 using Anexia.E5E.Abstractions;
+using Anexia.E5E.Abstractions.Termination;
 using Anexia.E5E.Runtime;
 using Anexia.E5E.Serialization;
 
@@ -12,6 +13,7 @@ namespace Anexia.E5E.Hosting;
 internal sealed class E5EHostWrapper : IHost
 {
 	private readonly IConsoleAbstraction _console;
+	private readonly ITerminator _terminator;
 	private readonly IHost _host;
 	private readonly E5ERuntimeOptions _options;
 
@@ -20,6 +22,7 @@ internal sealed class E5EHostWrapper : IHost
 		_host = host;
 		_options = Services.GetRequiredService<E5ERuntimeOptions>();
 		_console = Services.GetRequiredService<IConsoleAbstraction>();
+		_terminator = Services.GetService<ITerminator>() ?? new EnvironmentTerminator();
 	}
 
 	public void Dispose()
@@ -35,21 +38,20 @@ internal sealed class E5EHostWrapper : IHost
 			return;
 		}
 
-		string metadata = "";
 #if NET8_0_OR_GREATER
-		metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(),
+		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(),
 			E5ESerializationContext.Default.E5ERuntimeMetadata);
 #else
-		metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
+		var metadata = JsonSerializer.Serialize(new E5ERuntimeMetadata(), E5EJsonSerializerOptions.Default);
 #endif
 
 		_console.Open();
 		await _console.WriteToStdoutAsync(metadata).ConfigureAwait(false);
 		_console.Close();
 
-		// If we wrote the metadata, circumvent the default host mechanism as used by Run/RunAsync extensions
-		// and just stop the application.
-		_host.Services.GetRequiredService<IHostApplicationLifetime>().StopApplication();
+		// After we wrote the metadata, close the application immediately(!). Any startup tasks that occur after the startup
+		// (e.g. a long initialization task) won't be executed and the metadata is returned to e5e.
+		_terminator.Exit();
 	}
 
 	public Task StopAsync(CancellationToken cancellationToken = default)
