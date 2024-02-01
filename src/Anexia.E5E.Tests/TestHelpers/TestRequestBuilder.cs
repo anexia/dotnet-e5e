@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -17,7 +18,9 @@ public class TestRequestBuilder
 		_requestType = data switch
 		{
 			string => E5ERequestDataType.Text,
-			IEnumerable<byte> => E5ERequestDataType.Binary,
+			IEnumerable<byte> => throw new InvalidOperationException(
+				$"E5E does not compose binary requests just from the bytes. Please convert this call to use {nameof(E5EFileData)} instead."),
+			E5EFileData => E5ERequestDataType.Binary,
 			_ => E5ERequestDataType.StructuredObject,
 		};
 		_data = JsonSerializer.SerializeToElement(data);

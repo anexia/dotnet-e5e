@@ -4,6 +4,7 @@
 		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
+		<LangVersion>12</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,6 +26,15 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Anexia.E5E\Anexia.E5E.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="TestData\binary_request_with_multiple_files.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="TestData\binary_request_unknown_content_type.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
