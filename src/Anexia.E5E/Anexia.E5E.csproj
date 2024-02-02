@@ -55,4 +55,9 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
 		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
 	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Make the internal members visible to Anexia.E5E.Tests -->
+		<InternalsVisibleTo Include="$(AssemblyName).Tests"/>
+	</ItemGroup>
 </Project>
