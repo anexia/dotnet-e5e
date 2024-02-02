@@ -71,10 +71,12 @@ public static class HostBuilderExtensions
 	private sealed class E5EHostBuilderWrapper : IHostBuilder
 	{
 		private readonly IHostBuilder _inner;
+		private readonly E5ERuntimeOptions _options;
 
 		public E5EHostBuilderWrapper(IHostBuilder inner, E5ERuntimeOptions runtimeOptions)
 		{
 			_inner = inner;
+			_options = runtimeOptions;
 			_inner.ConfigureServices((_, services) =>
 			{
 				services.AddHostedService<E5ECommunicationService>();
@@ -110,6 +112,17 @@ public static class HostBuilderExtensions
 
 		public IHost Build()
 		{
+			if (_options.KeepAlive)
+				return new E5EHostWrapper(_inner.Build());
+
+			// If we are in the non-keepalive mode (should happen rarely), we *must* not write anything to stdout
+			// after a successful response. Because the default logging mechanism do not allow to set the logging
+			// level after startup, we enforce that all logs are written to stderr.
+			//
+			// This does **not** affect our ConsoleAbstraction. Why? The ConsoleLogger just references System.Console.Out,
+			// and our abstraction calls System.Console.OpenStandardOutput and is therefore using the actual /dev/stdout.
+			Console.SetOut(Console.Error);
+
 			return new E5EHostWrapper(_inner.Build());
 		}
 

@@ -15,7 +15,7 @@ public abstract class IntegrationTestBase : XunitContextBase, IAsyncLifetime
 
 	protected TestHostBuilder Host { get; }
 
-	public Task InitializeAsync()
+	public virtual Task InitializeAsync()
 	{
 		return Task.CompletedTask;
 	}

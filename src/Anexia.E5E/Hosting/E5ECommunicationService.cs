@@ -90,13 +90,15 @@ internal sealed class E5ECommunicationService : BackgroundService
 			var response = await RespondToLineAsync(line, stoppingToken).ConfigureAwait(false);
 			await _console.WriteToStdoutAsync(response).ConfigureAwait(false);
 
-			// After every *successful* execution, we need to write the execution sequence. This applies to ping
-			// messages as well. We do not write it after errors, otherwise our logs would get sent into the void.
-			await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
-			await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
-
 			// If we should keep it alive (which is notably the default), do that.
-			if (_options.KeepAlive) continue;
+			if (_options.KeepAlive)
+			{
+				// After every *successful* execution, we need to write the execution sequence. This applies to ping
+				// messages as well. We do not write it after errors, otherwise our logs would get sent into the void.
+				await _console.WriteToStdoutAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
+				await _console.WriteToStderrAsync(_options.DaemonExecutionTerminationSequence).ConfigureAwait(false);
+				continue;
+			}
 
 			// Otherwise, we just stop the processing at this point.
 			break;
