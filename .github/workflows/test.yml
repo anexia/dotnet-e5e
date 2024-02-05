@@ -27,4 +27,4 @@ jobs:
       run: dotnet test --no-restore --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover --logger trx --results-directory "test-results"
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
