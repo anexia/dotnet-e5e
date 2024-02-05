@@ -8,8 +8,19 @@ namespace Anexia.E5E.Runtime;
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
-public record E5ERuntimeMetadata
+public sealed record E5ERuntimeMetadata
 {
+	private E5ERuntimeMetadata()
+	{
+		// We try to fetch the informational version from the generated AssemblyInfo. Because SourceLink appends the
+		// commit hash, we have to trim it afterwards.
+		var version = typeof(E5ERuntimeMetadata).Assembly
+			.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+			?.InformationalVersion ?? "0.0.0+unknown";
+
+		LibraryVersion = version[..version.IndexOf('+')];
+	}
+
 	/// <summary>
 	///     The current instance of the metadata.
 	/// </summary>
@@ -18,9 +29,7 @@ public record E5ERuntimeMetadata
 	/// <summary>
 	///     The installed version of this NuGet library.
 	/// </summary>
-	public string LibraryVersion =>
-		typeof(E5ERuntimeMetadata).Assembly.GetCustomAttribute<AssemblyVersionAttribute>()?.Version ??
-		"0.0.0-unrecognized";
+	public string LibraryVersion { get; }
 
 	/// <summary>
 	///     The runtime this function is running in.

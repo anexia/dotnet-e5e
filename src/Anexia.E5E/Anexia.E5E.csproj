@@ -8,7 +8,6 @@
 
 		<!-- NuGet specific metadata, according to: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/nuget#important-nuget-package-metadata -->
 		<PackageId>Anexia.E5E</PackageId>
-		<PackageVersion>1.0.0</PackageVersion> <!-- This is a placeholder, overridden by Nerdbank.GitVersioning -->
 		<Description>A helper library to help you build serverless functions on top of the Anexia Engine.</Description>
 		<Authors>anexia</Authors> <!-- needs to match the NuGet profiles -->
 		<Company>ANEXIA Internetdienstleistungs GmbH</Company>
