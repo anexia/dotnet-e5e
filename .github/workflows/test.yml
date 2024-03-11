@@ -24,7 +24,19 @@ jobs:
     - run: dotnet restore
 
     - name: Run tests with coverage
-      run: dotnet test --no-restore --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover --logger trx --results-directory "test-results"
+      run: >
+        dotnet test
+        --no-restore
+        --collect:"XPlat Code Coverage"
+        /p:CoverletOutputFormat=cobertura
+        --logger trx
+        --results-directory "test-results"
+        --
+        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile="**/*.g.cs"
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+    - name: Upload coverage to Codeclimate
+      uses: paambaati/codeclimate-action@v5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageLocations: "test-results/**/coverage.cobertura.xml:cobertura"
