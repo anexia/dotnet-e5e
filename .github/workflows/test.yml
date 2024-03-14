@@ -27,8 +27,7 @@ jobs:
       run: >
         dotnet test
         --no-restore
-        --collect:"XPlat Code Coverage"
-        /p:CoverletOutputFormat=cobertura
+        --collect:"XPlat Code Coverage;Format=lcov"
         --logger trx
         --results-directory "test-results"
         --
@@ -39,4 +38,4 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
-        coverageLocations: "test-results/**/coverage.cobertura.xml:cobertura"
+        coverageLocations: "test-results/**/coverage.info:lcov"
