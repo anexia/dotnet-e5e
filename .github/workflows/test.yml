@@ -34,7 +34,7 @@ jobs:
         DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile="**/*.g.cs"
 
     - name: Upload coverage to Codeclimate
-      uses: paambaati/codeclimate-action@v5
+      uses: paambaati/codeclimate-action@v8
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
